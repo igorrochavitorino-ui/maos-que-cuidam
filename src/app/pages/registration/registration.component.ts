@@ -32,7 +32,7 @@ export class RegistrationComponent implements OnInit {
     phone: ['', [Validators.required, Validators.minLength(10)]],
     cpf: ['', [Validators.required, Validators.minLength(11)]],
     birthDate: ['', Validators.required],
-    city: ['São Paulo', Validators.required],
+    city: ['Macaé', Validators.required],
     neighborhood: ['', Validators.required],
     courseId: ['curso-banho-higienizacao', Validators.required],
     preferredShift: ['Manhã (08h às 12h)', Validators.required],

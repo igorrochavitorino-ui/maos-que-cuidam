@@ -35,7 +35,7 @@ export class AdoptionComponent {
     donorPhone: ['', [Validators.required, Validators.minLength(10)]],
     donorEmail: ['', [Validators.required, Validators.email]],
     donorType: ['Protetor Independente', Validators.required],
-    city: ['São Paulo', Validators.required],
+    city: ['Macaé', Validators.required],
     neighborhood: ['', Validators.required],
     petName: ['', [Validators.required, Validators.minLength(2)]],
     species: ['Cão', Validators.required],

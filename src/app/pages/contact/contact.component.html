@@ -6,9 +6,9 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         <span>Fale Conosco</span>
       </div>
-      <h1 class="page-header-title">Contato & Perguntas Frequentes</h1>
+      <h1 class="page-header-title">Contato & Sede Oficial</h1>
       <p class="page-header-desc">
-        Tire suas dúvidas, conheça nossa sede ou mande uma mensagem para nossa coordenação.
+        Tire suas dúvidas, conheça nossa sede em Macaé/RJ ou mande uma mensagem direta para nossa coordenação.
       </p>
     </div>
   </div>
@@ -24,13 +24,13 @@
           <div class="contact-success-box animate-fade-in">
             <div class="success-icon">✓</div>
             <h3>Mensagem Enviada com Sucesso!</h3>
-            <p>Obrigado pelo seu contato. Nossa equipe responderá no seu WhatsApp ou e-mail em até 24 horas úteis.</p>
+            <p>Obrigado pelo seu contato. Nossa equipe responderá no seu WhatsApp ou e-mail com todo carinho.</p>
             <button class="btn btn-primary" (click)="submitted.set(false)">Enviar Outra Mensagem</button>
           </div>
         } @else {
           <div class="form-title-group">
             <h3>Envie uma Mensagem Direta</h3>
-            <p>Preencha os campos abaixo que retornaremos com todo carinho.</p>
+            <p>Preencha os campos abaixo que retornaremos rapidamente.</p>
           </div>
 
           <form (ngSubmit)="submitContact()" class="contact-form-body">
@@ -46,7 +46,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label" for="contactPhone">WhatsApp / Telefone</label>
-                <input type="tel" id="contactPhone" [(ngModel)]="phone" name="phone" placeholder="(11) 90000-0000" class="form-control">
+                <input type="tel" id="contactPhone" [(ngModel)]="phone" name="phone" placeholder="(22) 99848-1112" class="form-control">
               </div>
             </div>
 
@@ -54,9 +54,10 @@
               <label class="form-label" for="contactSubject">Assunto</label>
               <select id="contactSubject" [(ngModel)]="subject" name="subject" class="form-select">
                 <option value="Dúvida sobre os cursos de banho e tosa">Dúvida sobre os cursos de banho e tosa</option>
-                <option value="Agendamento de banho social para pet">Agendamento de banho social para pet</option>
+                <option value="Adoção de animal ou doação de pet">Adoção de animal ou doação de pet</option>
+                <option value="Agendamento de banho social gratuito para pet">Agendamento de banho social gratuito para pet</option>
                 <option value="Quero ser voluntário ou instrutor">Quero ser voluntário ou instrutor</option>
-                <option value="Parceria de pet shop ou doação empresarial">Parceria de pet shop ou doação empresarial</option>
+                <option value="Parceria de pet shop ou doação de insumos">Parceria de pet shop ou doação de insumos</option>
                 <option value="Outro assunto">Outro assunto</option>
               </select>
             </div>
@@ -88,16 +89,32 @@
             <div class="info-row">
               <div class="info-icon">📍</div>
               <div>
-                <strong>Sede & Laboratório Prático:</strong>
-                <p>Av. dos Animais com Amor, 1250 - Vila Esperança, São Paulo/SP</p>
+                <strong>Sede Oficial & Laboratório de Aulas:</strong>
+                <p>Rua Raymundo Peixoto Lins, nº 48, Barra<br>CEP: 27961-074 • Macaé / RJ</p>
               </div>
             </div>
 
             <div class="info-row">
               <div class="info-icon">📱</div>
               <div>
-                <strong>Atendimento WhatsApp & Telefone:</strong>
-                <p>(11) 98765-4321 • (11) 3210-9876</p>
+                <strong>WhatsApp & Telefone de Contato:</strong>
+                <p>
+                  <a href="https://wa.me/5522998481112" target="_blank" style="color: var(--color-primary); font-weight: 700; text-decoration: none;">
+                    (22) 99848-1112
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-icon">📷</div>
+              <div>
+                <strong>Instagram Oficial:</strong>
+                <p>
+                  <a href="https://www.instagram.com/maosquecuidam_4/" target="_blank" style="color: var(--color-gold-hover); font-weight: 700; text-decoration: underline;">
+                    &#64;maosquecuidam_4
+                  </a>
+                </p>
               </div>
             </div>
 
@@ -119,6 +136,9 @@
           </div>
 
           <div class="quick-links-box">
+            <a href="https://wa.me/5522998481112" target="_blank" class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 0.75rem;">
+              💬 Chamar no WhatsApp Oficial
+            </a>
             <a routerLink="/cadastro" class="btn btn-outline-gold" style="width: 100%; justify-content: center;">
               Ir para Inscrição de Cursos
             </a>
@@ -139,7 +159,7 @@
       </div>
       <h2 class="section-title">Perguntas Frequentes (FAQ)</h2>
       <p class="section-subtitle">
-        Tudo o que você precisa saber sobre o funcionamento das turmas, banhos sociais e certificação.
+        Tudo o que você precisa saber sobre o funcionamento das turmas em Macaé/RJ, banhos sociais e certificação.
       </p>
       <div class="gold-divider"></div>
     </div>
