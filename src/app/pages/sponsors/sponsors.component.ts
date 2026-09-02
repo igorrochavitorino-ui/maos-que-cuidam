@@ -17,7 +17,6 @@ export class SponsorsComponent {
   registrationService = inject(RegistrationService);
 
   sponsors: Sponsor[] = this.registrationService.getSponsors();
-  selectedCategory = signal<string>('all');
   submittedProposal = signal<SponsorProposal | null>(null);
 
   proposalForm: FormGroup = this.fb.group({
@@ -25,19 +24,9 @@ export class SponsorsComponent {
     representativeName: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
     phone: ['', [Validators.required, Validators.minLength(10)]],
-    tierInterest: ['Cota Diamante (Mantenedor Master)', Validators.required],
+    tierInterest: ['Doação de Insumos / Cosméticos', Validators.required],
     proposalMessage: ['', [Validators.required, Validators.minLength(15)]]
   });
-
-  filterCategory(cat: string): void {
-    this.selectedCategory.set(cat);
-  }
-
-  get filteredSponsors(): Sponsor[] {
-    const c = this.selectedCategory();
-    if (c === 'all') return this.sponsors;
-    return this.sponsors.filter(s => s.category === c);
-  }
 
   submitProposal(): void {
     if (this.proposalForm.invalid) {
@@ -57,7 +46,7 @@ export class SponsorsComponent {
 
     this.submittedProposal.set(created);
     this.proposalForm.reset({
-      tierInterest: 'Cota Diamante (Mantenedor Master)'
+      tierInterest: 'Doação de Insumos / Cosméticos'
     });
   }
 
