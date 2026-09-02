@@ -98,6 +98,29 @@
   </div>
 </section>
 
+<!-- BARRA DE MARCAS E PATROCINADORES OFICIAIS -->
+<section class="home-sponsors-strip">
+  <div class="container">
+    <div class="sponsors-strip-header">
+      <span class="strip-tag">GRANDES MARCAS PARCEIRAS</span>
+      <p class="strip-text">Empresas líderes do mercado pet que apoiam e viabilizam os cursos da ONG</p>
+    </div>
+    <div class="home-sponsors-logos">
+      @for (sp of sponsors; track sp.id) {
+        <a routerLink="/patrocinadores" class="brand-chip" [title]="sp.name">
+          <span class="brand-chip-icon">{{ sp.logoIcon }}</span>
+          <span class="brand-chip-name">{{ sp.name }}</span>
+        </a>
+      }
+    </div>
+    <div class="text-center" style="margin-top: 1.5rem;">
+      <a routerLink="/patrocinadores" class="strip-link">
+        Conheça todos os nossos patrocinadores &raquo;
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- OS 3 PILARES INSTITUCIONAIS (Amor • Respeito • Proteção) -->
 <section class="pillars-section section-padding">
   <div class="container">

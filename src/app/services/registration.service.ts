@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Course, StudentRegistration, VolunteerRegistration, PetRegistration, Testimonial, RegistrationStatus } from '../models/registration.model';
+import { Course, StudentRegistration, VolunteerRegistration, PetRegistration, Testimonial, Sponsor, SponsorProposal, RegistrationStatus } from '../models/registration.model';
 
 @Injectable({
   providedIn: 'root'
@@ -8,20 +8,24 @@ export class RegistrationService {
   private readonly STUDENTS_KEY = 'mqc_students_data';
   private readonly VOLUNTEERS_KEY = 'mqc_volunteers_data';
   private readonly PETS_KEY = 'mqc_pets_data';
+  private readonly SPONSOR_PROPOSALS_KEY = 'mqc_sponsor_proposals_data';
 
   // Signals para reatividade pura
   private studentsSignal = signal<StudentRegistration[]>([]);
   private volunteersSignal = signal<VolunteerRegistration[]>([]);
   private petsSignal = signal<PetRegistration[]>([]);
+  private sponsorProposalsSignal = signal<SponsorProposal[]>([]);
 
   // Computed signals
   readonly students = computed(() => this.studentsSignal());
   readonly volunteers = computed(() => this.volunteersSignal());
   readonly pets = computed(() => this.petsSignal());
+  readonly sponsorProposals = computed(() => this.sponsorProposalsSignal());
 
   readonly totalStudents = computed(() => this.studentsSignal().length);
   readonly totalVolunteers = computed(() => this.volunteersSignal().length);
   readonly totalPets = computed(() => this.petsSignal().length);
+  readonly totalProposals = computed(() => this.sponsorProposalsSignal().length);
 
   // Lista oficial de cursos da ONG Mãos que Cuidam
   private readonly coursesList: Course[] = [
@@ -159,7 +163,94 @@ export class RegistrationService {
     }
   ];
 
-  // Depoimentos reais/inspiradores de formandos
+  // Grandes Patrocinadores Oficiais do Setor Pet
+  private readonly sponsorsList: Sponsor[] = [
+    {
+      id: 'sp-groomerpro',
+      name: 'GroomerPro Cosméticos & Spa Pet',
+      category: 'Diamante',
+      tagline: 'Líder em Cosméticos Hipoalergênicos e Tratamento da Pelagem',
+      description: 'Fornecedora oficial de 100% dos shampoos veganos, máscaras de hidratação e finalizadores dermatológicos utilizados nas aulas práticas da ONG.',
+      logoIcon: '🧼',
+      websiteUrl: 'https://groomerpro.com.br',
+      contributionType: 'Insumos Cosméticos & Manutenção de Laboratório',
+      studentsSupported: 240,
+      sinceYear: 2023
+    },
+    {
+      id: 'sp-titanium',
+      name: 'Titanium Blades & Pro Scissors',
+      category: 'Diamante',
+      tagline: 'Alta Precisão e Tecnologia em Tesouras e Lâminas Alemãs',
+      description: 'Equipa todas as bancadas dos nossos cursos com tesouras curvas, retas, tubarão e kits completos de lâminas profissionais de alta durabilidade.',
+      logoIcon: '✂️',
+      websiteUrl: 'https://titaniumblades.com',
+      contributionType: 'Kits de Tesouras Profissionais & Máquinas de Tosa',
+      studentsSupported: 180,
+      sinceYear: 2023
+    },
+    {
+      id: 'sp-petcare',
+      name: 'Rede PetCare Centros Veterinários & Diagnóstico',
+      category: 'Ouro',
+      tagline: 'Excelência em Medicina Veterinária e Cuidado Integral',
+      description: 'Disponibiliza médicos veterinários residentes para suporte em aula, triagem preventiva dos pets e contratação direta dos alunos formados.',
+      logoIcon: '🏥',
+      websiteUrl: 'https://petcare.vet.br',
+      contributionType: 'Supervisão Veterinária & Encaminhamento de Empregos',
+      studentsSupported: 160,
+      sinceYear: 2024
+    },
+    {
+      id: 'sp-aquadry',
+      name: 'AquaDry Sopradores & Banheiras Inox',
+      category: 'Ouro',
+      tagline: 'Engenharia Silenciosa e Ergonômica para Banho & Tosa',
+      description: 'Estruturou nossas salas com banheiras reguláveis em aço inox 304 e sopradores de baixo decibéis com tecnologia antiestresse para os cães.',
+      logoIcon: '🚿',
+      websiteUrl: 'https://aquadrypet.com.br',
+      contributionType: 'Infraestrutura de Laboratório & Secadores Silenciosos',
+      studentsSupported: 130,
+      sinceYear: 2024
+    },
+    {
+      id: 'sp-nutripet',
+      name: 'NutriPet Nutrição Super Premium',
+      category: 'Prata',
+      tagline: 'Nutrição Balanceada e Bem-Estar Canino e Felino',
+      description: 'Oferece petiscos funcionais de reforço positivo para treino de manejo amigável durante o banho e doa ração para protetores atendidos.',
+      logoIcon: '🍖',
+      websiteUrl: 'https://nutripet.com.br',
+      contributionType: 'Alimentação & Reforço Positivo em Aula',
+      studentsSupported: 95,
+      sinceYear: 2025
+    },
+    {
+      id: 'sp-mundoanimal',
+      name: 'Mundo Animal Grooming & Pet Shops',
+      category: 'Prata',
+      tagline: 'Rede com mais de 40 lojas em todo o estado',
+      description: 'Principal empresa contratante dos nossos formandos, concedendo prioridade de contratação para os alunos certificados pela ONG.',
+      logoIcon: '🏬',
+      websiteUrl: 'https://mundoanimalpet.com.br',
+      contributionType: 'Programa Jovem Groomer & Contratação Efetiva',
+      studentsSupported: 150,
+      sinceYear: 2024
+    },
+    {
+      id: 'sp-groomertech',
+      name: 'GroomerTech Software & Gestão Pet',
+      category: 'Parceiro Técnico',
+      tagline: 'Sistemas de Agendamento e Gestão para Negócios Pet',
+      description: 'Concede 1 ano de acesso 100% gratuito ao seu software de gestão para todos os formandos que abrem seu próprio Pet Móvel ou Pet Shop.',
+      logoIcon: '💻',
+      websiteUrl: 'https://groomertech.io',
+      contributionType: 'Licenças Gratuitas de Tecnologia para Empreendedores',
+      studentsSupported: 75,
+      sinceYear: 2025
+    }
+  ];
+
   private readonly testimonialsList: Testimonial[] = [
     {
       id: 'dep-1',
@@ -205,8 +296,28 @@ export class RegistrationService {
     return this.coursesList.find(c => c.id === id);
   }
 
+  getSponsors(): Sponsor[] {
+    return [...this.sponsorsList];
+  }
+
   getTestimonials(): Testimonial[] {
     return [...this.testimonialsList];
+  }
+
+  // --- MÉTODOS DE PROPOSTAS DE PATROCÍNIO ---
+  registerSponsorProposal(data: Omit<SponsorProposal, 'id' | 'protocol' | 'createdAt' | 'status'>): SponsorProposal {
+    const newProposal: SponsorProposal = {
+      ...data,
+      id: 'sp_prop_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      protocol: 'PAT-' + new Date().getFullYear() + '-' + Math.floor(10000 + Math.random() * 90000),
+      status: 'Pendente',
+      createdAt: new Date().toISOString()
+    };
+
+    const updated = [newProposal, ...this.sponsorProposalsSignal()];
+    this.sponsorProposalsSignal.set(updated);
+    this.saveProposals(updated);
+    return newProposal;
   }
 
   // --- MÉTODOS DE ALUNOS ---
@@ -322,6 +433,11 @@ export class RegistrationService {
         this.petsSignal.set(seedPets);
         this.savePets(seedPets);
       }
+
+      const storedProposals = localStorage.getItem(this.SPONSOR_PROPOSALS_KEY);
+      if (storedProposals) {
+        this.sponsorProposalsSignal.set(JSON.parse(storedProposals));
+      }
     } catch (e) {
       console.warn('Erro ao carregar do localStorage:', e);
       this.studentsSignal.set(this.getSeedStudents());
@@ -354,7 +470,14 @@ export class RegistrationService {
     }
   }
 
-  // Limpar e restaurar dados iniciais para testes
+  private saveProposals(data: SponsorProposal[]): void {
+    try {
+      localStorage.setItem(this.SPONSOR_PROPOSALS_KEY, JSON.stringify(data));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   resetAllData(): void {
     const seedStudents = this.getSeedStudents();
     const seedVolunteers = this.getSeedVolunteers();
@@ -369,7 +492,6 @@ export class RegistrationService {
     this.savePets(seedPets);
   }
 
-  // Dados iniciais enriquecidos para demonstração imediata
   private getSeedStudents(): StudentRegistration[] {
     return [
       {

@@ -251,6 +251,82 @@
   line-height: 1.3;
 }
 
+/* ================= HOME SPONSORS STRIP ================= */
+.home-sponsors-strip {
+  background: #ffffff;
+  padding: 2.25rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.sponsors-strip-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.strip-tag {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--color-gold-hover);
+  text-transform: uppercase;
+}
+
+.strip-text {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+  margin-bottom: 0;
+}
+
+.home-sponsors-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.brand-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--color-bg-main);
+  border: 1.5px solid var(--color-border);
+  padding: 0.6rem 1.15rem;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.brand-chip:hover {
+  border-color: var(--color-gold);
+  background: var(--color-gold-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.brand-chip-icon {
+  font-size: 1.25rem;
+}
+
+.brand-chip-name {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.strip-link {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-gold-hover);
+}
+
+.strip-link:hover {
+  text-decoration: underline;
+}
+
 /* ================= PILARES SECTION ================= */
 .bg-warm {
   background-color: var(--color-bg-warm);

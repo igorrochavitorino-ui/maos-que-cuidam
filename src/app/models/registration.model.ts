@@ -87,3 +87,29 @@ export interface Testimonial {
   currentRole: string;
   rating: number;
 }
+
+export interface Sponsor {
+  id: string;
+  name: string;
+  category: 'Diamante' | 'Ouro' | 'Prata' | 'Parceiro Técnico';
+  tagline: string;
+  description: string;
+  logoIcon: string;
+  websiteUrl: string;
+  contributionType: string;
+  studentsSupported: number;
+  sinceYear: number;
+}
+
+export interface SponsorProposal {
+  id: string;
+  protocol: string;
+  companyName: string;
+  representativeName: string;
+  email: string;
+  phone: string;
+  tierInterest: 'Cota Diamante (Mantenedor Master)' | 'Cota Ouro (Cosméticos & Insumos)' | 'Cota Prata (Equipamentos & Tesouras)' | 'Parceria de Empregabilidade / Vagas';
+  proposalMessage: string;
+  status: RegistrationStatus;
+  createdAt: string;
+}

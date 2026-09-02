@@ -1,0 +1,234 @@
+<!-- BANNER SUPERIOR DE PATROCINADORES -->
+<section class="page-header-section">
+  <div class="container">
+    <div class="page-header-content">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>Alianças Estratégicas & Responsabilidade Social (ESG)</span>
+      </div>
+      <h1 class="page-header-title">Grandes Patrocinadores & Empresas Parceiras</h1>
+      <p class="page-header-desc">
+        Marcas líderes da indústria e do mercado pet que acreditam no poder da educação profissional e investem no bem-estar animal junto à ONG Mãos que Cuidam.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- MÉTRICAS DE PATROCÍNIO -->
+<section class="sponsors-stats-section">
+  <div class="container">
+    <div class="sponsors-stats-grid">
+      <div class="sp-stat-item">
+        <span class="sp-stat-num">7 Marcas</span>
+        <span class="sp-stat-txt">Líderes do Setor Pet Apoiando a Causa</span>
+      </div>
+      <div class="sp-stat-item">
+        <span class="sp-stat-num">+950 Bolsas</span>
+        <span class="sp-stat-txt">Sociais Financiadas Integralmente</span>
+      </div>
+      <div class="sp-stat-item">
+        <span class="sp-stat-num">100%</span>
+        <span class="sp-stat-txt">Insumos, Lâminas e Shampoos Doados</span>
+      </div>
+      <div class="sp-stat-item">
+        <span class="sp-stat-num">94%</span>
+        <span class="sp-stat-txt">Alunos Empregados em Redes Parceiras</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEÇÃO DE CATÁLOGO DAS MARCAS -->
+<section class="sponsors-catalog-section section-padding">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <span>Marcas Parceiras</span>
+      </div>
+      <h2 class="section-title">Quem Torna Nossos Cursos Possíveis</h2>
+      <p class="section-subtitle">
+        Conheça as empresas que equipam nossas salas, fornecem produtos profissionais e contratam nossos formandos.
+      </p>
+      <div class="gold-divider"></div>
+    </div>
+
+    <!-- Filtros de Categoria -->
+    <div class="sponsors-filter-bar">
+      <button class="filter-btn" [class.active]="selectedCategory() === 'all'" (click)="filterCategory('all')">
+        Todas as Marcas ({{ sponsors.length }})
+      </button>
+      <button class="filter-btn" [class.active]="selectedCategory() === 'Diamante'" (click)="filterCategory('Diamante')">
+        💎 Cota Diamante
+      </button>
+      <button class="filter-btn" [class.active]="selectedCategory() === 'Ouro'" (click)="filterCategory('Ouro')">
+        🥇 Cota Ouro
+      </button>
+      <button class="filter-btn" [class.active]="selectedCategory() === 'Prata'" (click)="filterCategory('Prata')">
+        🥈 Cota Prata & Redes
+      </button>
+      <button class="filter-btn" [class.active]="selectedCategory() === 'Parceiro Técnico'" (click)="filterCategory('Parceiro Técnico')">
+        💻 Parceiros de Tecnologia
+      </button>
+    </div>
+
+    <!-- Grid de Cards dos Patrocinadores -->
+    <div class="sponsors-grid">
+      @for (sp of filteredSponsors; track sp.id) {
+        <div class="sponsor-card card-modern" [class.diamond-border]="sp.category === 'Diamante'">
+          <div class="sponsor-card-top">
+            <div class="sponsor-brand-icon">{{ sp.logoIcon }}</div>
+            <div class="sponsor-category-badge" [class.badge-diamante]="sp.category === 'Diamante'" [class.badge-ouro]="sp.category === 'Ouro'">
+              {{ sp.category === 'Diamante' ? '💎 Cota Diamante' : sp.category === 'Ouro' ? '🥇 Cota Ouro' : sp.category === 'Prata' ? '🥈 Cota Prata' : '💻 Parceiro Tech' }}
+            </div>
+          </div>
+
+          <h3 class="sponsor-name">{{ sp.name }}</h3>
+          <p class="sponsor-tagline">{{ sp.tagline }}</p>
+          <p class="sponsor-desc">{{ sp.description }}</p>
+
+          <div class="sponsor-impact-box">
+            <div class="impact-row">
+              <span class="impact-label">Apoio Principal:</span>
+              <strong class="impact-val">{{ sp.contributionType }}</strong>
+            </div>
+            <div class="impact-row">
+              <span class="impact-label">Alunos Apoiados:</span>
+              <strong class="impact-val text-gold">+{{ sp.studentsSupported }} profissionais</strong>
+            </div>
+            <div class="impact-row">
+              <span class="impact-label">Parceiro Desde:</span>
+              <span class="impact-val">{{ sp.sinceYear }}</span>
+            </div>
+          </div>
+
+          <div class="sponsor-card-footer">
+            <a [href]="sp.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy btn-sm">
+              Visitar Site Oficial &raquo;
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- SEÇÃO: SEJA UM PATROCINADOR / FORMULÁRIO EMPRESARIAL -->
+<section class="become-sponsor-section section-padding bg-warm">
+  <div class="container">
+    <div class="sponsor-form-grid">
+      <!-- Coluna Informativa de Vantagens ESG -->
+      <div class="sponsor-benefits-side">
+        <div class="section-tag">
+          <span>Faça Parte</span>
+        </div>
+        <h2 class="section-title text-left">Por que Sua Empresa Deve Apoiar a ONG Mãos que Cuidam?</h2>
+        <p class="benefits-lead">
+          Associe sua marca à transformação social e à causa mais nobre do setor pet: <strong>capacitar pessoas em vulnerabilidade e garantir respeito e saúde para os animais</strong>.
+        </p>
+
+        <div class="benefits-list">
+          <div class="benefit-item">
+            <div class="benefit-icon">🏆</div>
+            <div>
+              <strong>Selo "Empresa Amiga da Causa Animal & Capacitação":</strong>
+              <p>Direito de uso do selo oficial em suas embalagens, site e campanhas de marketing social (ESG).</p>
+            </div>
+          </div>
+
+          <div class="benefit-item">
+            <div class="benefit-icon">🎓</div>
+            <div>
+              <strong>Banco de Talentos Exclusivo:</strong>
+              <p>Acesso prioritário aos formandos com melhor desempenho técnico para contratação em suas lojas ou clínicas.</p>
+            </div>
+          </div>
+
+          <div class="benefit-item">
+            <div class="benefit-icon">📢</div>
+            <div>
+              <strong>Visibilidade de Marca em Nossas Salas:</strong>
+              <p>Aplicação da sua logomarca nos aventais dos alunos, bancadas práticas, certificados e materiais digitais.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna do Formulário de Proposta -->
+      <div class="sponsor-form-side">
+        @if (submittedProposal()) {
+          <div class="proposal-success-box card-modern animate-fade-in">
+            <div class="success-icon">✓</div>
+            <h3>Proposta Enviada com Sucesso!</h3>
+            <p>Obrigado pelo interesse da <strong>{{ submittedProposal()?.companyName }}</strong> em apoiar a ONG Mãos que Cuidam.</p>
+            
+            <div class="proposal-protocol-box">
+              <span>PROTOCOLO DA PROPOSTA:</span>
+              <strong>{{ submittedProposal()?.protocol }}</strong>
+            </div>
+
+            <p class="text-muted" style="font-size: 0.88rem;">
+              Nossa diretoria de parcerias e responsabilidade social entrará em contato com <strong>{{ submittedProposal()?.representativeName }}</strong> em até 24 horas úteis.
+            </p>
+
+            <button class="btn btn-primary" (click)="resetProposal()">
+              Enviar Nova Mensagem
+            </button>
+          </div>
+        } @else {
+          <div class="sponsor-form-card card-modern">
+            <div class="form-title-group">
+              <h3>Seja uma Empresa Parceira</h3>
+              <p>Preencha os dados da sua empresa para receber nosso Mídia Kit e propostas de cotas.</p>
+            </div>
+
+            <form [formGroup]="proposalForm" (ngSubmit)="submitProposal()" novalidate>
+              <div class="form-group">
+                <label class="form-label" for="companyName">Nome da Empresa / Marca Pet <span class="required">*</span></label>
+                <input type="text" id="companyName" formControlName="companyName" placeholder="Ex: PetShop Brasil / Marca Cosméticos" class="form-control" [class.is-invalid]="proposalForm.get('companyName')?.invalid && proposalForm.get('companyName')?.touched">
+                @if (proposalForm.get('companyName')?.invalid && proposalForm.get('companyName')?.touched) {
+                  <div class="form-error">Nome da empresa é obrigatório.</div>
+                }
+              </div>
+
+              <div class="grid-2" style="gap: 1rem;">
+                <div class="form-group">
+                  <label class="form-label" for="representativeName">Nome do Representante <span class="required">*</span></label>
+                  <input type="text" id="representativeName" formControlName="representativeName" placeholder="Seu nome" class="form-control" [class.is-invalid]="proposalForm.get('representativeName')?.invalid && proposalForm.get('representativeName')?.touched">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="spPhone">WhatsApp / Telefone <span class="required">*</span></label>
+                  <input type="tel" id="spPhone" formControlName="phone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="proposalForm.get('phone')?.invalid && proposalForm.get('phone')?.touched">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="spEmail">E-mail Corporativo <span class="required">*</span></label>
+                <input type="email" id="spEmail" formControlName="email" placeholder="contato@suaempresa.com.br" class="form-control" [class.is-invalid]="proposalForm.get('email')?.invalid && proposalForm.get('email')?.touched">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="tierInterest">Cota / Modelo de Parceria de Interesse</label>
+                <select id="tierInterest" formControlName="tierInterest" class="form-select">
+                  <option value="Cota Diamante (Mantenedor Master)">💎 Cota Diamante (Mantenedor Master)</option>
+                  <option value="Cota Ouro (Cosméticos & Insumos)">🥇 Cota Ouro (Cosméticos & Insumos)</option>
+                  <option value="Cota Prata (Equipamentos & Tesouras)">🥈 Cota Prata (Equipamentos & Tesouras)</option>
+                  <option value="Parceria de Empregabilidade / Vagas">🤝 Parceria de Contratação / Vagas de Emprego</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="proposalMessage">Mensagem ou Proposta de Apoio <span class="required">*</span></label>
+                <textarea id="proposalMessage" formControlName="proposalMessage" rows="3" placeholder="Conte como sua marca gostaria de contribuir ou quais produtos/serviços gostaria de doar..." class="form-textarea" [class.is-invalid]="proposalForm.get('proposalMessage')?.invalid && proposalForm.get('proposalMessage')?.touched"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                Enviar Proposta de Parceria &raquo;
+              </button>
+            </form>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

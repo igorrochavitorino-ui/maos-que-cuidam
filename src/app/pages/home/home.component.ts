@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
-import { Course, Testimonial } from '../../models/registration.model';
+import { Course, Testimonial, Sponsor } from '../../models/registration.model';
 
 @Component({
   selector: 'app-home',
@@ -16,6 +16,7 @@ export class HomeComponent {
 
   courses: Course[] = this.registrationService.getCourses();
   testimonials: Testimonial[] = this.registrationService.getTestimonials();
+  sponsors: Sponsor[] = this.registrationService.getSponsors();
 
   // Dados de impacto
   stats = [

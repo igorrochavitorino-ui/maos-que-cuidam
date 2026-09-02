@@ -9,6 +9,10 @@
       <span>Cursos Gratuitos de Banho & Tosa • Vagas Sociais para Capacitação Profissional</span>
     </div>
     <div class="banner-actions">
+      <a routerLink="/patrocinadores" class="banner-link">
+        <span>⭐ Nossos Patrocinadores</span>
+      </a>
+      <span class="banner-divider">|</span>
       <a routerLink="/doar" class="banner-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
         <span>Apoie com PIX</span>
@@ -55,6 +59,11 @@
           </a>
         </li>
         <li>
+          <a routerLink="/patrocinadores" routerLinkActive="active" class="nav-item">
+            Patrocinadores
+          </a>
+        </li>
+        <li>
           <a routerLink="/doar" routerLinkActive="active" class="nav-item">
             Como Ajudar
           </a>
@@ -90,6 +99,7 @@
         <li><a routerLink="/" (click)="closeMobileMenu()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Início</a></li>
         <li><a routerLink="/cursos" (click)="closeMobileMenu()" routerLinkActive="active">Cursos & Oficinas</a></li>
         <li><a routerLink="/cadastro" (click)="closeMobileMenu()" routerLinkActive="active">Portal de Inscrições</a></li>
+        <li><a routerLink="/patrocinadores" (click)="closeMobileMenu()" routerLinkActive="active">⭐ Patrocinadores & Empresas</a></li>
         <li><a routerLink="/doar" (click)="closeMobileMenu()" routerLinkActive="active">Como Ajudar / Doações</a></li>
         <li><a routerLink="/contato" (click)="closeMobileMenu()" routerLinkActive="active">Contato & Localização</a></li>
         <li><a routerLink="/admin" (click)="closeMobileMenu()" routerLinkActive="active" class="mobile-admin-link">⚙️ Painel de Gestão (Admin)</a></li>
