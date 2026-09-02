@@ -8,6 +8,7 @@ import { ContactComponent } from './pages/contact/contact.component';
 import { SponsorsComponent } from './pages/sponsors/sponsors.component';
 import { GalleryComponent } from './pages/gallery/gallery.component';
 import { AdoptionComponent } from './pages/adoption/adoption.component';
+import { ConsultComponent } from './pages/consult/consult.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Início | ONG Mãos que Cuidam' },
@@ -17,8 +18,9 @@ export const routes: Routes = [
   { path: 'transformacoes', component: GalleryComponent, title: 'Galeria & Banho Gratuito | ONG Mãos que Cuidam' },
   { path: 'galeria-pets', redirectTo: 'transformacoes' },
   { path: 'cadastro', component: RegistrationComponent, title: 'Inscrições & Cadastro | ONG Mãos que Cuidam' },
+  { path: 'consultar', component: ConsultComponent, title: 'Consultar Inscrição | ONG Mãos que Cuidam' },
   { path: 'patrocinadores', component: SponsorsComponent, title: 'Patrocinadores & Parceiros | ONG Mãos que Cuidam' },
-  { path: 'admin', component: AdminPanelComponent, title: 'Painel de Gestão | ONG Mãos que Cuidam' },
+  { path: 'admin', component: AdminPanelComponent, title: 'Área do Colaborador | ONG Mãos que Cuidam' },
   { path: 'doar', component: DonateComponent, title: 'Como Ajudar & Doações | ONG Mãos que Cuidam' },
   { path: 'contato', component: ContactComponent, title: 'Contato & FAQ | ONG Mãos que Cuidam' },
   { path: '**', redirectTo: '' }

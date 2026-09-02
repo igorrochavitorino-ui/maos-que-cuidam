@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
+import { AuthService } from '../../services/auth.service';
 import { PetGalleryItem, PetRegistration } from '../../models/registration.model';
 
 @Component({
@@ -15,19 +16,29 @@ import { PetGalleryItem, PetRegistration } from '../../models/registration.model
 export class GalleryComponent {
   private fb = inject(FormBuilder);
   registrationService = inject(RegistrationService);
+  authService = inject(AuthService);
 
   activeSection = signal<'galeria' | 'cadastro-gratis'>('galeria');
-  selectedCategory = signal<string>('all');
   selectedPetForModal = signal<PetGalleryItem | null>(null);
+  
+  // Mapa de controle do toggle Antes/Depois por pet
+  viewModeMap: { [key: string]: 'after' | 'before' } = {};
 
-  // Controle de exibição antes/depois por card (mapa de IDs)
-  viewModeMap: { [id: string]: 'after' | 'before' } = {};
-
-  // Confirmação de cadastro do pet modelo
+  // Estado do cadastro de pet modelo
   submittedModelDog = signal<PetRegistration | null>(null);
 
-  // Modal para adicionar nova foto
+  // Notificação toast
+  toastMessage = signal<string | null>(null);
+
+  // Modal para adicionar nova foto à galeria
   showAddPhotoModal = signal<boolean>(false);
+  showQuickLoginModal = signal<boolean>(false);
+  loginEmail = signal<string>('admin@maosquecuidam.org.br');
+  loginPassword = signal<string>('admin');
+  loginError = signal<string | null>(null);
+
+  beforePhotoPreview = signal<string>('https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80');
+  afterPhotoPreview = signal<string>('https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600&auto=format&fit=crop&q=80');
 
   // Formulário de Cadastro do Cão Modelo para Banho/Tosa Grátis
   dogModelForm: FormGroup = this.fb.group({
@@ -46,33 +57,27 @@ export class GalleryComponent {
     agreeTerms: [false, Validators.requiredTrue]
   });
 
-  // Formulário para Cadastrar Nova Foto na Galeria
+  // Formulário para Cadastrar Nova Foto na Galeria (Campos fiéis ao Card da Foto)
   newPhotoForm: FormGroup = this.fb.group({
-    petName: ['', Validators.required],
-    species: ['Cão', Validators.required],
-    breed: ['', Validators.required],
-    serviceDone: ['', Validators.required],
-    beforeImageUrl: ['', Validators.required],
-    afterImageUrl: ['', Validators.required],
-    story: ['', [Validators.required, Validators.minLength(15)]],
-    studentName: ['', Validators.required],
-    instructorName: ['', Validators.required],
-    category: ['Antes & Depois', Validators.required]
+    petName: ['', [Validators.required, Validators.minLength(2)]],
+    category: ['TOSA BEBÊ', Validators.required], // Tag pill (ex: Tosa Bebê, Banho & Desembolo)
+    breed: ['Poodle Toy Resgatado', Validators.required], // Raça / Espécie (ex: Poodle Toy Resgatado)
+    serviceDone: ['Tosa Bebê na Tesoura & Banho Hipoalergênico', Validators.required], // Procedimento
+    story: ['', [Validators.required, Validators.minLength(15)]], // História da transformação
+    studentName: ['', [Validators.required, Validators.minLength(3)]], // Aluno Responsável (Turma)
+    instructorName: ['Prof. Carlos Eduardo', Validators.required], // Supervisão
+    instagramPostUrl: ['https://www.instagram.com/maosquecuidam_4/'], // Link do Instagram
+    beforeImageUrl: [''],
+    afterImageUrl: [''],
+    likesCount: [41]
   });
 
   get galleryItems(): PetGalleryItem[] {
-    const items = this.registrationService.getGalleryItems();
-    const cat = this.selectedCategory();
-    if (cat === 'all') return items;
-    return items.filter(i => i.category === cat);
+    return this.registrationService.getGalleryItems();
   }
 
   setSection(sec: 'galeria' | 'cadastro-gratis'): void {
     this.activeSection.set(sec);
-  }
-
-  setCategory(cat: string): void {
-    this.selectedCategory.set(cat);
   }
 
   toggleViewMode(petId: string, mode: 'after' | 'before'): void {
@@ -86,6 +91,22 @@ export class GalleryComponent {
   likePet(item: PetGalleryItem, event: Event): void {
     event.stopPropagation();
     this.registrationService.likeGalleryItem(item.id);
+    this.showToast(`❤️ Você curtiu o(a) ${item.petName}! Siga nosso Instagram oficial @maosquecuidam_4`);
+  }
+
+  deleteGalleryPhoto(item: PetGalleryItem, event: Event): void {
+    event.stopPropagation();
+    if (confirm(`Tem certeza que deseja remover a foto de "${item.petName}" da galeria?`)) {
+      this.registrationService.deleteGalleryItem(item.id);
+      this.showToast(`Foto de "${item.petName}" removida da galeria com sucesso.`);
+    }
+  }
+
+  showToast(msg: string): void {
+    this.toastMessage.set(msg);
+    setTimeout(() => {
+      this.toastMessage.set(null);
+    }, 3500);
   }
 
   openModal(item: PetGalleryItem): void {
@@ -94,6 +115,50 @@ export class GalleryComponent {
 
   closeModal(): void {
     this.selectedPetForModal.set(null);
+  }
+
+  handleOpenAddPhoto(): void {
+    if (this.authService.isAuthenticated()) {
+      this.showAddPhotoModal.set(true);
+    } else {
+      this.loginError.set(null);
+      this.showQuickLoginModal.set(true);
+    }
+  }
+
+  submitQuickLogin(): void {
+    this.loginError.set(null);
+    const res = this.authService.login(this.loginEmail(), this.loginPassword());
+    if (res.success) {
+      this.showQuickLoginModal.set(false);
+      this.showAddPhotoModal.set(true);
+    } else {
+      this.loginError.set(res.message);
+    }
+  }
+
+  onBeforeFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.beforePhotoPreview.set(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onAfterFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.afterPhotoPreview.set(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   submitDogModel(): void {
@@ -136,23 +201,34 @@ export class GalleryComponent {
     }
 
     const val = this.newPhotoForm.value;
+    const beforeUrl = val.beforeImageUrl?.trim() || this.beforePhotoPreview();
+    const afterUrl = val.afterImageUrl?.trim() || this.afterPhotoPreview();
+
     this.registrationService.addGalleryItem({
       petName: val.petName,
-      species: val.species,
+      species: 'Cão',
       breed: val.breed,
       serviceDone: val.serviceDone,
-      beforeImageUrl: val.beforeImageUrl,
-      afterImageUrl: val.afterImageUrl,
+      beforeImageUrl: beforeUrl,
+      afterImageUrl: afterUrl,
       story: val.story,
       studentName: val.studentName,
       instructorName: val.instructorName,
-      category: val.category
+      category: val.category,
+      likesCount: val.likesCount || 1,
+      instagramPostUrl: val.instagramPostUrl || 'https://www.instagram.com/maosquecuidam_4/'
     });
 
     this.showAddPhotoModal.set(false);
     this.newPhotoForm.reset({
-      species: 'Cão',
-      category: 'Antes & Depois'
+      category: 'TOSA BEBÊ',
+      breed: 'Poodle Toy Resgatado',
+      serviceDone: 'Tosa Bebê na Tesoura & Banho Hipoalergênico',
+      instructorName: 'Prof. Carlos Eduardo',
+      instagramPostUrl: 'https://www.instagram.com/maosquecuidam_4/',
+      likesCount: 41
     });
+
+    this.showToast(`✨ Foto do(a) ${val.petName} publicada com sucesso na Galeria!`);
   }
 }

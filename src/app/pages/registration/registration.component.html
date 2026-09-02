@@ -16,39 +16,54 @@
 
 <section class="registration-main-section section-padding">
   <div class="container">
-    <!-- NAVEGAÇÃO ENTRE AS 3 ABAS DE CADASTRO -->
+    <!-- NAVEGAÇÃO ENTRE AS 3 ABAS DE CADASTRO (DESIGN LUXUOSO & MODERNO) -->
     <div class="tabs-container">
       <button 
-        class="tab-button" 
+        class="tab-button tab-btn-curso" 
         [class.active]="activeTab() === 'aluno'"
         (click)="setTab('aluno')">
-        <span class="tab-icon">🎓</span>
+        <div class="tab-icon-box icon-box-blue">
+          <span>🎓</span>
+        </div>
         <div class="tab-texts">
           <strong class="tab-title">Inscrição para Cursos</strong>
           <span class="tab-desc">Alunos & Bolsas Sociais</span>
         </div>
+        @if (activeTab() === 'aluno') {
+          <span class="tab-active-pill">Ativo</span>
+        }
       </button>
 
       <button 
-        class="tab-button" 
+        class="tab-button tab-btn-voluntario" 
         [class.active]="activeTab() === 'voluntario'"
         (click)="setTab('voluntario')">
-        <span class="tab-icon">🤝</span>
+        <div class="tab-icon-box icon-box-gold">
+          <span>🤝</span>
+        </div>
         <div class="tab-texts">
           <strong class="tab-title">Seja Voluntário</strong>
           <span class="tab-desc">Groomers & Veterinários</span>
         </div>
+        @if (activeTab() === 'voluntario') {
+          <span class="tab-active-pill">Ativo</span>
+        }
       </button>
 
       <button 
-        class="tab-button" 
+        class="tab-button tab-btn-pet" 
         [class.active]="activeTab() === 'pet'"
         (click)="setTab('pet')">
-        <span class="tab-icon">🐶</span>
+        <div class="tab-icon-box icon-box-emerald">
+          <span>🐶</span>
+        </div>
         <div class="tab-texts">
           <strong class="tab-title">Banho Social para Pet</strong>
           <span class="tab-desc">Atendimento Gratuito</span>
         </div>
+        @if (activeTab() === 'pet') {
+          <span class="tab-active-pill">Ativo</span>
+        }
       </button>
     </div>
 
@@ -81,6 +96,12 @@
                   <strong>{{ submittedStudent()?.cpf }}</strong>
                 </div>
                 <div class="p-detail">
+                  <span class="label">Status da Inscrição:</span>
+                  <strong style="color: #059669; font-weight: 700;">
+                    ✓ Registrada com Sucesso (Ordem Cronológica)
+                  </strong>
+                </div>
+                <div class="p-detail">
                   <span class="label">Curso Escolhido:</span>
                   <strong class="text-gold">{{ submittedStudent()?.courseName }}</strong>
                 </div>
@@ -102,7 +123,7 @@
                 </div>
                 <div class="p-detail">
                   <span class="label">Data de Registro:</span>
-                  <strong>{{ submittedStudent()?.createdAt | date:'dd/MM/yyyy HH:mm' }}</strong>
+                  <strong>{{ submittedStudent()?.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</strong>
                 </div>
               </div>
 
@@ -117,6 +138,10 @@
             </div>
 
             <div class="protocol-actions">
+              <a [href]="notificationService.getStudentWhatsappLink(submittedStudent()!)" target="_blank" class="btn" style="background-color: #25d366; color: #ffffff; border: none; font-weight: 700; gap: 0.5rem; display: inline-flex; align-items: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <span>Confirmar via WhatsApp da ONG</span>
+              </a>
               <button class="btn btn-navy" (click)="printProtocol()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                 <span>Imprimir Comprovante</span>
@@ -125,17 +150,18 @@
                 Fazer Nova Inscrição
               </button>
               <a routerLink="/admin" class="btn btn-primary">
-                Acessar Painel de Gestão &raquo;
+                Área do Colaborador &raquo;
               </a>
             </div>
           </div>
         } @else {
-          <!-- FORMULÁRIO DE INSCRIÇÃO DE ALUNO -->
-          <div class="form-card card-modern">
-            <div class="form-header-card">
-              <div class="form-title-group">
-                <h3>Formulário de Inscrição para Formação Profissional</h3>
-                <p>Preencha os dados abaixo com atenção. Os cursos são 100% gratuitos para vagas sociais.</p>
+          <!-- FORMULÁRIO DE INSCRIÇÃO DE ALUNO (DESIGN LUXUOSO) -->
+          <div class="form-card card-modern registration-lux-card">
+            <div class="form-header-card-lux">
+              <div>
+                <span class="badge-gold-pill">🎓 CAPACITAÇÃO PROFISSIONAL SOCIAL</span>
+                <h3 class="form-title-lux">Formulário de Inscrição para Formação Profissional</h3>
+                <p class="form-subtitle-lux">Preencha seus dados para concorrer a uma vaga 100% gratuita nos cursos de Banho e Tosa.</p>
               </div>
               <div class="form-logo-badge">
                 <img src="assets/logo.jpg" alt="Logo ONG" class="badge-logo-img">
@@ -143,169 +169,187 @@
             </div>
 
             <form [formGroup]="studentForm" (ngSubmit)="submitStudent()" novalidate>
-              <!-- Bloco 1: Seleção do Curso -->
-              <div class="form-section-title">
-                <span class="step-num">1</span>
-                <h4>Escolha do Curso & Horário</h4>
-              </div>
-
-              <div class="grid-2">
-                <div class="form-group">
-                  <label class="form-label" for="courseId">
-                    Selecione o Curso Desejado <span class="required">*</span>
-                  </label>
-                  <select id="courseId" formControlName="courseId" class="form-select" [class.is-invalid]="studentForm.get('courseId')?.invalid && studentForm.get('courseId')?.touched">
-                    @for (c of courses; track c.id) {
-                      <option [value]="c.id">{{ c.title }} ({{ c.durationHours }}h - {{ c.level }})</option>
-                    }
-                  </select>
-                  <span class="form-hint">Todas as aulas são presenciais com práticas em laboratório.</span>
+              <!-- SEÇÃO 1: CURSO & TURNO -->
+              <div class="form-section-group">
+                <div class="section-label-chip">
+                  <span>1</span> Escolha do Curso & Horário
                 </div>
 
-                <div class="form-group">
-                  <label class="form-label" for="preferredShift">
-                    Turno de Preferência <span class="required">*</span>
-                  </label>
-                  <select id="preferredShift" formControlName="preferredShift" class="form-select">
-                    <option value="Manhã (08h às 12h)">Manhã (08h às 12h) - Seg a Sex</option>
-                    <option value="Tarde (13h30 às 17h30)">Tarde (13h30 às 17h30) - Seg a Sex</option>
-                    <option value="Noite (18h30 às 22h)">Noite (18h30 às 22h) - Seg a Sex</option>
-                    <option value="Sábados (08h às 17h)">Turma Intensiva aos Sábados (08h às 17h)</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Bloco 2: Dados Pessoais -->
-              <div class="form-section-title">
-                <span class="step-num">2</span>
-                <h4>Dados Pessoais do Aluno</h4>
-              </div>
-
-              <div class="grid-2">
-                <div class="form-group">
-                  <label class="form-label" for="fullName">
-                    Nome Completo <span class="required">*</span>
-                  </label>
-                  <input type="text" id="fullName" formControlName="fullName" placeholder="Ex: Maria Aparecida da Silva" class="form-control" [class.is-invalid]="studentForm.get('fullName')?.invalid && studentForm.get('fullName')?.touched">
-                  @if (studentForm.get('fullName')?.invalid && studentForm.get('fullName')?.touched) {
-                    <div class="form-error">Por favor, informe seu nome completo (mínimo 3 caracteres).</div>
-                  }
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="cpf">
-                    CPF (somente números ou formatado) <span class="required">*</span>
-                  </label>
-                  <input type="text" id="cpf" formControlName="cpf" placeholder="000.000.000-00" class="form-control" [class.is-invalid]="studentForm.get('cpf')?.invalid && studentForm.get('cpf')?.touched">
-                  @if (studentForm.get('cpf')?.invalid && studentForm.get('cpf')?.touched) {
-                    <div class="form-error">Informe um CPF válido.</div>
-                  }
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="email">
-                    E-mail <span class="required">*</span>
-                  </label>
-                  <input type="email" id="email" formControlName="email" placeholder="seuemail@exemplo.com" class="form-control" [class.is-invalid]="studentForm.get('email')?.invalid && studentForm.get('email')?.touched">
-                  @if (studentForm.get('email')?.invalid && studentForm.get('email')?.touched) {
-                    <div class="form-error">Informe um e-mail válido.</div>
-                  }
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="phone">
-                    WhatsApp / Telefone para Contato <span class="required">*</span>
-                  </label>
-                  <input type="tel" id="phone" formControlName="phone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="studentForm.get('phone')?.invalid && studentForm.get('phone')?.touched">
-                  @if (studentForm.get('phone')?.invalid && studentForm.get('phone')?.touched) {
-                    <div class="form-error">Informe seu WhatsApp para contato.</div>
-                  }
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="birthDate">
-                    Data de Nascimento <span class="required">*</span>
-                  </label>
-                  <input type="date" id="birthDate" formControlName="birthDate" class="form-control" [class.is-invalid]="studentForm.get('birthDate')?.invalid && studentForm.get('birthDate')?.touched">
-                  @if (studentForm.get('birthDate')?.invalid && studentForm.get('birthDate')?.touched) {
-                    <div class="form-error">Data de nascimento obrigatória.</div>
-                  }
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="city">
-                    Cidade / Bairro <span class="required">*</span>
-                  </label>
-                  <div class="grid-2" style="gap: 0.5rem;">
-                    <input type="text" id="city" formControlName="city" placeholder="Cidade" class="form-control">
-                    <input type="text" formControlName="neighborhood" placeholder="Bairro" class="form-control" [class.is-invalid]="studentForm.get('neighborhood')?.invalid && studentForm.get('neighborhood')?.touched">
-                  </div>
-                  @if (studentForm.get('neighborhood')?.invalid && studentForm.get('neighborhood')?.touched) {
-                    <div class="form-error">Informe seu bairro.</div>
-                  }
-                </div>
-              </div>
-
-              <!-- Bloco 3: Perfil Social & Motivação -->
-              <div class="form-section-title">
-                <span class="step-num">3</span>
-                <h4>Perfil Social & Motivação</h4>
-              </div>
-
-              <div class="grid-2">
-                <div class="form-group">
-                  <label class="form-label" for="employmentStatus">
-                    Situação Atual de Trabalho
-                  </label>
-                  <select id="employmentStatus" formControlName="employmentStatus" class="form-select">
-                    <option value="Buscando primeira oportunidade na área">Buscando primeira oportunidade na área</option>
-                    <option value="Desempregado(a) no momento">Desempregado(a) no momento</option>
-                    <option value="Trabalhador autônomo / Informal">Trabalhador autônomo / Informal</option>
-                    <option value="Empregado em outro setor (transição de carreira)">Empregado em outro setor (transição de carreira)</option>
-                    <option value="Estudante">Estudante</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">
-                    Você já teve contato ou experiência cuidando de animais?
-                  </label>
-                  <div class="checkbox-box">
-                    <input type="checkbox" id="hasPetExperience" formControlName="hasPetExperience" class="form-checkbox">
-                    <label for="hasPetExperience" class="checkbox-text">
-                      Sim, já tenho pets ou já atuei informalmente cuidando de cães/gatos.
+                <div class="grid-2" style="gap: 1.25rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="courseId">
+                      Selecione o Curso Desejado <span class="required">*</span>
                     </label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">📚</span>
+                      <select id="courseId" formControlName="courseId" class="form-select lux-input" [class.is-invalid]="studentForm.get('courseId')?.invalid && studentForm.get('courseId')?.touched">
+                        @for (c of courses; track c.id) {
+                          <option [value]="c.id">{{ c.title }} ({{ c.durationHours }}h - {{ c.level }})</option>
+                        }
+                      </select>
+                    </div>
+                    <span class="form-hint">Aulas 100% práticas em laboratório equipado.</span>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="preferredShift">
+                      Turno de Preferência <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">⏰</span>
+                      <select id="preferredShift" formControlName="preferredShift" class="form-select lux-input">
+                        <option value="Manhã (08h às 12h)">Manhã (08h às 12h) - Seg a Sex</option>
+                        <option value="Tarde (13h30 às 17h30)">Tarde (13h30 às 17h30) - Seg a Sex</option>
+                        <option value="Noite (18h30 às 22h)">Noite (18h30 às 22h) - Seg a Sex</option>
+                        <option value="Sábados (08h às 17h)">Turma Intensiva aos Sábados (08h às 17h)</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div class="form-group">
-                <label class="form-label" for="motivation">
-                  Por que você deseja fazer este curso na ONG Mãos que Cuidam? <span class="required">*</span>
-                </label>
-                <textarea id="motivation" formControlName="motivation" rows="3" placeholder="Conte-nos um pouco sobre seu amor por animais e seus planos para o futuro com esta capacitação..." class="form-textarea" [class.is-invalid]="studentForm.get('motivation')?.invalid && studentForm.get('motivation')?.touched"></textarea>
-                @if (studentForm.get('motivation')?.invalid && studentForm.get('motivation')?.touched) {
-                  <div class="form-error">Por favor, descreva sua motivação (mínimo 15 caracteres).</div>
-                }
-              </div>
-
-              <!-- Termo de Compromisso -->
-              <div class="terms-card">
-                <div class="checkbox-box">
-                  <input type="checkbox" id="agreeTermsStudent" formControlName="agreeTerms" class="form-checkbox" [class.is-invalid]="studentForm.get('agreeTerms')?.invalid && studentForm.get('agreeTerms')?.touched">
-                  <label for="agreeTermsStudent" class="checkbox-text">
-                    Declaro que li e concordo com os princípios de <strong>Amor, Respeito e Proteção Animal</strong> da ONG, comprometendo-me a frequentar as aulas práticas com assiduidade e pontualidade. <span class="required">*</span>
-                  </label>
+              <!-- SEÇÃO 2: DADOS PESSOAIS DO ALUNO -->
+              <div class="form-section-group mt-4">
+                <div class="section-label-chip">
+                  <span>2</span> Dados Pessoais do Aluno
                 </div>
-                @if (studentForm.get('agreeTerms')?.invalid && studentForm.get('agreeTerms')?.touched) {
-                  <div class="form-error">É necessário aceitar os termos da ONG para enviar a inscrição.</div>
-                }
+
+                <div class="grid-2" style="gap: 1.25rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="fullName">
+                      Nome Completo <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">👤</span>
+                      <input type="text" id="fullName" formControlName="fullName" placeholder="Ex: Maria Aparecida da Silva" class="form-control lux-input" [class.is-invalid]="studentForm.get('fullName')?.invalid && studentForm.get('fullName')?.touched">
+                    </div>
+                    @if (studentForm.get('fullName')?.invalid && studentForm.get('fullName')?.touched) {
+                      <div class="form-error">Informe seu nome completo.</div>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="cpf">
+                      CPF (somente números ou formatado) <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">🪪</span>
+                      <input type="text" id="cpf" formControlName="cpf" placeholder="000.000.000-00" class="form-control lux-input" [class.is-invalid]="studentForm.get('cpf')?.invalid && studentForm.get('cpf')?.touched">
+                    </div>
+                    @if (studentForm.get('cpf')?.invalid && studentForm.get('cpf')?.touched) {
+                      <div class="form-error">Informe um CPF válido.</div>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="email">
+                      E-mail <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">📧</span>
+                      <input type="email" id="email" formControlName="email" placeholder="seuemail@exemplo.com" class="form-control lux-input" [class.is-invalid]="studentForm.get('email')?.invalid && studentForm.get('email')?.touched">
+                    </div>
+                    @if (studentForm.get('email')?.invalid && studentForm.get('email')?.touched) {
+                      <div class="form-error">Informe um e-mail válido.</div>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="phone">
+                      WhatsApp / Telefone para Contato <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">📱</span>
+                      <input type="tel" id="phone" formControlName="phone" placeholder="(22) 99848-1112" class="form-control lux-input" [class.is-invalid]="studentForm.get('phone')?.invalid && studentForm.get('phone')?.touched">
+                    </div>
+                    @if (studentForm.get('phone')?.invalid && studentForm.get('phone')?.touched) {
+                      <div class="form-error">Informe seu WhatsApp para contato.</div>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="birthDate">
+                      Data de Nascimento <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">🎂</span>
+                      <input type="date" id="birthDate" formControlName="birthDate" class="form-control lux-input" [class.is-invalid]="studentForm.get('birthDate')?.invalid && studentForm.get('birthDate')?.touched">
+                    </div>
+                    @if (studentForm.get('birthDate')?.invalid && studentForm.get('birthDate')?.touched) {
+                      <div class="form-error">Data de nascimento obrigatória.</div>
+                    }
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="city">
+                      Cidade & Bairro <span class="required">*</span>
+                    </label>
+                    <div class="grid-2" style="gap: 0.5rem;">
+                      <div class="input-with-icon">
+                        <span class="input-prefix-icon">📍</span>
+                        <input type="text" id="city" formControlName="city" placeholder="Macaé" class="form-control lux-input">
+                      </div>
+                      <input type="text" formControlName="neighborhood" placeholder="Bairro (ex: Barra)" class="form-control lux-input" style="padding-left: 1rem !important;" [class.is-invalid]="studentForm.get('neighborhood')?.invalid && studentForm.get('neighborhood')?.touched">
+                    </div>
+                    @if (studentForm.get('neighborhood')?.invalid && studentForm.get('neighborhood')?.touched) {
+                      <div class="form-error">Informe seu bairro.</div>
+                    }
+                  </div>
+                </div>
               </div>
 
-              <div class="form-submit-row">
-                <button type="submit" class="btn btn-primary btn-lg submit-btn">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                  <span>Confirmar e Enviar Inscrição</span>
+              <!-- SEÇÃO 3: PERFIL SOCIAL & MOTIVAÇÃO -->
+              <div class="form-section-group mt-4">
+                <div class="section-label-chip">
+                  <span>3</span> Perfil Social & Motivação
+                </div>
+
+                <div class="grid-2" style="gap: 1.25rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="employmentStatus">
+                      Situação Atual de Trabalho
+                    </label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">💼</span>
+                      <select id="employmentStatus" formControlName="employmentStatus" class="form-select lux-input">
+                        <option value="Buscando primeira oportunidade na área">Buscando primeira oportunidade na área</option>
+                        <option value="Desempregado(a) no momento">Desempregado(a) no momento</option>
+                        <option value="Trabalhador autônomo / Informal">Trabalhador autônomo / Informal</option>
+                        <option value="Empregado em outro setor (transição de carreira)">Empregado em outro setor (transição de carreira)</option>
+                        <option value="Estudante">Estudante</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">
+                      Você já teve contato cuidando de animais?
+                    </label>
+                    <div class="checkbox-box mt-2" style="background: #ffffff; padding: 0.75rem 1rem; border: 1.5px solid #cbd5e1; border-radius: 10px;">
+                      <input type="checkbox" id="hasPetExperience" formControlName="hasPetExperience" class="form-checkbox">
+                      <label for="hasPetExperience" class="checkbox-text" style="font-size: 0.88rem; color: var(--color-primary);">
+                        🐾 Sim, já tenho pets ou já atuei cuidando de cães/gatos.
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-label" for="motivation">
+                    Por que você deseja fazer este curso na ONG Mãos que Cuidam? <span class="required">*</span>
+                  </label>
+                  <textarea id="motivation" formControlName="motivation" rows="3" placeholder="Conte-nos um pouco sobre seu amor por animais e seus planos para o futuro com esta capacitação..." class="form-textarea lux-input" style="padding-left: 1rem !important;" [class.is-invalid]="studentForm.get('motivation')?.invalid && studentForm.get('motivation')?.touched"></textarea>
+                  @if (studentForm.get('motivation')?.invalid && studentForm.get('motivation')?.touched) {
+                    <div class="form-error">Por favor, descreva sua motivação (mínimo 15 caracteres).</div>
+                  }
+                </div>
+              </div>
+
+              <!-- BOTÃO DE ENVIO LUXUOSO -->
+              <div class="form-submit-row-lux mt-4">
+                <button type="submit" class="btn btn-gold-submit btn-lg" style="width: 100%; justify-content: center; padding: 1rem;" [disabled]="studentForm.invalid">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                  <span>Concluir Minha Inscrição Gratuita &raquo;</span>
                 </button>
               </div>
             </form>
@@ -361,11 +405,12 @@
             </div>
           </div>
         } @else {
-          <div class="form-card card-modern">
-            <div class="form-header-card">
-              <div class="form-title-group">
-                <h3>Cadastro de Voluntários & Especialistas</h3>
-                <p>Compartilhe seu conhecimento ou seu tempo para transformar a vida de animais e alunos.</p>
+          <div class="form-card card-modern registration-lux-card">
+            <div class="form-header-card-lux">
+              <div>
+                <span class="badge-gold-pill">🤝 EQUIPE SOLIDÁRIA & INSTRUTORES</span>
+                <h3 class="form-title-lux">Cadastro de Voluntários & Especialistas</h3>
+                <p class="form-subtitle-lux">Compartilhe seu conhecimento ou seu tempo para transformar a vida de animais e alunos.</p>
               </div>
               <div class="form-logo-badge">
                 <img src="assets/logo.jpg" alt="Logo ONG" class="badge-logo-img">
@@ -373,79 +418,115 @@
             </div>
 
             <form [formGroup]="volunteerForm" (ngSubmit)="submitVolunteer()" novalidate>
-              <div class="grid-2">
-                <div class="form-group">
-                  <label class="form-label" for="volFullName">Nome Completo <span class="required">*</span></label>
-                  <input type="text" id="volFullName" formControlName="fullName" placeholder="Ex: Dr. Roberto Alcantara" class="form-control" [class.is-invalid]="volunteerForm.get('fullName')?.invalid && volunteerForm.get('fullName')?.touched">
-                  @if (volunteerForm.get('fullName')?.invalid && volunteerForm.get('fullName')?.touched) {
-                    <div class="form-error">Nome completo é obrigatório.</div>
-                  }
+              <!-- SEÇÃO 1: DADOS PESSOAIS DO VOLUNTÁRIO -->
+              <div class="form-section-group">
+                <div class="section-label-chip">
+                  <span>1</span> Dados Pessoais & Atuação
                 </div>
 
-                <div class="form-group">
-                  <label class="form-label" for="volOccupation">Sua Profissão / Atuação <span class="required">*</span></label>
-                  <input type="text" id="volOccupation" formControlName="occupation" placeholder="Ex: Tosador Profissional / Médico Veterinário / Administrador" class="form-control" [class.is-invalid]="volunteerForm.get('occupation')?.invalid && volunteerForm.get('occupation')?.touched">
-                  @if (volunteerForm.get('occupation')?.invalid && volunteerForm.get('occupation')?.touched) {
-                    <div class="form-error">Informe sua profissão.</div>
-                  }
-                </div>
+                <div class="grid-2" style="gap: 1.25rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="volFullName">Nome Completo <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">👤</span>
+                      <input type="text" id="volFullName" formControlName="fullName" placeholder="Ex: Dr. Roberto Alcantara" class="form-control lux-input" [class.is-invalid]="volunteerForm.get('fullName')?.invalid && volunteerForm.get('fullName')?.touched">
+                    </div>
+                    @if (volunteerForm.get('fullName')?.invalid && volunteerForm.get('fullName')?.touched) {
+                      <div class="form-error">Nome completo é obrigatório.</div>
+                    }
+                  </div>
 
-                <div class="form-group">
-                  <label class="form-label" for="volEmail">E-mail <span class="required">*</span></label>
-                  <input type="email" id="volEmail" formControlName="email" placeholder="email@exemplo.com" class="form-control" [class.is-invalid]="volunteerForm.get('email')?.invalid && volunteerForm.get('email')?.touched">
-                  @if (volunteerForm.get('email')?.invalid && volunteerForm.get('email')?.touched) {
-                    <div class="form-error">E-mail válido obrigatório.</div>
-                  }
-                </div>
+                  <div class="form-group">
+                    <label class="form-label" for="volOccupation">Sua Profissão / Atuação <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">💼</span>
+                      <input type="text" id="volOccupation" formControlName="occupation" placeholder="Ex: Tosador Profissional / Veterinário" class="form-control lux-input" [class.is-invalid]="volunteerForm.get('occupation')?.invalid && volunteerForm.get('occupation')?.touched">
+                    </div>
+                    @if (volunteerForm.get('occupation')?.invalid && volunteerForm.get('occupation')?.touched) {
+                      <div class="form-error">Informe sua profissão.</div>
+                    }
+                  </div>
 
-                <div class="form-group">
-                  <label class="form-label" for="volPhone">WhatsApp / Telefone <span class="required">*</span></label>
-                  <input type="tel" id="volPhone" formControlName="phone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="volunteerForm.get('phone')?.invalid && volunteerForm.get('phone')?.touched">
-                  @if (volunteerForm.get('phone')?.invalid && volunteerForm.get('phone')?.touched) {
-                    <div class="form-error">WhatsApp é obrigatório.</div>
-                  }
-                </div>
+                  <div class="form-group">
+                    <label class="form-label" for="volEmail">E-mail <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">📧</span>
+                      <input type="email" id="volEmail" formControlName="email" placeholder="email@exemplo.com" class="form-control lux-input" [class.is-invalid]="volunteerForm.get('email')?.invalid && volunteerForm.get('email')?.touched">
+                    </div>
+                    @if (volunteerForm.get('email')?.invalid && volunteerForm.get('email')?.touched) {
+                      <div class="form-error">E-mail válido obrigatório.</div>
+                    }
+                  </div>
 
-                <div class="form-group">
-                  <label class="form-label" for="areaOfInterest">Área de Interesse de Apoio <span class="required">*</span></label>
-                  <select id="areaOfInterest" formControlName="areaOfInterest" class="form-select">
-                    <option value="Instrutor de Banho e Tosa">Instrutor de Banho e Tosa</option>
-                    <option value="Médico Veterinário Parceiro">Médico Veterinário Parceiro</option>
-                    <option value="Auxiliar e Manejo Pet">Auxiliar e Manejo Pet</option>
-                    <option value="Eventos e Comunicação">Eventos e Comunicação / Redes Sociais</option>
-                    <option value="Apoio Administrativo / Triagem">Apoio Administrativo / Triagem</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="availability">Disponibilidade de Dias e Horários <span class="required">*</span></label>
-                  <input type="text" id="availability" formControlName="availability" placeholder="Ex: Sábados de manhã / Terças à tarde" class="form-control" [class.is-invalid]="volunteerForm.get('availability')?.invalid && volunteerForm.get('availability')?.touched">
-                  @if (volunteerForm.get('availability')?.invalid && volunteerForm.get('availability')?.touched) {
-                    <div class="form-error">Informe sua disponibilidade.</div>
-                  }
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="experienceDescription">Resumo de Experiência e Como Deseja Contribuir <span class="required">*</span></label>
-                <textarea id="experienceDescription" formControlName="experienceDescription" rows="3" placeholder="Fale um pouco sobre suas habilidades, trajetória profissional e projetos que gostaria de desenvolver conosco..." class="form-textarea" [class.is-invalid]="volunteerForm.get('experienceDescription')?.invalid && volunteerForm.get('experienceDescription')?.touched"></textarea>
-                @if (volunteerForm.get('experienceDescription')?.invalid && volunteerForm.get('experienceDescription')?.touched) {
-                  <div class="form-error">Descreva sua experiência (mínimo 15 caracteres).</div>
-                }
-              </div>
-
-              <div class="terms-card">
-                <div class="checkbox-box">
-                  <input type="checkbox" id="agreeTermsVol" formControlName="agreeTerms" class="form-checkbox">
-                  <label for="agreeTermsVol" class="checkbox-text">
-                    Estou ciente do caráter voluntário da atividade e concordo com os valores éticos da ONG Mãos que Cuidam. <span class="required">*</span>
-                  </label>
+                  <div class="form-group">
+                    <label class="form-label" for="volPhone">WhatsApp / Telefone <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">📱</span>
+                      <input type="tel" id="volPhone" formControlName="phone" placeholder="(22) 99848-1112" class="form-control lux-input" [class.is-invalid]="volunteerForm.get('phone')?.invalid && volunteerForm.get('phone')?.touched">
+                    </div>
+                    @if (volunteerForm.get('phone')?.invalid && volunteerForm.get('phone')?.touched) {
+                      <div class="form-error">WhatsApp é obrigatório.</div>
+                    }
+                  </div>
                 </div>
               </div>
 
-              <div class="form-submit-row">
-                <button type="submit" class="btn btn-primary btn-lg submit-btn">
-                  Enviar Cadastro de Voluntário &raquo;
+              <!-- SEÇÃO 2: ÁREA DE APOIO & DISPONIBILIDADE -->
+              <div class="form-section-group mt-4">
+                <div class="section-label-chip">
+                  <span>2</span> Área de Apoio & Disponibilidade
+                </div>
+
+                <div class="grid-2" style="gap: 1.25rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="areaOfInterest">Área de Interesse de Apoio <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">🎯</span>
+                      <select id="areaOfInterest" formControlName="areaOfInterest" class="form-select lux-input">
+                        <option value="Instrutor de Banho e Tosa">Instrutor de Banho e Tosa</option>
+                        <option value="Médico Veterinário Parceiro">Médico Veterinário Parceiro</option>
+                        <option value="Auxiliar e Manejo Pet">Auxiliar e Manejo Pet</option>
+                        <option value="Eventos e Comunicação">Eventos e Comunicação / Redes Sociais</option>
+                        <option value="Apoio Administrativo / Triagem">Apoio Administrativo / Triagem</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="availability">Disponibilidade de Dias e Horários <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">📅</span>
+                      <input type="text" id="availability" formControlName="availability" placeholder="Ex: Sábados de manhã / Terças à tarde" class="form-control lux-input" [class.is-invalid]="volunteerForm.get('availability')?.invalid && volunteerForm.get('availability')?.touched">
+                    </div>
+                    @if (volunteerForm.get('availability')?.invalid && volunteerForm.get('availability')?.touched) {
+                      <div class="form-error">Informe sua disponibilidade.</div>
+                    }
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-label" for="experienceDescription">Resumo de Experiência e Como Deseja Contribuir <span class="required">*</span></label>
+                  <textarea id="experienceDescription" formControlName="experienceDescription" rows="3" placeholder="Fale um pouco sobre suas habilidades, trajetória profissional e projetos que gostaria de desenvolver conosco..." class="form-textarea lux-input" style="padding-left: 1rem !important;" [class.is-invalid]="volunteerForm.get('experienceDescription')?.invalid && volunteerForm.get('experienceDescription')?.touched"></textarea>
+                  @if (volunteerForm.get('experienceDescription')?.invalid && volunteerForm.get('experienceDescription')?.touched) {
+                    <div class="form-error">Descreva sua experiência (mínimo 15 caracteres).</div>
+                  }
+                </div>
+
+                <div class="terms-card mt-3">
+                  <div class="checkbox-box">
+                    <input type="checkbox" id="agreeTermsVol" formControlName="agreeTerms" class="form-checkbox">
+                    <label for="agreeTermsVol" class="checkbox-text">
+                      Estou ciente do caráter voluntário da atividade e concordo com os valores éticos da ONG Mãos que Cuidam. <span class="required">*</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BOTÃO DE ENVIO LUXUOSO -->
+              <div class="form-submit-row-lux mt-4">
+                <button type="submit" class="btn btn-gold-submit btn-lg" style="width: 100%; justify-content: center; padding: 1rem;" [disabled]="volunteerForm.invalid">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                  <span>Enviar Cadastro de Voluntário &raquo;</span>
                 </button>
               </div>
             </form>
@@ -496,16 +577,21 @@
             </div>
 
             <div class="protocol-actions">
+              <a [href]="notificationService.getPetWhatsappLink(submittedPet()!)" target="_blank" class="btn" style="background-color: #25d366; color: #ffffff; border: none; font-weight: 700; gap: 0.5rem; display: inline-flex; align-items: center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <span>Agendar Banho via WhatsApp da ONG</span>
+              </a>
               <button class="btn btn-outline-gold" (click)="resetCurrentSubmission()">Cadastrar Outro Pet</button>
-              <a routerLink="/admin" class="btn btn-primary">Ver no Painel de Gestão &raquo;</a>
+              <a routerLink="/admin" class="btn btn-primary">Área do Colaborador &raquo;</a>
             </div>
           </div>
         } @else {
-          <div class="form-card card-modern">
-            <div class="form-header-card">
-              <div class="form-title-group">
-                <h3>Cadastro de Pet para Banho Social Gratuito</h3>
-                <p>Destinado a famílias de baixa renda ou protetores independentes. Cuidado com amor e produtos de alta qualidade.</p>
+          <div class="form-card card-modern registration-lux-card">
+            <div class="form-header-card-lux">
+              <div>
+                <span class="badge-gold-pill">🐶 BANHO & HIGIENE SOLIDÁRIA</span>
+                <h3 class="form-title-lux">Cadastro de Pet para Banho Social Gratuito</h3>
+                <p class="form-subtitle-lux">Destinado a famílias de baixa renda ou protetores independentes de Macaé. Cuidado com amor e produtos profissionais.</p>
               </div>
               <div class="form-logo-badge">
                 <img src="assets/logo.jpg" alt="Logo ONG" class="badge-logo-img">
@@ -513,78 +599,120 @@
             </div>
 
             <form [formGroup]="petForm" (ngSubmit)="submitPet()" novalidate>
-              <div class="grid-2">
-                <div class="form-group">
-                  <label class="form-label" for="tutorName">Nome do(a) Tutor(a) <span class="required">*</span></label>
-                  <input type="text" id="tutorName" formControlName="tutorName" placeholder="Seu nome completo" class="form-control" [class.is-invalid]="petForm.get('tutorName')?.invalid && petForm.get('tutorName')?.touched">
-                  @if (petForm.get('tutorName')?.invalid && petForm.get('tutorName')?.touched) {
-                    <div class="form-error">Nome do tutor é obrigatório.</div>
-                  }
+              <!-- SEÇÃO 1: DADOS DO TUTOR -->
+              <div class="form-section-group">
+                <div class="section-label-chip">
+                  <span>1</span> Dados do(a) Tutor(a) Responsável
                 </div>
 
-                <div class="form-group">
-                  <label class="form-label" for="tutorPhone">WhatsApp do Tutor <span class="required">*</span></label>
-                  <input type="tel" id="tutorPhone" formControlName="tutorPhone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="petForm.get('tutorPhone')?.invalid && petForm.get('tutorPhone')?.touched">
-                  @if (petForm.get('tutorPhone')?.invalid && petForm.get('tutorPhone')?.touched) {
-                    <div class="form-error">Telefone obrigatório.</div>
-                  }
-                </div>
+                <div class="grid-3" style="gap: 1.25rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="tutorName">Nome do(a) Tutor(a) <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">👤</span>
+                      <input type="text" id="tutorName" formControlName="tutorName" placeholder="Seu nome completo" class="form-control lux-input" [class.is-invalid]="petForm.get('tutorName')?.invalid && petForm.get('tutorName')?.touched">
+                    </div>
+                    @if (petForm.get('tutorName')?.invalid && petForm.get('tutorName')?.touched) {
+                      <div class="form-error">Nome do tutor é obrigatório.</div>
+                    }
+                  </div>
 
-                <div class="form-group">
-                  <label class="form-label" for="tutorCpf">CPF do Tutor <span class="required">*</span></label>
-                  <input type="text" id="tutorCpf" formControlName="tutorCpf" placeholder="000.000.000-00" class="form-control" [class.is-invalid]="petForm.get('tutorCpf')?.invalid && petForm.get('tutorCpf')?.touched">
-                </div>
+                  <div class="form-group">
+                    <label class="form-label" for="tutorPhone">WhatsApp do Tutor <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">📱</span>
+                      <input type="tel" id="tutorPhone" formControlName="tutorPhone" placeholder="(22) 99848-1112" class="form-control lux-input" [class.is-invalid]="petForm.get('tutorPhone')?.invalid && petForm.get('tutorPhone')?.touched">
+                    </div>
+                    @if (petForm.get('tutorPhone')?.invalid && petForm.get('tutorPhone')?.touched) {
+                      <div class="form-error">Telefone obrigatório.</div>
+                    }
+                  </div>
 
-                <div class="form-group">
-                  <label class="form-label" for="petName">Nome do Pet <span class="required">*</span></label>
-                  <input type="text" id="petName" formControlName="petName" placeholder="Ex: Mel, Bob, Pipoca" class="form-control" [class.is-invalid]="petForm.get('petName')?.invalid && petForm.get('petName')?.touched">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="petSpecies">Espécie <span class="required">*</span></label>
-                  <select id="petSpecies" formControlName="petSpecies" class="form-select">
-                    <option value="Cão">Cão (Cachorro)</option>
-                    <option value="Gato">Gato (Felino)</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="petSize">Porte do Animal <span class="required">*</span></label>
-                  <select id="petSize" formControlName="petSize" class="form-select">
-                    <option value="Porte Pequeno (até 10kg)">Porte Pequeno (até 10kg)</option>
-                    <option value="Porte Médio (10kg a 25kg)">Porte Médio (10kg a 25kg)</option>
-                    <option value="Porte Grande (acima de 25kg)">Porte Grande (acima de 25kg)</option>
-                  </select>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="petBreed">Raça / Tipo <span class="required">*</span></label>
-                  <input type="text" id="petBreed" formControlName="petBreed" placeholder="Ex: SRD / Poodle / Shih Tzu / Labrador" class="form-control">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="petAge">Idade Aproximada <span class="required">*</span></label>
-                  <input type="text" id="petAge" formControlName="petAge" placeholder="Ex: 2 anos, 8 meses, idoso" class="form-control">
+                  <div class="form-group">
+                    <label class="form-label" for="tutorCpf">CPF do Tutor</label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">🪪</span>
+                      <input type="text" id="tutorCpf" formControlName="tutorCpf" placeholder="000.000.000-00" class="form-control lux-input" [class.is-invalid]="petForm.get('tutorCpf')?.invalid && petForm.get('tutorCpf')?.touched">
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div class="form-group">
-                <label class="form-label" for="specialCareNotes">Observações de Comportamento e Cuidados Especiais</label>
-                <textarea id="specialCareNotes" formControlName="specialCareNotes" rows="2" placeholder="O pet é dócil? Tem medo de secador? Tem alguma alergia ou problema de pele?" class="form-textarea"></textarea>
-              </div>
+              <!-- SEÇÃO 2: DADOS DO PET -->
+              <div class="form-section-group mt-4">
+                <div class="section-label-chip">
+                  <span>2</span> Informações do Pet
+                </div>
 
-              <div class="terms-card">
-                <div class="checkbox-box">
-                  <input type="checkbox" id="agreeTermsPet" formControlName="agreeTerms" class="form-checkbox">
-                  <label for="agreeTermsPet" class="checkbox-text">
-                    Autorizo a realização de banho e higienização supervisionada pela equipe da ONG Mãos que Cuidam. <span class="required">*</span>
-                  </label>
+                <div class="grid-2" style="gap: 1.25rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="petName">Nome do Pet <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">🐾</span>
+                      <input type="text" id="petName" formControlName="petName" placeholder="Ex: Mel, Bob, Pipoca" class="form-control lux-input" [class.is-invalid]="petForm.get('petName')?.invalid && petForm.get('petName')?.touched">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="petSpecies">Espécie <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">🐕</span>
+                      <select id="petSpecies" formControlName="petSpecies" class="form-select lux-input">
+                        <option value="Cão">Cão (Cachorro)</option>
+                        <option value="Gato">Gato (Felino)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="petSize">Porte do Animal <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">📏</span>
+                      <select id="petSize" formControlName="petSize" class="form-select lux-input">
+                        <option value="Porte Pequeno (até 10kg)">Porte Pequeno (até 10kg)</option>
+                        <option value="Porte Médio (10kg a 25kg)">Porte Médio (10kg a 25kg)</option>
+                        <option value="Porte Grande (acima de 25kg)">Porte Grande (acima de 25kg)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="petBreed">Raça / Tipo <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">🏷️</span>
+                      <input type="text" id="petBreed" formControlName="petBreed" placeholder="Ex: SRD (Vira-lata) / Poodle / Shih Tzu" class="form-control lux-input">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="petAge">Idade Aproximada <span class="required">*</span></label>
+                    <div class="input-with-icon">
+                      <span class="input-prefix-icon">⏳</span>
+                      <input type="text" id="petAge" formControlName="petAge" placeholder="Ex: 2 anos, 8 meses, idoso" class="form-control lux-input">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group mt-3">
+                  <label class="form-label" for="specialCareNotes">Observações de Comportamento e Cuidados Especiais</label>
+                  <textarea id="specialCareNotes" formControlName="specialCareNotes" rows="2" placeholder="O pet é dócil? Tem medo de secador? Tem alguma alergia ou problema de pele?" class="form-textarea lux-input" style="padding-left: 1rem !important;"></textarea>
+                </div>
+
+                <div class="terms-card mt-3">
+                  <div class="checkbox-box">
+                    <input type="checkbox" id="agreeTermsPet" formControlName="agreeTerms" class="form-checkbox">
+                    <label for="agreeTermsPet" class="checkbox-text">
+                      Autorizo a realização de banho e higienização supervisionada pela equipe da ONG Mãos que Cuidam. <span class="required">*</span>
+                    </label>
+                  </div>
                 </div>
               </div>
 
-              <div class="form-submit-row">
-                <button type="submit" class="btn btn-primary btn-lg submit-btn">
-                  Cadastrar Pet para Atendimento &raquo;
+              <!-- BOTÃO DE ENVIO LUXUOSO -->
+              <div class="form-submit-row-lux mt-4">
+                <button type="submit" class="btn btn-gold-submit btn-lg" style="width: 100%; justify-content: center; padding: 1rem;" [disabled]="petForm.invalid">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+                  <span>Cadastrar Pet para Atendimento &raquo;</span>
                 </button>
               </div>
             </form>

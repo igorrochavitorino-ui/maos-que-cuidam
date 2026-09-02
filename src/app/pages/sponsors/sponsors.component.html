@@ -17,47 +17,64 @@
 <!-- SEÇÃO DE CATÁLOGO DAS MARCAS -->
 <section class="sponsors-catalog-section section-padding">
   <div class="container">
-    <div class="section-header">
-      <div class="section-tag">
-        <span>Marcas Parceiras</span>
+    <!-- BARRA DE AÇÃO SUPERIOR -->
+    <div class="sponsors-action-bar card-modern mb-4">
+      <div class="action-bar-left">
+        <span class="action-bar-title">⭐ Rede Oficial de Patrocinadores & Parceiros ({{ sponsors().length }} Marcas)</span>
       </div>
-      <h2 class="section-title">Quem Torna Nossos Cursos Possíveis</h2>
-      <p class="section-subtitle">
-        Conheça as empresas que equipam nossas salas, fornecem produtos profissionais e contratam nossos formandos.
-      </p>
-      <div class="gold-divider"></div>
+      <button class="btn btn-primary" (click)="handleOpenAddSponsor()" title="Cadastrar nova empresa parceira">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+        <span>+ Cadastrar Empresa Patrocinadora</span>
+      </button>
     </div>
 
-    <!-- Grid de Cards dos Patrocinadores -->
+    <!-- Grid de Cards dos Patrocinadores (IDÊNTICO À FOTO DO USUÁRIO) -->
     <div class="sponsors-grid">
-      @for (sp of sponsors; track sp.id) {
+      @for (sp of sponsors(); track sp.id) {
         <div class="sponsor-card card-modern">
+          <!-- Topo do Card: Logo da Empresa + Badge de Destaque -->
           <div class="sponsor-card-top">
-            <div class="sponsor-brand-icon">{{ sp.logoIcon }}</div>
+            <div class="sponsor-logo-box">
+              <img [src]="sp.logoUrl" [alt]="sp.name + ' Logo'" class="sponsor-brand-img">
+            </div>
             <div class="sponsor-category-badge">
-              ⭐ Apoiador Oficial
+              {{ sp.badgeLabel || '⭐ Apoiador Oficial' }}
             </div>
           </div>
 
+          <!-- Título da Empresa -->
           <h3 class="sponsor-name">{{ sp.name }}</h3>
+
+          <!-- Slogan / Subtítulo -->
           <p class="sponsor-tagline">{{ sp.tagline }}</p>
+
+          <!-- Descrição do Patrocínio -->
           <p class="sponsor-desc">{{ sp.description }}</p>
 
+          <!-- Box de Apoio Principal (SEM "Parceiro Desde") -->
           <div class="sponsor-impact-box">
             <div class="impact-row">
               <span class="impact-label">Apoio Principal:</span>
               <strong class="impact-val">{{ sp.contributionType }}</strong>
             </div>
-            <div class="impact-row">
-              <span class="impact-label">Parceiro Desde:</span>
-              <span class="impact-val">{{ sp.sinceYear }}</span>
-            </div>
           </div>
 
+          <!-- Rodapé do Card -->
           <div class="sponsor-card-footer">
             <a [href]="sp.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy btn-sm">
               Visitar Site Oficial &raquo;
             </a>
+
+            @if (authService.isAuthenticated()) {
+              <div class="sponsor-admin-actions">
+                <button class="btn btn-sm btn-outline-gold" (click)="openEditSponsor(sp)" title="Editar Empresa">
+                  ✏️
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteSponsor(sp.id, sp.name)" title="Excluir Empresa" style="color: #ef4444; border-color: #fca5a5;">
+                  🗑️
+                </button>
+              </div>
+            }
           </div>
         </div>
       }
@@ -150,32 +167,33 @@
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label" for="spPhone">WhatsApp / Telefone <span class="required">*</span></label>
-                  <input type="tel" id="spPhone" formControlName="phone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="proposalForm.get('phone')?.invalid && proposalForm.get('phone')?.touched">
+                  <label class="form-label" for="sponsorPhone">WhatsApp / Telefone <span class="required">*</span></label>
+                  <input type="tel" id="sponsorPhone" formControlName="phone" placeholder="(22) 99848-1112" class="form-control" [class.is-invalid]="proposalForm.get('phone')?.invalid && proposalForm.get('phone')?.touched">
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="spEmail">E-mail Corporativo <span class="required">*</span></label>
-                <input type="email" id="spEmail" formControlName="email" placeholder="contato@suaempresa.com.br" class="form-control" [class.is-invalid]="proposalForm.get('email')?.invalid && proposalForm.get('email')?.touched">
+                <label class="form-label" for="sponsorEmail">E-mail Corporativo <span class="required">*</span></label>
+                <input type="email" id="sponsorEmail" formControlName="email" placeholder="contato@empresa.com.br" class="form-control" [class.is-invalid]="proposalForm.get('email')?.invalid && proposalForm.get('email')?.touched">
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="tierInterest">Tipo de Parceria / Apoio Desejado</label>
-                <select id="tierInterest" formControlName="tierInterest" class="form-select">
-                  <option value="Doação de Insumos / Cosméticos">🧴 Doação de Shampoos e Cosméticos Pet</option>
-                  <option value="Doação de Equipamentos / Tesouras">✂️ Fornecimento de Equipamentos / Tesouras</option>
-                  <option value="Contratação de Alunos Formados">🤝 Contratação de Alunos / Oferta de Vagas</option>
-                  <option value="Patrocínio Institucional / Apoio Financeiro">⭐ Apoio Institucional / Financeiro</option>
+                <label class="form-label">Tipo de Apoio Desejado</label>
+                <select formControlName="tierInterest" class="form-select">
+                  <option value="Doação de Insumos / Cosméticos">Doação de Insumos / Cosméticos</option>
+                  <option value="Equipamentos para Salas Práticas">Equipamentos para Salas Práticas</option>
+                  <option value="Cota Financeira Mensal">Cota Financeira Mensal</option>
+                  <option value="Contratação Direta de Alunos Formados">Contratação Direta de Alunos Formados</option>
+                  <option value="Outro formato de parceria">Outro formato de parceria</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="proposalMessage">Mensagem ou Proposta de Apoio <span class="required">*</span></label>
-                <textarea id="proposalMessage" formControlName="proposalMessage" rows="3" placeholder="Conte como sua marca gostaria de contribuir ou quais produtos/serviços gostaria de doar..." class="form-textarea" [class.is-invalid]="proposalForm.get('proposalMessage')?.invalid && proposalForm.get('proposalMessage')?.touched"></textarea>
+                <label class="form-label" for="sponsorMsg">Mensagem / Proposta de Parceria <span class="required">*</span></label>
+                <textarea id="sponsorMsg" formControlName="proposalMessage" rows="3" placeholder="Conte como sua empresa gostaria de colaborar..." class="form-textarea" [class.is-invalid]="proposalForm.get('proposalMessage')?.invalid && proposalForm.get('proposalMessage')?.touched"></textarea>
               </div>
 
-              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" [disabled]="proposalForm.invalid">
                 Enviar Proposta de Parceria &raquo;
               </button>
             </form>
@@ -185,3 +203,199 @@
     </div>
   </div>
 </section>
+
+<!-- ================= MODAL LUXUOSO: CADASTRAR / EDITAR EMPRESA PATROCINADORA ================= -->
+@if (showAddSponsorModal()) {
+  <div class="modal-backdrop" (click)="showAddSponsorModal.set(false)">
+    <div class="modal-box sponsor-modal-premium animate-fade-in" (click)="$event.stopPropagation()">
+      <!-- BOTÃO FECHAR ESTILIZADO -->
+      <button class="modal-close-btn-styled" (click)="showAddSponsorModal.set(false)" title="Fechar janela">✕</button>
+
+      <!-- CABEÇALHO ELEGANTE DO MODAL -->
+      <div class="modal-header-premium">
+        <div class="header-badge-row">
+          <span class="badge-gold-pill">✨ GESTÃO DE PATROCINADORES</span>
+        </div>
+        <h3 class="modal-header-title">
+          {{ editingSponsorId() ? 'Editar Empresa Patrocinadora' : 'Cadastrar Nova Empresa Patrocinadora' }}
+        </h3>
+        <p class="modal-header-subtitle">
+          Preencha as informações para gerar o card oficial com logotipo e dados da empresa no site.
+        </p>
+      </div>
+
+      <form [formGroup]="sponsorForm" (ngSubmit)="saveSponsor()">
+        <div class="modal-body-premium">
+
+          <!-- 1. IDENTIFICAÇÃO DA MARCA -->
+          <div class="form-section-group">
+            <div class="section-label-chip">
+              <span>1</span> Dados da Empresa & Selo
+            </div>
+
+            <div class="grid-2" style="gap: 1.25rem;">
+              <div class="form-group">
+                <label class="form-label">Nome da Empresa / Marca <span class="required">*</span></label>
+                <div class="input-with-icon">
+                  <span class="input-prefix-icon">🏢</span>
+                  <input type="text" formControlName="name" placeholder="Ex: GroomerPro Cosméticos & Spa Pet" class="form-control lux-input" [class.is-invalid]="sponsorForm.get('name')?.invalid && sponsorForm.get('name')?.touched">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Selo / Badge de Destaque <span class="required">*</span></label>
+                <div class="input-with-icon">
+                  <span class="input-prefix-icon">⭐</span>
+                  <select formControlName="badgeLabel" class="form-select lux-input">
+                    <option value="⭐ Apoiador Oficial">⭐ Apoiador Oficial</option>
+                    <option value="👑 Cota Diamante">👑 Cota Diamante</option>
+                    <option value="🥇 Cota Ouro">🥇 Cota Ouro</option>
+                    <option value="🥈 Cota Prata">🥈 Cota Prata</option>
+                    <option value="⚙️ Parceiro Técnico">⚙️ Parceiro Técnico</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label class="form-label">Slogan / Frase de Destaque <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <span class="input-prefix-icon">✨</span>
+                <input type="text" formControlName="tagline" placeholder="Ex: Líder em Cosméticos Hipoalergênicos e Tratamento da Pelagem" class="form-control lux-input" [class.is-invalid]="sponsorForm.get('tagline')?.invalid && sponsorForm.get('tagline')?.touched">
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. UPLOAD DA LOGOMARCA OFICIAL -->
+          <div class="form-section-group">
+            <div class="section-label-chip">
+              <span>2</span> Logomarca Oficial da Empresa
+            </div>
+
+            <div class="premium-upload-zone">
+              <div class="upload-controls-col">
+                <input type="file" accept="image/*" (change)="onLogoFileSelected($event)" id="sponsorLogoInput" style="display: none;">
+                <label for="sponsorLogoInput" class="upload-trigger-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                  <span>Escolher Imagem da Logo (PC ou Celular)</span>
+                </label>
+                
+                <div class="url-fallback-box">
+                  <span class="url-or-label">ou cole o link da imagem:</span>
+                  <div class="input-with-icon">
+                    <span class="input-prefix-icon">🔗</span>
+                    <input type="url" formControlName="logoUrl" placeholder="https://exemplo.com/logo.png" class="form-control lux-input input-sm">
+                  </div>
+                </div>
+              </div>
+
+              <!-- PREVIEW MODERNO DO LOGOTIPO -->
+              <div class="logo-preview-card">
+                <span class="preview-tag">Prévia da Logo</span>
+                <div class="logo-display-frame">
+                  @if (logoPreview()) {
+                    <img [src]="logoPreview()" alt="Logo Preview" class="preview-img-active">
+                  } @else {
+                    <span class="preview-placeholder-text">Sem logo</span>
+                  }
+                </div>
+                <small class="preview-caption">Como aparecerá no card</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. INFORMAÇÕES DO APOIO & SITE -->
+          <div class="form-section-group">
+            <div class="section-label-chip">
+              <span>3</span> Descrição do Patrocínio & Site
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descrição & Impacto do Patrocínio <span class="required">*</span></label>
+              <textarea formControlName="description" rows="3" placeholder="Ex: Fornecedora oficial de 100% dos shampoos veganos, máscaras de hidratação e finalizadores dermatológicos utilizados nas aulas práticas da ONG." class="form-textarea lux-input" [class.is-invalid]="sponsorForm.get('description')?.invalid && sponsorForm.get('description')?.touched"></textarea>
+            </div>
+
+            <div class="grid-2 mt-3" style="gap: 1.25rem;">
+              <div class="form-group">
+                <label class="form-label">Apoio Principal <span class="required">*</span></label>
+                <div class="input-with-icon">
+                  <span class="input-prefix-icon">🎁</span>
+                  <input type="text" formControlName="contributionType" placeholder="Ex: Insumos Cosméticos & Manutenção de Laboratório" class="form-control lux-input" [class.is-invalid]="sponsorForm.get('contributionType')?.invalid && sponsorForm.get('contributionType')?.touched">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Site Oficial da Empresa <span class="required">*</span></label>
+                <div class="input-with-icon">
+                  <span class="input-prefix-icon">🌐</span>
+                  <input type="url" formControlName="websiteUrl" placeholder="https://groomerpro.com.br" class="form-control lux-input" [class.is-invalid]="sponsorForm.get('websiteUrl')?.invalid && sponsorForm.get('websiteUrl')?.touched">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RODAPÉ DO MODAL -->
+        <div class="modal-footer-lux">
+          <button type="button" class="btn btn-outline-cancel" (click)="showAddSponsorModal.set(false)">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-gold-submit" [disabled]="sponsorForm.invalid">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+            <span>{{ editingSponsorId() ? 'Salvar Alterações' : 'Publicar Patrocinador' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- ================= MODAL: LOGIN RÁPIDO DO COLABORADOR ================= -->
+@if (showQuickLoginModal()) {
+  <div class="modal-backdrop" (click)="showQuickLoginModal.set(false)">
+    <div class="modal-box" (click)="$event.stopPropagation()" style="max-width: 440px;">
+      <button class="modal-close-btn" (click)="showQuickLoginModal.set(false)">✕</button>
+
+      <div class="modal-header text-center">
+        <span class="badge badge-navy">🔒 Acesso Restrito</span>
+        <h3 class="modal-course-title mt-2">Área do Colaborador</h3>
+        <p class="modal-course-tagline">Informe seu login para cadastrar e gerenciar empresas patrocinadoras.</p>
+      </div>
+
+      <div class="modal-body">
+        @if (loginError()) {
+          <div class="alert alert-danger" style="background: #fee2e2; color: #991b1b; padding: 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.85rem;">
+            ⚠️ {{ loginError() }}
+          </div>
+        }
+
+        <div class="form-group mb-3">
+          <label class="form-label">E-mail Institucional</label>
+          <input type="email" [ngModel]="loginEmail()" (ngModelChange)="loginEmail.set($event)" placeholder="admin@maosquecuidam.org.br" class="form-control">
+        </div>
+
+        <div class="form-group mb-3">
+          <label class="form-label">Senha</label>
+          <input type="password" [ngModel]="loginPassword()" (ngModelChange)="loginPassword.set($event)" (keyup.enter)="submitQuickLogin()" placeholder="Sua senha" class="form-control">
+        </div>
+      </div>
+
+      <div class="modal-footer" style="flex-direction: column; gap: 0.5rem;">
+        <button class="btn btn-primary" (click)="submitQuickLogin()" style="width: 100%;">
+          <span>Entrar & Cadastrar Patrocinador</span>
+        </button>
+        <button class="btn btn-outline-navy" (click)="showQuickLoginModal.set(false)" style="width: 100%;">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- TOAST FLUTUANTE -->
+@if (toastMessage()) {
+  <div class="admin-toast animate-fade-in" style="position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: #132a47; color: #ffffff; padding: 0.75rem 1.5rem; border-radius: var(--radius-full); box-shadow: var(--shadow-lg); z-index: 10000; font-size: 0.9rem; border-left: 4px solid var(--color-gold);">
+    <span>{{ toastMessage() }}</span>
+  </div>
+}

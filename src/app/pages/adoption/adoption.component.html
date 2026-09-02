@@ -4,11 +4,11 @@
     <div class="adoption-hero-content">
       <div class="section-tag">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-        <span>Adoção & Doação Responsável</span>
+        <span>Mural de Adoção & Divulgação Solidária</span>
       </div>
       <h1 class="adoption-hero-title">Encontre seu Novo Melhor Amigo</h1>
       <p class="adoption-hero-desc">
-        Conectamos animais resgatados e bem cuidados a famílias amorosas. Se você quer adotar um pet ou precisa encontrar um lar seguro para um animalzinho, você está no lugar certo!
+        Conectamos protetores independentes e famílias amorosas em Macaé e região. Se você quer adotar um pet ou precisa encontrar um lar seguro para um animalzinho resgatado, utilize nosso mural solidário!
       </p>
 
       <!-- Botões de Alternância Principal -->
@@ -23,7 +23,7 @@
           class="tab-btn btn-highlight" 
           [class.active]="activeTab() === 'doar'"
           (click)="setTab('doar')">
-          🏠 Quero Doar / Divulgar um Animal
+          🏠 Quero Divulgar um Animal para Adoção
         </button>
       </div>
     </div>
@@ -34,9 +34,31 @@
 @if (activeTab() === 'adotar') {
   <section class="adoption-mural-section section-padding">
     <div class="container">
+      <!-- ⚖️ MEDIDA DE PROTEÇÃO 1: AVISO VISÍVEL DE TERMO DE USO E ISENÇÃO DE RESPONSABILIDADE -->
+      <div class="legal-notice-banner card-modern mb-4">
+        <div class="legal-notice-icon">⚖️</div>
+        <div class="legal-notice-content">
+          <h4>Aviso Legal & Isenção de Responsabilidade</h4>
+          <p>
+            O portal da <strong>ONG Mãos que Cuidam</strong> atua <strong>exclusivamente como mural comunitário voluntário de divulgação e ponte de aproximação solidária</strong>. 
+            A ONG <strong>não detém a posse, propriedade ou custódia física dos animais</strong> anunciados por terceiros e <strong>não atesta nem garante o estado clínico prévio, histórico veterinário ou temperamento</strong> dos animais. 
+            Toda adoção é formalizada mediante <strong>Termo de Adoção Responsável Direto firmado exclusivamente entre o Protetor/Antigo Tutor e o Novo Adotante</strong>, sem que a ONG figure como doadora.
+          </p>
+        </div>
+      </div>
+
       <!-- Barra de Filtros Rápidos -->
       <div class="adoption-filters-card card-modern">
         <div class="filters-row">
+          <div class="filter-group-item">
+            <label class="filter-lbl">Status:</label>
+            <div class="filter-pills">
+              <button class="pill-btn" [class.active]="statusFilter() === 'all'" (click)="statusFilter.set('all')">Todos</button>
+              <button class="pill-btn" [class.active]="statusFilter() === 'Disponível'" (click)="statusFilter.set('Disponível')">🏠 Disponíveis</button>
+              <button class="pill-btn" [class.active]="statusFilter() === 'Adotado'" (click)="statusFilter.set('Adotado')">🎉 Já Adotados</button>
+            </div>
+          </div>
+
           <div class="filter-group-item">
             <label class="filter-lbl">Espécie:</label>
             <div class="filter-pills">
@@ -68,185 +90,197 @@
         </div>
       </div>
 
-      <!-- Feed de Pets para Adoção -->
-      @if (filteredPets.length === 0) {
-        <div class="empty-pets-box text-center card-modern p-5">
-          <div style="font-size: 3rem; margin-bottom: 1rem;">🐾</div>
-          <h3>Nenhum animal encontrado com esses filtros.</h3>
-          <p>Tente selecionar outros portes ou espécies acima.</p>
-          <button class="btn btn-outline-gold" (click)="speciesFilter.set('all'); sizeFilter.set('all'); ageFilter.set('all')">Limpar Filtros</button>
-        </div>
-      } @else {
-        <div class="adopt-grid">
-          @for (pet of filteredPets; track pet.id) {
-            <div class="adopt-card card-modern">
-              <div class="adopt-photo-box" (click)="openDetailsModal(pet)">
-                <img [src]="pet.photoUrl" [alt]="pet.name" class="adopt-photo">
-                <span class="adopt-status-badge" [class.badge-available]="pet.status === 'Disponível'">
-                  {{ pet.status }}
-                </span>
-                <span class="adopt-gender-tag">
-                  {{ pet.gender === 'Macho' ? '♂️ Macho' : '♀️ Fêmea' }}
-                </span>
+      <!-- Feed de Cards dos Pets Disponíveis -->
+      <div class="pets-grid mt-4">
+        @if (filteredPets.length === 0) {
+          <div class="empty-pets-state card-modern">
+            <span>🐾 Nenhum pet encontrado com os filtros selecionados.</span>
+            <button class="btn btn-outline-navy mt-2" (click)="speciesFilter.set('all'); sizeFilter.set('all'); ageFilter.set('all'); statusFilter.set('all');">
+              Limpar Filtros
+            </button>
+          </div>
+        }
+
+        @for (pet of filteredPets; track pet.id) {
+          <div class="pet-card card-modern animate-fade-in" [class.pet-card-adopted]="pet.status === 'Adotado'">
+            <!-- Imagem e Badges -->
+            <div class="pet-card-image-wrap">
+              <img [src]="pet.photoUrl" [alt]="pet.name" class="pet-card-img" loading="lazy">
+              
+              @if (authService.isAuthenticated()) {
+                <button class="btn-delete-pet-admin" (click)="deletePet(pet, $event)" title="Excluir Anúncio de Pet">
+                  🗑️
+                </button>
+              }
+
+              @if (pet.status === 'Adotado') {
+                <div class="adopted-ribbon-badge">
+                  <span>🎉 ADOTADO COM AMOR!</span>
+                </div>
+              }
+
+              <span class="pet-species-badge" [class.cat-badge]="pet.species === 'Gato'">
+                {{ pet.species === 'Cão' ? '🐶 Cão' : '🐱 Gato' }}
+              </span>
+              <span class="pet-gender-badge" [class.female]="pet.gender === 'Fêmea'">
+                {{ pet.gender === 'Macho' ? '♂ Macho' : '♀ Fêmea' }}
+              </span>
+            </div>
+
+            <!-- Conteúdo do Card -->
+            <div class="pet-card-body">
+              <div class="pet-card-header">
+                <h3 class="pet-name">{{ pet.name }}</h3>
+                <span class="pet-age-badge">{{ pet.ageText }}</span>
               </div>
 
-              <div class="adopt-info-box">
-                <div class="adopt-header-line">
-                  <h3 class="adopt-pet-name">{{ pet.name }}</h3>
-                  <span class="adopt-age-pill">{{ pet.ageText }} ({{ pet.size }})</span>
-                </div>
+              <div class="pet-meta-row">
+                <span>{{ pet.breed }}</span>
+                <span>•</span>
+                <span>{{ pet.size }}</span>
+              </div>
 
-                <div class="adopt-breed-line">
-                  <span>🐾 {{ pet.breed }} • {{ pet.city }}</span>
-                </div>
+              <!-- Tags de Saúde & Temperamento -->
+              <div class="pet-health-tags">
+                @if (pet.isCastrated) { <span class="tag-pill">✓ Castrado</span> }
+                @if (pet.isVaccinated) { <span class="tag-pill">✓ Vacinado</span> }
+                @if (pet.isDewormed) { <span class="tag-pill">✓ Vermifugado</span> }
+              </div>
 
-                <!-- Selos de Saúde -->
-                <div class="adopt-health-tags">
-                  @if (pet.isCastrated) { <span class="h-tag">✓ Castrado</span> }
-                  @if (pet.isVaccinated) { <span class="h-tag">✓ Vacinado</span> }
-                  @if (pet.isDewormed) { <span class="h-tag">✓ Vermifugado</span> }
-                </div>
+              <div class="pet-temperament-box">
+                <small><strong>Comportamento:</strong> {{ pet.temperament }}</small>
+              </div>
 
-                <p class="adopt-temperament"><strong>Temperamento:</strong> {{ pet.temperament }}</p>
-                <p class="adopt-story-snippet">{{ pet.story }}</p>
+              <p class="pet-story-preview">{{ pet.story }}</p>
 
-                <div class="adopt-donor-badge">
-                  <span class="donor-label">Acolhido por:</span>
+              <!-- Dados do Doador / Protetor -->
+              <div class="pet-donor-footer">
+                <div class="donor-info">
+                  <span class="donor-title">Acolhido por:</span>
                   <span class="donor-name">{{ pet.donorName }} ({{ pet.donorType }})</span>
+                  <span class="donor-location">📍 {{ pet.neighborhood }} • {{ pet.city }}</span>
                 </div>
+              </div>
 
-                <div class="adopt-actions-grid">
-                  <button class="btn btn-outline-navy btn-sm" (click)="openDetailsModal(pet)">
-                    Ver Perfil Completo
-                  </button>
+              <!-- Ações do Card -->
+              <div class="pet-card-actions">
+                <button class="btn btn-outline-navy btn-sm" (click)="openDetailsModal(pet)">
+                  Ver Detalhes
+                </button>
+                <button class="btn btn-outline-gold btn-sm" (click)="sharePetOnWhatsapp(pet)" title="Compartilhar no WhatsApp">
+                  📲 Compartilhar
+                </button>
+                @if (pet.status === 'Disponível') {
                   <button class="btn btn-primary btn-sm" (click)="openAdoptionModal(pet)">
-                    ❤️ Quero Adotar
+                    ❤️ Adotar
                   </button>
-                </div>
+                } @else {
+                  <button class="btn btn-success btn-sm" style="background-color: #059669; color: #fff;" disabled>
+                    ✓ Adotado
+                  </button>
+                }
               </div>
             </div>
-          }
-        </div>
-      }
-
-      <!-- Banner Informativo Sobre Adoção Responsável -->
-      <div class="responsible-adoption-banner card-modern">
-        <div class="banner-icon-side">🐕‍🦺</div>
-        <div class="banner-text-side">
-          <h3>O que é necessário para adotar com responsabilidade?</h3>
-          <p>Ter mais de 18 anos, apresentar documento com foto e comprovante de residência, dispor de ambiente seguro (casa murada ou apartamento com telas de proteção) e garantir amor, vacinas e cuidados para toda a vida do animal.</p>
-        </div>
+          </div>
+        }
       </div>
     </div>
   </section>
 }
 
-<!-- ================= ABA 2: QUERO DOAR / CADASTRAR ANIMAL ================= -->
+<!-- ================= ABA 2: DIVULGAR / DOAR ANIMAL (QUESTIONÁRIO DE PROTEÇÃO) ================= -->
 @if (activeTab() === 'doar') {
-  <section class="donation-form-section section-padding">
+  <section class="donation-section section-padding">
     <div class="container">
-      <div class="donation-grid">
-        <!-- Coluna Informativa e Dicas para o Doador -->
-        <div class="donation-info-side">
-          <div class="section-tag">
-            <span>Guia de Acolhimento & Doação Ética</span>
-          </div>
-          <h2 class="section-title text-left">Divulgue um Animal para Adoção</h2>
-          <p class="info-lead">
-            Cadastre as informações e fotos do animalzinho resgatado ou que você precisa doar. O anúncio será publicado no mural da ONG Mãos que Cuidam e divulgado para nossa rede de adotantes.
-          </p>
-
-          <div class="donor-rules-list">
-            <div class="rule-card card-modern">
-              <div class="rule-num">1</div>
-              <div>
-                <strong>Fotos Nítidas e Atraentes:</strong>
-                <p>Tire fotos bem iluminadas, focando no rostinho e olhar dócil do pet. Animais com boas fotos são adotados até 4x mais rápido!</p>
-              </div>
-            </div>
-
-            <div class="rule-card card-modern">
-              <div class="rule-num">2</div>
-              <div>
-                <strong>Informações Transparentes:</strong>
-                <p>Relate o histórico real de saúde, vacinas e se ele convive bem com outros animais ou crianças.</p>
-              </div>
-            </div>
-
-            <div class="rule-card card-modern">
-              <div class="rule-num">3</div>
-              <div>
-                <strong>Triagem do Futuro Adotante:</strong>
-                <p>Você receberá os contatos dos interessados e poderá conversar diretamente para escolher a melhor família.</p>
-              </div>
-            </div>
+      <div class="donation-form-wrapper">
+        <div class="donation-guidelines-sidebar">
+          <div class="guidelines-card card-modern">
+            <div class="guideline-icon">🛡️</div>
+            <h3>Mural Solidário e Seguro</h3>
+            <p>A ONG Mãos que Cuidam apoia a adoção responsável e ajuda protetores independentes e famílias a encontrarem lares seguros.</p>
+            
+            <ul class="guideline-list">
+              <li><strong>100% Gratuito:</strong> É expressamente proibida a cobrança de qualquer valor pelo animal.</li>
+              <li><strong>Contrato Direto:</strong> O Termo de Adoção é emitido diretamente entre você e o adotante.</li>
+              <li><strong>Transparência Clínica:</strong> Declare o histórico de vacinas e comportamento com total sinceridade.</li>
+              <li><strong>Isenção da ONG:</strong> A plataforma atua apenas na divulgação solidária.</li>
+            </ul>
           </div>
         </div>
 
-        <!-- Coluna do Formulário de Cadastro do Pet -->
-        <div class="donation-form-side">
+        <div class="donation-form-container">
           @if (submittedDonation()) {
-            <div class="donation-success-card card-modern animate-fade-in">
-              <div class="success-badge-top">✓ PET CADASTRADO COM SUCESSO NO MURAL!</div>
-              <h2>O anúncio de {{ submittedDonation()?.name }} já está ativo!</h2>
-              <p>Os visitantes do site já podem visualizar as fotos e enviar mensagens de interesse de adoção.</p>
-
-              <div class="success-preview-photo">
-                <img [src]="submittedDonation()?.photoUrl" [alt]="submittedDonation()?.name" class="success-img">
+            <div class="donation-success-card card-modern animate-fade-in text-center">
+              <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🐾</div>
+              <h3 style="color: var(--color-primary);">Anúncio Publicado com Sucesso!</h3>
+              <p style="color: var(--color-text-muted);">
+                O animalzinho <strong>{{ submittedDonation()?.name }}</strong> já está visível no Mural de Adoção da ONG.
+              </p>
+              <div class="ticket-protocol-box p-3 my-3">
+                <span>IDENTIFICADOR DO ANÚNCIO:</span>
+                <h4 style="color: var(--color-gold); margin: 0.2rem 0 0 0;">{{ submittedDonation()?.id }}</h4>
               </div>
-
-              <div class="success-actions">
-                <button class="btn btn-outline-gold" (click)="submittedDonation.set(null)">Cadastrar Outro Animal</button>
+              <p style="font-size: 0.9rem; color: var(--color-text-main);">
+                Assim que famílias interessadas visualizarem o anúncio, entrarão em contato diretamente no seu WhatsApp informado.
+              </p>
+              <div class="mt-4">
                 <button class="btn btn-primary" (click)="setTab('adotar')">Ver no Mural de Adoção &raquo;</button>
               </div>
             </div>
           } @else {
             <div class="donation-form-card card-modern">
               <div class="form-title-group">
-                <h3>Formulário de Cadastro do Pet para Doação</h3>
-                <p>Preencha os dados do animalzinho e suas informações de contato como doador.</p>
+                <h3>Cadastro do Animal para Adoção Responsável</h3>
+                <p>Preencha os dados do animalzinho e suas informações de contato com precisão.</p>
               </div>
 
               <form [formGroup]="donationForm" (ngSubmit)="submitDonation()" novalidate>
-                <!-- DADOS DO DOADOR -->
+                <!-- 1. DADOS DO DOADOR / PROTETOR -->
                 <div class="form-section-subtitle">
-                  <span>1. Dados do Doador / Protetor Responsável</span>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Seu Nome Completo <span class="required">*</span></label>
-                  <input type="text" formControlName="donorName" placeholder="Ex: Maria Clara Silva" class="form-control" [class.is-invalid]="donationForm.get('donorName')?.invalid && donationForm.get('donorName')?.touched">
+                  <span>1. Dados do Protetor / Antigo Tutor Responsável</span>
                 </div>
 
                 <div class="grid-2" style="gap: 1rem;">
                   <div class="form-group">
-                    <label class="form-label">Seu WhatsApp de Contato <span class="required">*</span></label>
-                    <input type="tel" formControlName="donorPhone" placeholder="(11) 98765-4321" class="form-control" [class.is-invalid]="donationForm.get('donorPhone')?.invalid && donationForm.get('donorPhone')?.touched">
+                    <label class="form-label">Nome Completo do Protetor <span class="required">*</span></label>
+                    <input type="text" formControlName="donorName" placeholder="Seu nome completo" class="form-control" [class.is-invalid]="donationForm.get('donorName')?.invalid && donationForm.get('donorName')?.touched">
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Seu E-mail <span class="required">*</span></label>
+                    <label class="form-label">CPF do Protetor <span class="required">*</span></label>
+                    <input type="text" formControlName="donorCpf" placeholder="000.000.000-00" class="form-control" [class.is-invalid]="donationForm.get('donorCpf')?.invalid && donationForm.get('donorCpf')?.touched">
+                  </div>
+                </div>
+
+                <div class="grid-2" style="gap: 1rem;">
+                  <div class="form-group">
+                    <label class="form-label">WhatsApp de Contato Direto <span class="required">*</span></label>
+                    <input type="tel" formControlName="donorPhone" placeholder="(22) 99848-1112" class="form-control" [class.is-invalid]="donationForm.get('donorPhone')?.invalid && donationForm.get('donorPhone')?.touched">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">E-mail de Contato <span class="required">*</span></label>
                     <input type="email" formControlName="donorEmail" placeholder="seuemail@exemplo.com" class="form-control" [class.is-invalid]="donationForm.get('donorEmail')?.invalid && donationForm.get('donorEmail')?.touched">
                   </div>
                 </div>
 
                 <div class="grid-2" style="gap: 1rem;">
                   <div class="form-group">
-                    <label class="form-label">Perfil do Doador</label>
+                    <label class="form-label">Perfil do Doador <span class="required">*</span></label>
                     <select formControlName="donorType" class="form-select">
                       <option value="Protetor Independente">Protetor Independente</option>
-                      <option value="Tutor Temporário">Tutor Temporário</option>
+                      <option value="Tutor Temporário">Tutor Temporário / Resgate</option>
                       <option value="Abrigo Parceiro">Abrigo Parceiro</option>
                     </select>
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Bairro / Região <span class="required">*</span></label>
-                    <input type="text" formControlName="neighborhood" placeholder="Ex: Tatuapé, Centro" class="form-control" [class.is-invalid]="donationForm.get('neighborhood')?.invalid && donationForm.get('neighborhood')?.touched">
+                    <label class="form-label">Bairro / Região em Macaé <span class="required">*</span></label>
+                    <input type="text" formControlName="neighborhood" placeholder="Ex: Barra, Centro, Cavaleiros, Imbetiba" class="form-control" [class.is-invalid]="donationForm.get('neighborhood')?.invalid && donationForm.get('neighborhood')?.touched">
                   </div>
                 </div>
 
-                <!-- DADOS DO PET -->
+                <!-- 2. DADOS DO PET -->
                 <div class="form-section-subtitle mt-4">
                   <span>2. Dados e Características do Animal</span>
                 </div>
@@ -302,13 +336,13 @@
 
                   <div class="form-group">
                     <label class="form-label">Raça / Tipo <span class="required">*</span></label>
-                    <input type="text" formControlName="breed" placeholder="Ex: SRD, Poodle, Siamês" class="form-control">
+                    <input type="text" formControlName="breed" placeholder="Ex: Sem Raça Definida (SRD)" class="form-control">
                   </div>
                 </div>
 
-                <!-- UPLOAD DA FOTO DO PET -->
+                <!-- FOTO DO ANIMAL -->
                 <div class="form-group">
-                  <label class="form-label">Foto do Pet <span class="required">*</span></label>
+                  <label class="form-label">Foto do Animal <span class="required">*</span></label>
                   <div class="photo-upload-box">
                     <input type="file" accept="image/*" (change)="onFileSelected($event)" id="petPhotoInput" class="file-input-hidden">
                     <label for="petPhotoInput" class="photo-upload-label">
@@ -323,42 +357,68 @@
                   </div>
                 </div>
 
-                <!-- CHECKBOXES DE SAÚDE -->
+                <!-- 📋 MEDIDA DE PROTEÇÃO 3: QUESTIONÁRIO DE ADOÇÃO RESPONSÁVEL E SAÚDE CLÍNICA -->
+                <div class="form-section-subtitle mt-4">
+                  <span>3. Questionário Clínico & Comportamental (Obrigatório)</span>
+                </div>
+
                 <div class="health-checkboxes-grid">
                   <label class="checkbox-pill">
                     <input type="checkbox" formControlName="isCastrated">
-                    <span>✓ Já Castrado</span>
+                    <span>✓ Animal Já Castrado</span>
                   </label>
                   <label class="checkbox-pill">
                     <input type="checkbox" formControlName="isVaccinated">
-                    <span>✓ Vacinado</span>
+                    <span>✓ Vacinas em Dia</span>
                   </label>
                   <label class="checkbox-pill">
                     <input type="checkbox" formControlName="isDewormed">
-                    <span>✓ Vermifugado</span>
+                    <span>✓ Vermifugado Recentemente</span>
                   </label>
                 </div>
 
-                <div class="form-group mt-3">
-                  <label class="form-label">Temperamento & Convivência <span class="required">*</span></label>
-                  <input type="text" formControlName="temperament" placeholder="Ex: Muito dócil, adora crianças, se dá bem com outros cães..." class="form-control" [class.is-invalid]="donationForm.get('temperament')?.invalid && donationForm.get('temperament')?.touched">
+                <div class="grid-2 mt-3" style="gap: 1rem;">
+                  <div class="form-group">
+                    <label class="form-label">Histórico de Vacinas <span class="required">*</span></label>
+                    <input type="text" formControlName="vaccineDetails" placeholder="Ex: V8/V10 e Antirrábica aplicadas" class="form-control">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Histórico de Agressividade / Convivência <span class="required">*</span></label>
+                    <input type="text" formControlName="aggressionHistory" placeholder="Ex: Sem histórico de agressividade, dócil com crianças e outros cães" class="form-control" [class.is-invalid]="donationForm.get('aggressionHistory')?.invalid && donationForm.get('aggressionHistory')?.touched">
+                  </div>
                 </div>
 
                 <div class="form-group">
-                  <label class="form-label">História e Mensagem do Animal <span class="required">*</span></label>
+                  <label class="form-label">Temperamento Resumido <span class="required">*</span></label>
+                  <input type="text" formControlName="temperament" placeholder="Ex: Brincalhão, dócil, companheiro, late pouco..." class="form-control" [class.is-invalid]="donationForm.get('temperament')?.invalid && donationForm.get('temperament')?.touched">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">História e Requisitos do Lar <span class="required">*</span></label>
                   <textarea formControlName="story" rows="3" placeholder="Conte como ele foi resgatado e que tipo de lar ele procura..." class="form-textarea" [class.is-invalid]="donationForm.get('story')?.invalid && donationForm.get('story')?.touched"></textarea>
                 </div>
 
-                <div class="terms-card">
+                <!-- DECLARAÇÃO FORMAL DE RESPONSABILIDADE DO PROTETOR -->
+                <div class="terms-card mt-3">
                   <div class="checkbox-box">
-                    <input type="checkbox" id="agreeTermsDonation" formControlName="agreeTerms" class="form-checkbox">
-                    <label for="agreeTermsDonation" class="checkbox-text">
-                      Declaro que as informações e fotos fornecidas são verdadeiras e que a doação é <strong>100% gratuita e sem fins lucrativos</strong>, visando o bem-estar do animal. <span class="required">*</span>
+                    <input type="checkbox" id="checkProtDeclaration" formControlName="protectionDeclaration" class="form-checkbox">
+                    <label for="checkProtDeclaration" class="checkbox-text">
+                      <strong>Declaração de Responsabilidade do Protetor:</strong> Declaro, sob as penas da lei, que sou o tutor/protetor responsável pelo animal anunciado, que todas as informações de saúde, vacinas, castração e histórico comportamental são autênticas e que assumo integral responsabilidade civil e jurídica, <strong>isentando expressamente a ONG Mãos que Cuidam de qualquer vínculo de custódia, posse ou guarda</strong>. <span class="required">*</span>
                     </label>
                   </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                <div class="terms-card mt-2">
+                  <div class="checkbox-box">
+                    <input type="checkbox" id="agreeTermsDonation" formControlName="agreeTerms" class="form-checkbox">
+                    <label for="agreeTermsDonation" class="checkbox-text">
+                      Declaro que a doação é <strong>100% gratuita e sem fins lucrativos</strong>, comprometendo-me a assinar o <em>Termo de Adoção Direto</em> com o adotante selecionado. <span class="required">*</span>
+                    </label>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg mt-3" style="width: 100%;">
                   🐾 Publicar Anúncio no Mural de Adoção &raquo;
                 </button>
               </form>
@@ -370,16 +430,16 @@
   </section>
 }
 
-<!-- ================= MODAL: QUERO ADOTAR ESSE PET ================= -->
+<!-- ================= MODAL: QUERO ADOTAR ESSE PET (FORMULÁRIO DE ADOÇÃO) ================= -->
 @if (selectedPetForAdoption()) {
   <div class="modal-backdrop" (click)="closeAdoptionModal()">
     <div class="modal-box modal-lg" (click)="$event.stopPropagation()">
       <button class="modal-close-btn" (click)="closeAdoptionModal()">✕</button>
 
       <div class="modal-header">
-        <span class="badge badge-gold">Formulário de Adoção Responsável</span>
+        <span class="badge badge-gold">Interesse em Adoção Responsável</span>
         <h3 class="modal-course-title">Quero Adotar o(a) {{ selectedPetForAdoption()?.name }}! ❤️</h3>
-        <p class="modal-course-tagline">Preencha seus dados para demonstrar interesse e entrar em contato com o responsável.</p>
+        <p class="modal-course-tagline">Preencha seus dados para entrar em contato com o protetor responsável e firmar o Termo Direto.</p>
       </div>
 
       <form [formGroup]="adoptionInterestForm" (ngSubmit)="submitAdoptionInterest()">
@@ -389,19 +449,14 @@
             <div>
               <h4 style="margin: 0; color: var(--color-primary);">{{ selectedPetForAdoption()?.name }}</h4>
               <span style="font-size: 0.88rem; color: var(--color-gold-hover);">{{ selectedPetForAdoption()?.breed }} • {{ selectedPetForAdoption()?.ageText }} • {{ selectedPetForAdoption()?.gender }}</span>
-              <p style="font-size: 0.82rem; color: var(--color-text-muted); margin-top: 0.2rem; margin-bottom: 0;">Acolhido por: {{ selectedPetForAdoption()?.donorName }} ({{ selectedPetForAdoption()?.city }})</p>
+              <p style="font-size: 0.82rem; color: var(--color-text-muted); margin-top: 0.2rem; margin-bottom: 0;">Protetor(a) Responsável: {{ selectedPetForAdoption()?.donorName }} ({{ selectedPetForAdoption()?.city }})</p>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Seu Nome Completo <span class="required">*</span></label>
-            <input type="text" formControlName="adopterName" placeholder="Seu nome" class="form-control" [class.is-invalid]="adoptionInterestForm.get('adopterName')?.invalid && adoptionInterestForm.get('adopterName')?.touched">
           </div>
 
           <div class="grid-2" style="gap: 1rem;">
             <div class="form-group">
-              <label class="form-label">Seu WhatsApp <span class="required">*</span></label>
-              <input type="tel" formControlName="adopterPhone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="adoptionInterestForm.get('adopterPhone')?.invalid && adoptionInterestForm.get('adopterPhone')?.touched">
+              <label class="form-label">Seu Nome Completo <span class="required">*</span></label>
+              <input type="text" formControlName="adopterName" placeholder="Seu nome" class="form-control" [class.is-invalid]="adoptionInterestForm.get('adopterName')?.invalid && adoptionInterestForm.get('adopterName')?.touched">
             </div>
 
             <div class="form-group">
@@ -410,14 +465,26 @@
             </div>
           </div>
 
+          <div class="grid-2" style="gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Seu WhatsApp de Contato <span class="required">*</span></label>
+              <input type="tel" formControlName="adopterPhone" placeholder="(22) 90000-0000" class="form-control" [class.is-invalid]="adoptionInterestForm.get('adopterPhone')?.invalid && adoptionInterestForm.get('adopterPhone')?.touched">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Seu E-mail <span class="required">*</span></label>
+              <input type="email" formControlName="adopterEmail" placeholder="seuemail@exemplo.com" class="form-control">
+            </div>
+          </div>
+
           <div class="form-group">
-            <label class="form-label">Seu E-mail <span class="required">*</span></label>
-            <input type="email" formControlName="adopterEmail" placeholder="seuemail@exemplo.com" class="form-control">
+            <label class="form-label">Seu Endereço Completo (para o Termo de Adoção) <span class="required">*</span></label>
+            <input type="text" formControlName="adopterAddress" placeholder="Rua, Número, Bairro, Macaé/RJ" class="form-control" [class.is-invalid]="adoptionInterestForm.get('adopterAddress')?.invalid && adoptionInterestForm.get('adopterAddress')?.touched">
           </div>
 
           <div class="grid-2" style="gap: 1rem;">
             <div class="form-group">
-              <label class="form-label">Tipo de Moradia <span class="required">*</span></label>
+              <label class="form-label">Tipo de Residência <span class="required">*</span></label>
               <select formControlName="residenceType" class="form-select">
                 <option value="Casa com Quintal Murado">Casa com Quintal Murado</option>
                 <option value="Apartamento com Redes de Proteção">Apartamento com Redes de Proteção</option>
@@ -436,14 +503,15 @@
 
           <div class="form-group">
             <label class="form-label">Por que você quer adotar o(a) {{ selectedPetForAdoption()?.name }}? <span class="required">*</span></label>
-            <textarea formControlName="motivation" rows="2" placeholder="Conte um pouco sobre sua rotina e como será a vida dele com você..." class="form-textarea"></textarea>
+            <textarea formControlName="motivation" rows="2" placeholder="Conte um pouco sobre sua rotina e ambiente..." class="form-textarea"></textarea>
           </div>
 
+          <!-- MEDIDA DE PROTEÇÃO 2: CIÊNCIA DO CONTRATO DIRETO ENTRE AS PARTES -->
           <div class="terms-card">
             <div class="checkbox-box">
-              <input type="checkbox" id="agreeTermsAdopter" formControlName="agreeTerms" class="form-checkbox">
-              <label for="agreeTermsAdopter" class="checkbox-text">
-                Estou ciente de que a adoção é um ato de compromisso para a vida toda do animal. <span class="required">*</span>
+              <input type="checkbox" id="agreeDirectContract" formControlName="agreeDirectContractTerms" class="form-checkbox">
+              <label for="agreeDirectContract" class="checkbox-text">
+                <strong>Ciência do Contrato Direto:</strong> Estou ciente de que o <em>Termo de Adoção e Posse Responsável</em> será celebrado <strong>diretamente entre mim e o protetor/doador do animal</strong>, e que a ONG atua apenas como canal voluntário de aproximação, não respondendo por questões civis, comportamentais ou sanitárias. <span class="required">*</span>
               </label>
             </div>
           </div>
@@ -451,14 +519,14 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-navy" (click)="closeAdoptionModal()">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Enviar Pedido de Adoção &raquo;</button>
+          <button type="submit" class="btn btn-primary">Registrar Interesse &raquo;</button>
         </div>
       </form>
     </div>
   </div>
 }
 
-<!-- ================= MODAL: PROTOCOLO DE INTERESSE ENVIADO ================= -->
+<!-- ================= MODAL: CONFIRMAÇÃO DO PEDIDO + BOTÃO DO CONTRATO DIRETO ================= -->
 @if (submittedApplication()) {
   <div class="modal-backdrop" (click)="submittedApplication.set(null)">
     <div class="modal-box text-center" (click)="$event.stopPropagation()">
@@ -469,21 +537,150 @@
       <p style="color: var(--color-text-muted);">Protocolo Oficial: <strong>{{ submittedApplication()?.protocol }}</strong></p>
 
       <div class="ticket-protocol-box p-3 my-3">
-        <span>PET SOLICITADO:</span>
+        <span>ANIMAL SOLICITADO:</span>
         <h4 style="color: var(--color-gold); margin: 0.2rem 0 0 0;">🐾 {{ submittedApplication()?.petName }}</h4>
       </div>
 
       <p style="font-size: 0.92rem; color: var(--color-text-main); line-height: 1.6;">
-        Seu interesse foi registrado com sucesso! Você também pode clicar no botão abaixo para <strong>chamar o doador diretamente no WhatsApp</strong> e agilizar a sua visita.
+        Seu interesse foi registrado com sucesso! Para sua segurança jurídica e do animal, disponibilizamos o <strong>Termo de Adoção Responsável Direto</strong> para assinatura entre você e o protetor.
       </p>
 
-      <div class="modal-footer justify-content-center" style="gap: 1rem; border-top: none;">
-        @if (selectedPetForDetails()) {
-          <a [href]="formatWhatsappLink(selectedPetForDetails()!.donorPhone, selectedPetForDetails()!.name)" target="_blank" class="btn btn-primary">
-            💬 Conversar no WhatsApp
+      <div class="modal-footer justify-content-center" style="gap: 0.75rem; border-top: none; flex-wrap: wrap;">
+        <!-- 📄 MEDIDA DE PROTEÇÃO 2: BOTÃO PARA VISUALIZAR E IMPRIMIR O CONTRATO DIRETO -->
+        <button class="btn btn-primary" (click)="openDirectContract(contractPet(), submittedApplication())">
+          📄 Gerar Termo de Adoção Direto
+        </button>
+
+        @if (contractPet()) {
+          <a [href]="formatWhatsappLink(contractPet()!.donorPhone, contractPet()!.name)" target="_blank" class="btn btn-success" style="background-color: #25d366; color: #fff; border: none;">
+            💬 Conversar com o Doador no WhatsApp
           </a>
         }
         <button class="btn btn-outline-navy" (click)="submittedApplication.set(null)">Fechar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ================= 📄 MODAL / DOCUMENTO: TERMO DE ADOÇÃO DIRETO ENTRE AS PARTES ================= -->
+@if (showContractModal()) {
+  <div class="modal-backdrop contract-backdrop" (click)="showContractModal.set(false)">
+    <div class="modal-box modal-lg contract-document-box" (click)="$event.stopPropagation()">
+      <div class="contract-no-print contract-actions-bar">
+        <button class="btn btn-primary btn-sm" (click)="printContract()">
+          🖨️ Imprimir Termo (2 Vias / PDF)
+        </button>
+        <button class="btn btn-outline-navy btn-sm" (click)="showContractModal.set(false)">
+          ✕ Fechar
+        </button>
+      </div>
+
+      <div class="contract-printable-area">
+        <div class="contract-header text-center">
+          <h2>TERMO DE ADOÇÃO E POSSE RESPONSÁVEL DE ANIMAL DOMÉSTICO</h2>
+          <p class="contract-subtitle">INSTRUMENTO PARTICULAR DE TRANSFERÊNCIA DIRETA DE GUARDA ENTRE PARTICULARES</p>
+        </div>
+
+        <div class="contract-body">
+          <p>Pelo presente instrumento particular, as partes abaixo qualificadas:</p>
+
+          <!-- QUALIFICAÇÃO DO DOADOR -->
+          <div class="contract-section">
+            <h4>1. DOADOR / PROTETOR RESPONSÁVEL (CEDENTE):</h4>
+            <table class="contract-table">
+              <tr>
+                <td><strong>Nome:</strong> {{ contractPet()?.donorName }}</td>
+                <td><strong>CPF:</strong> {{ contractPet()?.donorCpf || 'A preencher no ato da entrega' }}</td>
+              </tr>
+              <tr>
+                <td><strong>Telefone / WhatsApp:</strong> {{ contractPet()?.donorPhone }}</td>
+                <td><strong>Endereço / Bairro:</strong> {{ contractPet()?.neighborhood }} - {{ contractPet()?.city }}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- QUALIFICAÇÃO DO ADOTANTE -->
+          <div class="contract-section">
+            <h4>2. ADOTANTE (CESSIONÁRIO):</h4>
+            <table class="contract-table">
+              <tr>
+                <td><strong>Nome:</strong> {{ contractAdopter()?.adopterName }}</td>
+                <td><strong>CPF:</strong> {{ contractAdopter()?.adopterCpf }}</td>
+              </tr>
+              <tr>
+                <td><strong>Telefone:</strong> {{ contractAdopter()?.adopterPhone }}</td>
+                <td><strong>E-mail:</strong> {{ contractAdopter()?.adopterEmail }}</td>
+              </tr>
+              <tr>
+                <td colspan="2"><strong>Endereço de Acolhimento:</strong> {{ contractAdopter()?.adopterAddress || 'Conforme cadastro' }}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- QUALIFICAÇÃO DO ANIMAL -->
+          <div class="contract-section">
+            <h4>3. DADOS DO ANIMAL TRANSFERIDO:</h4>
+            <table class="contract-table">
+              <tr>
+                <td><strong>Nome:</strong> {{ contractPet()?.name }}</td>
+                <td><strong>Espécie:</strong> {{ contractPet()?.species }}</td>
+                <td><strong>Sexo:</strong> {{ contractPet()?.gender }}</td>
+              </tr>
+              <tr>
+                <td><strong>Raça:</strong> {{ contractPet()?.breed }}</td>
+                <td><strong>Porte:</strong> {{ contractPet()?.size }}</td>
+                <td><strong>Idade Estimada:</strong> {{ contractPet()?.ageText }}</td>
+              </tr>
+              <tr>
+                <td><strong>Castrado:</strong> {{ contractPet()?.isCastrated ? 'Sim' : 'Não' }}</td>
+                <td><strong>Vacinas:</strong> {{ contractPet()?.isVaccinated ? 'Em dia' : 'Pendente' }}</td>
+                <td><strong>Comportamento:</strong> {{ contractPet()?.temperament }}</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- CLÁUSULAS CONTRATUAIS -->
+          <div class="contract-section">
+            <h4>4. CLÁUSULAS E CONDIÇÕES:</h4>
+            <ol class="contract-clauses">
+              <li><strong>DA TRANSFERÊNCIA DIRETA:</strong> O DOADOR transfere expressamente neste ato a guarda e a responsabilidade civil do animal descrito acima ao ADOTANTE, que assume a posse responsável de forma gratuita.</li>
+              <li><strong>DA INTERMEDIAÇÃO E ISENÇÃO DA ONG:</strong> As partes reconhecem expressamente que o portal da <strong>ONG Mãos que Cuidam</strong> funcionou exclusivamente como veículo voluntário de divulgação e aproximação, <strong>não figurando como doadora, proprietária ou garantidora</strong> do estado clínico prévio ou temperamento do animal.</li>
+              <li><strong>DO BEM-ESTAR E NÃO ABANDONO:</strong> O ADOTANTE compromete-se a fornecer alimentação adequada, abrigo seguro contra intempéries, assistência veterinária sempre que necessário e zelar pelo bem-estar do animal, sendo vedado qualquer ato de maus-tratos ou abandono (Art. 32 da Lei Federal nº 9.605/1998).</li>
+              <li><strong>DA DEVOLUÇÃO RESPONSÁVEL:</strong> Em caso de impossibilidade futura e imprevisível de manutenção do animal, o ADOTANTE compromete-se a comunicar o DOADOR original antes de qualquer decisão, sendo expressamente proibido o repasse do animal a terceiros desautorizados ou o abandono.</li>
+            </ol>
+          </div>
+
+          <!-- ASSINATURAS -->
+          <div class="contract-signatures">
+            <p class="contract-date">Macaé / RJ, ______ de ________________________ de 2026.</p>
+
+            <div class="signature-grid">
+              <div class="sig-box">
+                <div class="sig-line"></div>
+                <strong>{{ contractPet()?.donorName }}</strong>
+                <span>Assinatura do Doador / Protetor</span>
+              </div>
+
+              <div class="sig-box">
+                <div class="sig-line"></div>
+                <strong>{{ contractAdopter()?.adopterName }}</strong>
+                <span>Assinatura do Adotante</span>
+              </div>
+            </div>
+
+            <div class="signature-grid mt-4">
+              <div class="sig-box">
+                <div class="sig-line"></div>
+                <span>Testemunha 1 (Nome e CPF)</span>
+              </div>
+
+              <div class="sig-box">
+                <div class="sig-line"></div>
+                <span>Testemunha 2 (Nome e CPF)</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -516,10 +713,11 @@
 
             <p><strong>Porte:</strong> {{ selectedPetForDetails()?.size }}</p>
             <p><strong>Temperamento:</strong> {{ selectedPetForDetails()?.temperament }}</p>
+            <p><strong>Histórico de Convivência:</strong> {{ selectedPetForDetails()?.aggressionHistory || 'Sem histórico de agressividade relatado pelo protetor.' }}</p>
             <p><strong>História:</strong> {{ selectedPetForDetails()?.story }}</p>
 
             <div class="donor-card-box bg-warm p-3 rounded">
-              <strong style="color: var(--color-primary);">Informações do Responsável:</strong>
+              <strong style="color: var(--color-primary);">Protetor / Responsável:</strong>
               <div style="font-size: 0.88rem; margin-top: 0.3rem;">
                 <div>👤 <strong>{{ selectedPetForDetails()?.donorName }}</strong> ({{ selectedPetForDetails()?.donorType }})</div>
                 <div>📍 {{ selectedPetForDetails()?.neighborhood }} - {{ selectedPetForDetails()?.city }}</div>

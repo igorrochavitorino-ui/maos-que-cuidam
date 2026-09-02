@@ -68,20 +68,45 @@
   box-shadow: 0 4px 14px rgba(212, 154, 55, 0.35);
 }
 
-/* Barra de controles da galeria */
-.gallery-controls-bar {
+/* Barra de ação principal da galeria */
+.gallery-action-bar-wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1.25rem;
-  margin-bottom: 2.5rem;
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-left: 5px solid var(--color-gold);
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
 }
 
-.category-filters {
-  display: flex;
-  flex-wrap: wrap;
+.gallery-title-pill {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--color-primary);
+}
+
+.btn-add-photo-glow {
+  display: inline-flex;
+  align-items: center;
   gap: 0.5rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(19, 42, 71, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-add-photo-glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(19, 42, 71, 0.35);
+}
+
+.lock-sub {
+  font-size: 0.72rem;
+  opacity: 0.85;
 }
 
 /* Grid de Cards */
@@ -211,7 +236,30 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-bottom: 0.75rem;
+}
+
+.insta-link-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(220, 39, 67, 0.25);
+}
+
+.insta-link-badge:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 10px rgba(220, 39, 67, 0.4);
+  color: #ffffff;
 }
 
 .card-pet-species {
@@ -467,4 +515,30 @@
 @media (max-width: 640px) {
   .ticket-details-grid { grid-template-columns: 1fr; }
   .modal-credits-grid { grid-template-columns: 1fr; }
+}
+
+.btn-delete-gallery-admin {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: #fee2e2;
+  border: 1.5px solid #ef4444;
+  color: #ef4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.82rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.btn-delete-gallery-admin:hover {
+  background: #ef4444;
+  color: #ffffff;
+  transform: scale(1.1);
 }

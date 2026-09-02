@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
+import { NotificationService } from '../../services/notification.service';
 import { Course, StudentRegistration, VolunteerRegistration, PetRegistration } from '../../models/registration.model';
 
 @Component({
@@ -16,6 +17,7 @@ export class RegistrationComponent implements OnInit {
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private registrationService = inject(RegistrationService);
+  public notificationService = inject(NotificationService);
 
   activeTab = signal<'aluno' | 'voluntario' | 'pet'>('aluno');
   courses: Course[] = this.registrationService.getCourses();
@@ -32,7 +34,7 @@ export class RegistrationComponent implements OnInit {
     phone: ['', [Validators.required, Validators.minLength(10)]],
     cpf: ['', [Validators.required, Validators.minLength(11)]],
     birthDate: ['', Validators.required],
-    city: ['', Validators.required],
+    city: ['Macaé', Validators.required],
     neighborhood: ['', Validators.required],
     courseId: ['curso-banho-higienizacao', Validators.required],
     preferredShift: ['Manhã (08h às 12h)', Validators.required],
@@ -189,6 +191,21 @@ export class RegistrationComponent implements OnInit {
 
   printProtocol(): void {
     window.print();
+  }
+
+  getStudentQueueRank(std: StudentRegistration | null): { position: number; isTitular: boolean; waitingNumber?: number } {
+    if (!std) return { position: 1, isTitular: true };
+    const allStudents = this.registrationService.students();
+    const sorted = [...allStudents].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    const courseStudents = sorted.filter(s => s.courseId === std.courseId);
+    const idx = courseStudents.findIndex(s => s.id === std.id);
+    const pos = idx >= 0 ? idx + 1 : courseStudents.length;
+    const isTitular = pos <= 15;
+    return {
+      position: pos,
+      isTitular,
+      waitingNumber: isTitular ? undefined : (pos - 15)
+    };
   }
 
   resetCurrentSubmission(): void {

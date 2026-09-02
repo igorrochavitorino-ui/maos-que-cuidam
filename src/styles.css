@@ -424,3 +424,77 @@ img {
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .section-title { font-size: 1.75rem; }
 }
+
+/* ================= ♿ RECURSOS DE ACESSIBILIDADE GLOBAL ================= */
+body.font-scale-small {
+  font-size: 14px !important;
+}
+
+body.font-scale-medium {
+  font-size: 18px !important;
+}
+
+body.font-scale-large {
+  font-size: 21px !important;
+}
+
+body.font-scale-medium h1 { font-size: 2.8rem !important; }
+body.font-scale-medium h2 { font-size: 2.2rem !important; }
+body.font-scale-medium h3 { font-size: 1.7rem !important; }
+body.font-scale-medium p, body.font-scale-medium a, body.font-scale-medium span, body.font-scale-medium button, body.font-scale-medium input {
+  font-size: 1.12rem !important;
+}
+
+body.font-scale-large h1 { font-size: 3.2rem !important; }
+body.font-scale-large h2 { font-size: 2.5rem !important; }
+body.font-scale-large h3 { font-size: 2rem !important; }
+body.font-scale-large p, body.font-scale-large a, body.font-scale-large span, body.font-scale-large button, body.font-scale-large input {
+  font-size: 1.25rem !important;
+}
+
+/* Modo Alto Contraste */
+html.high-contrast-mode {
+  filter: contrast(125%);
+}
+
+html.high-contrast-mode body {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html.high-contrast-mode .card-modern,
+html.high-contrast-mode .modal-box,
+html.high-contrast-mode .form-control,
+html.high-contrast-mode .form-select,
+html.high-contrast-mode .form-textarea,
+html.high-contrast-mode .navbar-wrapper,
+html.high-contrast-mode .footer-modern {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+  border-color: #ffd700 !important;
+}
+
+html.high-contrast-mode h1,
+html.high-contrast-mode h2,
+html.high-contrast-mode h3,
+html.high-contrast-mode h4,
+html.high-contrast-mode strong {
+  color: #ffd700 !important;
+}
+
+html.high-contrast-mode p,
+html.high-contrast-mode span,
+html.high-contrast-mode label {
+  color: #ffffff !important;
+}
+
+html.high-contrast-mode .btn-primary {
+  background: #ffd700 !important;
+  color: #000000 !important;
+  border-color: #ffffff !important;
+  font-weight: 900 !important;
+}
+
+html.high-contrast-mode a {
+  color: #00ffff !important;
+}

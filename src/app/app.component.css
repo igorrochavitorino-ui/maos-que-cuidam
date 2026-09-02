@@ -7,3 +7,88 @@
 .main-content {
   flex: 1 0 auto;
 }
+
+/* ================= 🟢 BOTÃO FLUTUANTE DO WHATSAPP (COMPACTO) ================= */
+.floating-whatsapp-wrap {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.whatsapp-tooltip {
+  background: #ffffff;
+  color: #1e293b;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  font-size: 0.76rem;
+  white-space: nowrap;
+  border-left: 3px solid #25d366;
+  animation: floatTooltip 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.whatsapp-tooltip strong {
+  color: #059669;
+}
+
+.floating-whatsapp-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.floating-whatsapp-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.55);
+  color: #ffffff;
+}
+
+.whatsapp-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 1.5px solid #25d366;
+  animation: pulseEffect 2.2s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulseEffect {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.45); opacity: 0; }
+}
+
+@keyframes floatTooltip {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@media (max-width: 768px) {
+  .whatsapp-tooltip {
+    display: none;
+  }
+  .floating-whatsapp-wrap {
+    bottom: 1rem;
+    right: 1rem;
+  }
+  .floating-whatsapp-btn {
+    width: 44px;
+    height: 44px;
+  }
+}

@@ -24,135 +24,263 @@
   line-height: 1.6;
 }
 
-/* Tabs */
+/* ================= 3 ABAS LUXUOSAS DE CADASTRO ================= */
 .tabs-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
-  max-width: 960px;
-  margin: 0 auto 3rem auto;
+  gap: 1.5rem;
+  max-width: 980px;
+  margin: 0 auto 3.5rem auto;
 }
 
 .tab-button {
   background-color: #ffffff;
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem 1.5rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 1.35rem 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1.1rem;
+  gap: 1.15rem;
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: left;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 15px rgba(19, 42, 71, 0.05);
+  position: relative;
+  overflow: hidden;
 }
 
 .tab-button:hover {
   border-color: var(--color-gold);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(19, 42, 71, 0.1);
 }
 
 .tab-button.active {
-  background-color: #ffffff;
+  background: linear-gradient(180deg, #ffffff 0%, #fdfbf7 100%);
   border-color: var(--color-gold);
-  box-shadow: 0 8px 20px rgba(212, 154, 55, 0.25);
-  border-bottom: 5px solid var(--color-gold);
+  box-shadow: 0 14px 30px rgba(212, 154, 55, 0.22);
+  transform: translateY(-3px);
 }
 
-.tab-icon {
-  font-size: 2rem;
-  line-height: 1;
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #d49a37, #f59e0b, #d49a37);
+  border-radius: 0 0 18px 18px;
+}
+
+/* Ícone em caixas estilizadas */
+.tab-icon-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-button:hover .tab-icon-box {
+  transform: scale(1.08);
+}
+
+.icon-box-blue {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border: 1.5px solid #7dd3fc;
+}
+
+.icon-box-gold {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1.5px solid #fcd34d;
+}
+
+.icon-box-emerald {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 1.5px solid #86efac;
 }
 
 .tab-texts {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 }
 
 .tab-title {
   font-family: var(--font-heading);
   font-size: 1.05rem;
+  font-weight: 800;
   color: var(--color-primary);
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .tab-desc {
   font-size: 0.8rem;
-  color: var(--color-text-muted);
-  margin-top: 0.2rem;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 0.25rem;
 }
 
-/* Card do Formulário */
+.tab-active-pill {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ================= CARD DO FORMULÁRIO LUXUOSO ================= */
 .form-wrapper {
-  max-width: 920px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
-.form-card {
-  padding: 3rem;
+.registration-lux-card {
+  padding: 3rem 3.5rem;
   background-color: #ffffff;
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-lg);
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 45px rgba(19, 42, 71, 0.08);
 }
 
-.form-header-card {
+/* Cabeçalho do Formulário */
+.form-header-card-lux {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px solid var(--color-bg-warm);
+  border-bottom: 2px solid #f1f5f9;
   padding-bottom: 1.75rem;
   margin-bottom: 2.25rem;
   gap: 1.5rem;
 }
 
-.form-title-group h3 {
-  font-size: 1.6rem;
-  color: var(--color-primary);
-  margin-bottom: 0.4rem;
+.badge-gold-pill {
+  background: rgba(212, 154, 55, 0.15);
+  color: var(--color-gold-hover);
+  border: 1px solid var(--color-gold);
+  padding: 0.25rem 0.85rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.75px;
+  display: inline-block;
+  margin-bottom: 0.5rem;
 }
 
-.form-title-group p {
-  font-size: 0.95rem;
-  color: var(--color-text-muted);
-  margin-bottom: 0;
+.form-title-lux {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 0.35rem;
+}
+
+.form-subtitle-lux {
+  font-size: 0.92rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.5;
 }
 
 .badge-logo-img {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  border: 2px solid var(--color-gold);
+  border: 2.5px solid var(--color-gold);
+  box-shadow: 0 4px 12px rgba(212, 154, 55, 0.2);
 }
 
-.form-section-title {
+/* Seções Numeradas */
+.form-section-group {
+  background: #fbfcfe;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1.75rem 1.75rem 1.5rem 1.75rem;
+  position: relative;
+}
+
+.section-label-chip {
+  position: absolute;
+  top: -13px;
+  left: 1.25rem;
+  background: #132a47;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 2px 12px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: 2rem;
-  margin-bottom: 1.25rem;
+  gap: 8px;
+  border: 1px solid var(--color-gold);
+  box-shadow: var(--shadow-sm);
 }
 
-.step-num {
-  width: 28px;
-  height: 28px;
-  background-color: var(--color-gold);
-  color: #ffffff;
+.section-label-chip span {
+  background: var(--color-gold);
+  color: #132a47;
+  width: 17px;
+  height: 17px;
   border-radius: 50%;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.68rem;
+  font-weight: 900;
 }
 
-.form-section-title h4 {
-  font-size: 1.15rem;
+/* Inputs Luxuosos com Ícones */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-prefix-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 1.05rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.lux-input {
+  width: 100%;
+  padding: 0.8rem 1rem 0.8rem 2.75rem !important;
+  border-radius: 10px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  font-size: 0.92rem;
   color: var(--color-primary);
-  margin-bottom: 0;
+  font-weight: 500;
+  transition: all 0.25s ease;
 }
 
-/* Checkbox estilizado */
+.lux-input:focus {
+  border-color: var(--color-gold);
+  background: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(212, 154, 55, 0.15);
+}
+
+textarea.lux-input {
+  padding: 0.85rem 1.15rem !important;
+  font-family: inherit;
+  resize: vertical;
+}
+
+/* Checkboxes & Termos */
 .checkbox-box {
   display: flex;
   align-items: flex-start;
@@ -176,30 +304,49 @@
 }
 
 .terms-card {
-  background-color: var(--color-bg-warm);
-  border: 1px solid var(--color-gold-border);
-  padding: 1.25rem;
-  border-radius: var(--radius-md);
-  margin: 2rem 0;
+  background-color: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  padding: 1.15rem 1.25rem;
+  border-radius: 12px;
 }
 
-.form-submit-row {
-  display: flex;
-  justify-content: flex-end;
+/* Botão de Envio Dourado */
+.btn-gold-submit {
+  background: linear-gradient(135deg, #d49a37 0%, #b88226 100%);
+  color: #ffffff;
+  padding: 0.9rem 2rem;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(212, 154, 55, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.25s ease;
 }
 
-.submit-btn {
-  width: 100%;
-  max-width: 380px;
+.btn-gold-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 154, 55, 0.45);
+  background: linear-gradient(135deg, #e5a93e 0%, #c48c2c 100%);
+}
+
+.btn-gold-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* ================= PROTOCOLO DIGITAL ================= */
 .protocol-card {
   padding: 3.5rem 3rem;
   background-color: #ffffff;
+  border-radius: 20px;
   border: 2px solid var(--color-gold);
-  box-shadow: var(--shadow-xl);
-  border-radius: var(--radius-xl);
+  box-shadow: 0 20px 45px rgba(19, 42, 71, 0.08);
 }
 
 .protocol-header {
@@ -208,46 +355,43 @@
 }
 
 .protocol-badge-success {
-  display: inline-flex;
-  background-color: #ecfdf5;
-  color: #059669;
-  border: 1px solid #a7f3d0;
-  font-family: var(--font-heading);
-  font-weight: 700;
+  background: #dcfce7;
+  color: #15803d;
   font-size: 0.85rem;
-  padding: 0.4rem 1.2rem;
+  font-weight: 800;
+  padding: 0.4rem 1.25rem;
   border-radius: var(--radius-full);
+  display: inline-block;
   margin-bottom: 1rem;
+  border: 1px solid #86efac;
 }
 
 .protocol-title {
-  font-size: 2.2rem;
+  font-size: 2rem;
   color: var(--color-primary);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.5rem;
 }
 
 .protocol-subtitle {
+  color: #64748b;
   font-size: 1rem;
-  color: var(--color-text-muted);
-  font-weight: 500;
 }
 
 .protocol-code-box {
-  background: linear-gradient(135deg, #10243e 0%, #16365c 100%);
+  background: linear-gradient(135deg, #0e1e33 0%, #173255 100%);
   color: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: 1.5rem 2rem;
+  border-radius: 14px;
+  padding: 1.5rem;
   text-align: center;
-  border: 2px solid var(--color-gold);
   margin-bottom: 2rem;
+  border: 2px solid var(--color-gold);
 }
 
 .code-label {
   display: block;
   font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  color: #cbd5e1;
-  margin-bottom: 0.25rem;
+  color: #94a3b8;
+  letter-spacing: 1px;
 }
 
 .code-value {
@@ -255,65 +399,72 @@
   font-size: 2.2rem;
   font-weight: 800;
   color: var(--color-gold);
-  letter-spacing: 0.05em;
   display: block;
+  margin: 0.4rem 0;
 }
 
 .code-status {
   font-size: 0.85rem;
-  color: #a7f3d0;
-  margin-top: 0.25rem;
-  display: inline-block;
+  color: #cbd5e1;
+}
+
+.code-status strong {
+  color: #10b981;
 }
 
 .protocol-details-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
-  background-color: var(--color-bg-main);
-  border: 1px solid var(--color-border);
+  background-color: #f8fafc;
   padding: 1.75rem;
-  border-radius: var(--radius-md);
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
   margin-bottom: 2rem;
 }
 
 .p-detail {
-  font-size: 0.92rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .p-detail .label {
-  display: block;
   font-size: 0.78rem;
-  color: var(--color-text-muted);
+  color: #64748b;
   text-transform: uppercase;
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.2rem;
+  font-weight: 700;
 }
 
-.text-gold {
-  color: var(--color-gold-hover);
+.p-detail strong {
+  font-size: 0.95rem;
+  color: var(--color-primary);
 }
 
 .protocol-instructions {
-  background-color: #eff6ff;
-  border-left: 4px solid var(--color-info);
-  padding: 1.5rem;
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  background-color: #fefce8;
+  border-left: 4px solid var(--color-gold);
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-sm);
   margin-bottom: 2.5rem;
 }
 
 .protocol-instructions h4 {
-  font-size: 1.05rem;
-  color: #1e3a8a;
-  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
 }
 
 .protocol-instructions ol {
-  margin-left: 1.25rem;
-  font-size: 0.9rem;
-  color: #1e293b;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  padding-left: 1.25rem;
+  margin-bottom: 0;
+}
+
+.protocol-instructions li {
+  font-size: 0.88rem;
+  color: #475569;
+  margin-bottom: 0.35rem;
+  line-height: 1.5;
 }
 
 .protocol-actions {
@@ -323,22 +474,13 @@
   gap: 1rem;
 }
 
-/* Impressão Oficial */
-@media print {
-  .page-header-section, .tabs-container, .top-banner, .main-header, .site-footer, .protocol-actions {
-    display: none !important;
-  }
-  .protocol-card {
-    border: 2px solid #000;
-    box-shadow: none;
-    margin: 0;
-    padding: 1.5cm;
-  }
+@media (max-width: 992px) {
+  .tabs-container { grid-template-columns: 1fr; }
+  .registration-lux-card { padding: 2rem 1.5rem; }
+  .protocol-details-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 900px) {
-  .tabs-container { grid-template-columns: 1fr; }
-  .form-card { padding: 2rem 1.5rem; }
-  .protocol-card { padding: 2rem 1.5rem; }
+@media (max-width: 640px) {
   .protocol-details-grid { grid-template-columns: 1fr; }
+  .protocol-card { padding: 2rem 1.25rem; }
 }

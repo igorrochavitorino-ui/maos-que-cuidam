@@ -1,4 +1,6 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { FirebaseService } from './firebase.service';
+import { NotificationService } from './notification.service';
 import { 
   Course, 
   StudentRegistration, 
@@ -10,13 +12,17 @@ import {
   PetGalleryItem, 
   AdoptablePet, 
   AdoptionApplication, 
-  RegistrationStatus 
+  RegistrationStatus,
+  ImpactStat
 } from '../models/registration.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RegistrationService {
+  private firebaseService = inject(FirebaseService);
+  private notificationService = inject(NotificationService);
+
   private readonly STUDENTS_KEY = 'mqc_students_data';
   private readonly VOLUNTEERS_KEY = 'mqc_volunteers_data';
   private readonly PETS_KEY = 'mqc_pets_data';
@@ -24,6 +30,9 @@ export class RegistrationService {
   private readonly GALLERY_KEY = 'mqc_gallery_data';
   private readonly ADOPTABLE_PETS_KEY = 'mqc_adoptable_pets_data';
   private readonly ADOPTION_APPLICATIONS_KEY = 'mqc_adoption_applications_data';
+  private readonly SPONSORS_KEY = 'mqc_sponsors_data';
+  private readonly TESTIMONIALS_KEY = 'mqc_testimonials_data';
+  private readonly IMPACT_STATS_KEY = 'mqc_impact_stats_data';
 
   // Signals para reatividade pura
   private studentsSignal = signal<StudentRegistration[]>([]);
@@ -33,6 +42,9 @@ export class RegistrationService {
   private gallerySignal = signal<PetGalleryItem[]>([]);
   private adoptablePetsSignal = signal<AdoptablePet[]>([]);
   private adoptionApplicationsSignal = signal<AdoptionApplication[]>([]);
+  private sponsorsSignal = signal<Sponsor[]>([]);
+  private testimonialsSignal = signal<Testimonial[]>([]);
+  private impactStatsSignal = signal<ImpactStat[]>([]);
 
   // Computed signals
   readonly students = computed(() => this.studentsSignal());
@@ -42,6 +54,9 @@ export class RegistrationService {
   readonly galleryItems = computed(() => this.gallerySignal());
   readonly adoptablePets = computed(() => this.adoptablePetsSignal());
   readonly adoptionApplications = computed(() => this.adoptionApplicationsSignal());
+  readonly sponsors = computed(() => this.sponsorsSignal());
+  readonly testimonials = computed(() => this.testimonialsSignal());
+  readonly impactStats = computed(() => this.impactStatsSignal());
 
   readonly totalStudents = computed(() => this.studentsSignal().length);
   readonly totalVolunteers = computed(() => this.volunteersSignal().length);
@@ -50,6 +65,8 @@ export class RegistrationService {
   readonly totalGalleryPets = computed(() => this.gallerySignal().length);
   readonly totalAdoptablePets = computed(() => this.adoptablePetsSignal().length);
   readonly totalAdoptionApplications = computed(() => this.adoptionApplicationsSignal().length);
+  readonly totalSponsors = computed(() => this.sponsorsSignal().length);
+  readonly totalTestimonials = computed(() => this.testimonialsSignal().length);
 
   // Lista oficial de cursos da ONG Mãos que Cuidam
   private readonly coursesList: Course[] = [
@@ -188,128 +205,161 @@ export class RegistrationService {
   ];
 
   // Grandes Patrocinadores Oficiais do Setor Pet
-  private readonly sponsorsList: Sponsor[] = [
-    {
-      id: 'sp-groomerpro',
-      name: 'GroomerPro Cosméticos & Spa Pet',
-      category: 'Diamante',
-      tagline: 'Líder em Cosméticos Hipoalergênicos e Tratamento da Pelagem',
-      description: 'Fornecedora oficial de 100% dos shampoos veganos, máscaras de hidratação e finalizadores dermatológicos utilizados nas aulas práticas da ONG.',
-      logoIcon: '🧼',
-      websiteUrl: 'https://groomerpro.com.br',
-      contributionType: 'Insumos Cosméticos & Manutenção de Laboratório',
-      studentsSupported: 240,
-      sinceYear: 2023
-    },
-    {
-      id: 'sp-titanium',
-      name: 'Titanium Blades & Pro Scissors',
-      category: 'Diamante',
-      tagline: 'Alta Precisão e Tecnologia em Tesouras e Lâminas Alemãs',
-      description: 'Equipa todas as bancadas dos nossos cursos com tesouras curvas, retas, tubarão e kits completos de lâminas profissionais de alta durabilidade.',
-      logoIcon: '✂️',
-      websiteUrl: 'https://titaniumblades.com',
-      contributionType: 'Kits de Tesouras Profissionais & Máquinas de Tosa',
-      studentsSupported: 180,
-      sinceYear: 2023
-    },
-    {
-      id: 'sp-petcare',
-      name: 'Rede PetCare Centros Veterinários & Diagnóstico',
-      category: 'Ouro',
-      tagline: 'Excelência em Medicina Veterinária e Cuidado Integral',
-      description: 'Disponibiliza médicos veterinários residentes para suporte em aula, triagem preventiva dos pets e contratação direta dos alunos formados.',
-      logoIcon: '🏥',
-      websiteUrl: 'https://petcare.vet.br',
-      contributionType: 'Acompanhamento & Encaminhamento de Empregos',
-      studentsSupported: 160,
-      sinceYear: 2024
-    },
-    {
-      id: 'sp-aquadry',
-      name: 'AquaDry Sopradores & Banheiras Inox',
-      category: 'Ouro',
-      tagline: 'Engenharia Silenciosa e Ergonômica para Banho & Tosa',
-      description: 'Estruturou nossas salas com banheiras reguláveis em aço inox 304 e sopradores de baixo decibéis com tecnologia antiestresse para os cães.',
-      logoIcon: '🚿',
-      websiteUrl: 'https://aquadrypet.com.br',
-      contributionType: 'Infraestrutura de Laboratório & Secadores Silenciosos',
-      studentsSupported: 130,
-      sinceYear: 2024
-    },
-    {
-      id: 'sp-nutripet',
-      name: 'NutriPet Nutrição Super Premium',
-      category: 'Prata',
-      tagline: 'Nutrição Balanceada e Bem-Estar Canino e Felino',
-      description: 'Oferece petiscos funcionais de reforço positivo para treino de manejo amigável durante o banho e doa ração para protetores atendidos.',
-      logoIcon: '🍖',
-      websiteUrl: 'https://nutripet.com.br',
-      contributionType: 'Alimentação & Reforço Positivo em Aula',
-      studentsSupported: 95,
-      sinceYear: 2025
-    },
-    {
-      id: 'sp-mundoanimal',
-      name: 'Mundo Animal Grooming & Pet Shops',
-      category: 'Prata',
-      tagline: 'Rede com mais de 40 lojas em todo o estado',
-      description: 'Principal empresa contratante dos nossos formandos, concedendo prioridade de contratação para os alunos certificados pela ONG.',
-      logoIcon: '🏬',
-      websiteUrl: 'https://mundoanimalpet.com.br',
-      contributionType: 'Programa Jovem Groomer & Contratação Efetiva',
-      studentsSupported: 150,
-      sinceYear: 2024
-    },
-    {
-      id: 'sp-groomertech',
-      name: 'GroomerTech Software & Gestão Pet',
-      category: 'Parceiro Técnico',
-      tagline: 'Sistemas de Agendamento e Gestão para Negócios Pet',
-      description: 'Concede 1 ano de acesso 100% gratuito ao seu software de gestão para todos os formandos que abrem seu próprio Pet Móvel ou Pet Shop.',
-      logoIcon: '💻',
-      websiteUrl: 'https://groomertech.io',
-      contributionType: 'Licenças Gratuitas de Tecnologia para Empreendedores',
-      studentsSupported: 75,
-      sinceYear: 2025
-    }
-  ];
+  private getSeedSponsors(): Sponsor[] {
+    return [
+      {
+        id: 'sp-groomerpro',
+        name: 'GroomerPro Cosméticos & Spa Pet',
+        category: 'Diamante',
+        badgeLabel: '⭐ Apoiador Oficial',
+        tagline: 'Líder em Cosméticos Hipoalergênicos e Tratamento da Pelagem',
+        description: 'Fornecedora oficial de 100% dos shampoos veganos, máscaras de hidratação e finalizadores dermatológicos utilizados nas aulas práticas da ONG.',
+        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="gp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f472b6"/><stop offset="100%" stop-color="%23ec4899"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23fdf2f8"/><circle cx="50" cy="50" r="30" fill="url(%23gp)"/><path d="M42 38c-3 0-5 2-5 5 0 6 13 18 13 18s13-12 13-18c0-3-2-5-5-5-3 0-6 3-8 6-2-3-5-6-8-6z" fill="%23ffffff"/></svg>',
+        websiteUrl: 'https://groomerpro.com.br',
+        contributionType: 'Insumos Cosméticos & Manutenção de Laboratório',
+        studentsSupported: 240
+      },
+      {
+        id: 'sp-titanium',
+        name: 'Titanium Blades & Pro Scissors',
+        category: 'Diamante',
+        badgeLabel: '⭐ Cota Diamante',
+        tagline: 'Alta Precisão e Tecnologia em Tesouras e Lâminas Alemãs',
+        description: 'Equipa todas as bancadas dos nossos cursos com tesouras curvas, retas, tubarão e kits completos de lâminas profissionais de alta durabilidade.',
+        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="tb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23d49a37"/><stop offset="100%" stop-color="%23132a47"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23fef7ec"/><circle cx="50" cy="50" r="30" fill="url(%23tb)"/><path d="M40 35l20 30m0-30L40 65" stroke="%23ffffff" stroke-width="6" stroke-linecap="round"/></svg>',
+        websiteUrl: 'https://titaniumblades.com',
+        contributionType: 'Kits de Tesouras Profissionais & Máquinas de Tosa',
+        studentsSupported: 180
+      },
+      {
+        id: 'sp-petcare',
+        name: 'Rede PetCare Centros Veterinários & Diagnóstico',
+        category: 'Ouro',
+        badgeLabel: '⭐ Cota Ouro',
+        tagline: 'Excelência em Medicina Veterinária e Cuidado Integral',
+        description: 'Disponibiliza médicos veterinários residentes para suporte em aula, triagem preventiva dos pets e contratação direta dos alunos formados.',
+        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="pc" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%230ea5e9"/><stop offset="100%" stop-color="%230284c7"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23f0f9ff"/><circle cx="50" cy="50" r="30" fill="url(%23pc)"/><path d="M50 35v30M35 50h30" stroke="%23ffffff" stroke-width="7" stroke-linecap="round"/></svg>',
+        websiteUrl: 'https://petcare.vet.br',
+        contributionType: 'Acompanhamento & Encaminhamento de Empregos',
+        studentsSupported: 160
+      },
+      {
+        id: 'sp-aquadry',
+        name: 'AquaDry Sopradores & Banheiras Inox',
+        category: 'Ouro',
+        badgeLabel: '⭐ Cota Ouro',
+        tagline: 'Engenharia Silenciosa e Ergonômica para Banho & Tosa',
+        description: 'Estruturou nossas salas com banheiras reguláveis em aço inox 304 e sopradores de baixo decibéis com tecnologia antiestresse para os cães.',
+        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="ad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2306b6d4"/><stop offset="100%" stop-color="%230891b2"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23ecfeff"/><circle cx="50" cy="50" r="30" fill="url(%23ad)"/><path d="M50 32c-7 10-15 17-15 24a15 15 0 0 0 30 0c0-7-8-14-15-24z" fill="%23ffffff"/></svg>',
+        websiteUrl: 'https://aquadrypet.com.br',
+        contributionType: 'Infraestrutura de Laboratório & Secadores Silenciosos',
+        studentsSupported: 130
+      },
+      {
+        id: 'sp-nutripet',
+        name: 'NutriPet Nutrição Super Premium',
+        category: 'Prata',
+        badgeLabel: '⭐ Cota Prata',
+        tagline: 'Nutrição Balanceada e Bem-Estar Canino e Felino',
+        description: 'Oferece petiscos funcionais de reforço positivo para treino de manejo amigável durante o banho e doa ração para protetores atendidos.',
+        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="np" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f59e0b"/><stop offset="100%" stop-color="%23d97706"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23fffbeb"/><circle cx="50" cy="50" r="30" fill="url(%23np)"/><ellipse cx="50" cy="58" rx="14" ry="10" fill="%23ffffff"/><circle cx="38" cy="44" r="5" fill="%23ffffff"/><circle cx="62" cy="44" r="5" fill="%23ffffff"/><circle cx="45" cy="36" r="4.5" fill="%23ffffff"/><circle cx="55" cy="36" r="4.5" fill="%23ffffff"/></svg>',
+        websiteUrl: 'https://nutripet.com.br',
+        contributionType: 'Alimentação & Reforço Positivo em Aula',
+        studentsSupported: 95
+      },
+      {
+        id: 'sp-mundoanimal',
+        name: 'Mundo Animal Grooming & Pet Shops',
+        category: 'Prata',
+        badgeLabel: '⭐ Cota Prata',
+        tagline: 'Rede com mais de 40 lojas em todo o estado',
+        description: 'Principal empresa contratante dos nossos formandos, concedendo prioridade de contratação para os alunos certificados pela ONG.',
+        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="ma" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2310b981"/><stop offset="100%" stop-color="%23059669"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23ecfdf5"/><circle cx="50" cy="50" r="30" fill="url(%23ma)"/><path d="M36 44h28v22H36z" fill="%23ffffff"/><path d="M32 44l18-12 18 12" stroke="%23ffffff" stroke-width="4" fill="none" stroke-linejoin="round"/></svg>',
+        websiteUrl: 'https://mundoanimalpet.com.br',
+        contributionType: 'Programa Jovem Groomer & Contratação Efetiva',
+        studentsSupported: 150
+      },
+      {
+        id: 'sp-groomertech',
+        name: 'GroomerTech Software & Gestão Pet',
+        category: 'Parceiro Técnico',
+        badgeLabel: '⭐ Parceiro Técnico',
+        tagline: 'Sistemas de Agendamento e Gestão para Negócios Pet',
+        description: 'Concede 1 ano de acesso 100% gratuito ao seu software de gestão para todos os formandos que abrem seu próprio Pet Móvel ou Pet Shop.',
+        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="gt" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%238b5cf6"/><stop offset="100%" stop-color="%236d28d9"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23f5f3ff"/><circle cx="50" cy="50" r="30" fill="url(%23gt)"/><path d="M40 42h20v16H40z" fill="%23ffffff"/><path d="M45 58v4h10v-4" stroke="%23ffffff" stroke-width="3"/></svg>',
+        websiteUrl: 'https://groomertech.io',
+        contributionType: 'Licenças Gratuitas de Tecnologia para Empreendedores',
+        studentsSupported: 75
+      }
+    ];
+  }
 
-  private readonly testimonialsList: Testimonial[] = [
-    {
-      id: 'dep-1',
-      authorName: 'Camila Rodrigues',
-      courseCompleted: 'Tosa Comercial & Tesoura',
-      year: 2025,
-      avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
-      story: 'A ONG Mãos que Cuidam mudou o rumo da minha vida. Eu estava desempregada há quase um ano. Os professores me ensinaram com uma paciência incrível. Hoje trabalho com carteira assinada em uma grande clínica pet e sustento minha família!',
-      currentRole: 'Tosadora Profissional no Pet Care Jardins',
-      rating: 5
-    },
-    {
-      id: 'dep-2',
-      authorName: 'Marcos Vinícius Andrade',
-      courseCompleted: 'Formação Básica em Banho & Higienização',
-      year: 2025,
-      avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-      story: 'O respeito e o amor que a ONG ensina em relação aos animais é algo que não se vê em nenhum outro curso pago. Aprendi a lidar com cães assustados sem usar força ou sedação. Montei meu banho e tosa domiciliar com apoio deles!',
-      currentRole: 'Empreendedor Autônomo (Pet Móvel Carinho)',
-      rating: 5
-    },
-    {
-      id: 'dep-3',
-      authorName: 'Renata Silveira',
-      courseCompleted: 'Tosa Comercial & Empreendedorismo',
-      year: 2024,
-      avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-      story: 'Levei meu cachorrinho resgatado para o banho social e fiquei apaixonada pela ONG. Me inscrevi no curso de tosa e me formei com nota máxima. Hoje sou voluntária nos fins de semana e dou aula prática para as novas turmas!',
-      currentRole: 'Instrutora Voluntária & Groomer',
-      rating: 5
-    }
-  ];
+  private getSeedTestimonials(): Testimonial[] {
+    return [
+      {
+        id: 'dep-1',
+        authorName: 'Camila Rodrigues',
+        courseCompleted: 'Especialização em Tosa Comercial & Tesoura',
+        year: 2025,
+        avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
+        story: 'A ONG Mãos que Cuidam mudou o rumo da minha vida. Eu morava no bairro Barra em Macaé e estava desempregada há quase um ano. Os professores me ensinaram com uma paciência incrível. Hoje trabalho com carteira assinada em uma grande clínica pet nos Cavaleiros e sustento minha família com dignidade!',
+        currentRole: 'Tosadora Profissional (Macaé / RJ)',
+        rating: 5
+      },
+      {
+        id: 'dep-2',
+        authorName: 'Marcos Vinícius Andrade',
+        courseCompleted: 'Formação Básica em Banho & Empreendedorismo Pet',
+        year: 2025,
+        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+        story: 'O respeito e o amor que a ONG ensina em relação aos animais é algo único. Aprendi a lidar com cães assustados sem usar força ou sedação. Com o apoio da equipe, montei meu Pet Móvel atendendo os bairros Imbetiba, Glória e Parque Aeroporto!',
+        currentRole: 'Empreendedor Autônomo (Pet Móvel Carinho - Macaé)',
+        rating: 5
+      },
+      {
+        id: 'dep-3',
+        authorName: 'Renata Silveira',
+        courseCompleted: 'Tosa Bebê & Primeiros Socorros Pet',
+        year: 2024,
+        avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+        story: 'Levei meu cachorrinho resgatado para o banho social gratuito e fiquei apaixonada pela ONG. Me inscrevi no curso, me formei e hoje além de trabalhar na área, sou voluntária nos fins de semana ajudando nas aulas práticas para as novas turmas!',
+        currentRole: 'Instrutora Voluntária & Groomer',
+        rating: 5
+      },
+      {
+        id: 'dep-4',
+        authorName: 'Dona Sônia Regina (Tutora)',
+        courseCompleted: 'Atendimento do Banho Social Gratuito',
+        year: 2025,
+        avatarUrl: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=150&auto=format&fit=crop&q=80',
+        story: 'Resgatei 2 cachorrinhos da rua com pelos muito embolados e machucados. Eu não tinha condições de pagar pet shop. A equipe da ONG recebeu a gente com um carinho que me fez chorar. Eles trataram meus bichinhos como príncipes!',
+        currentRole: 'Moradora de Macaé (Bairro Barra)',
+        rating: 5
+      }
+    ];
+  }
+
+  private getSeedImpactStats(): ImpactStat[] {
+    return [
+      { id: 'stat-1', number: '+520', label: 'Alunos Capacitados', sublabel: 'com formação prática de excelência', icon: 'graduation' },
+      { id: 'stat-2', number: '+2.850', label: 'Banhos & Tosas Sociais', sublabel: 'em cães resgatados e de famílias carentes', icon: 'paw' },
+      { id: 'stat-3', number: '94%', label: 'Índice de Inserção', sublabel: 'trabalhando ou com negócio próprio', icon: 'trending' },
+      { id: 'stat-4', number: '100%', label: 'Gratuito & Social', sublabel: 'sem custos para alunos de baixa renda', icon: 'heart' }
+    ];
+  }
 
   constructor() {
     this.loadFromStorage();
+  }
+
+  getImpactStats(): ImpactStat[] {
+    return [...this.impactStatsSignal()];
+  }
+
+  updateImpactStats(stats: ImpactStat[]): void {
+    this.impactStatsSignal.set(stats);
+    this.saveImpactStats(stats);
+    this.firebaseService.saveDocument('configuracoes', 'impact_stats', { stats });
   }
 
   getCourses(): Course[] {
@@ -321,11 +371,54 @@ export class RegistrationService {
   }
 
   getSponsors(): Sponsor[] {
-    return [...this.sponsorsList];
+    return [...this.sponsorsSignal()];
+  }
+
+  addSponsor(data: Omit<Sponsor, 'id'>): Sponsor {
+    const newSp: Sponsor = {
+      ...data,
+      id: 'sp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)
+    };
+    const updated = [newSp, ...this.sponsorsSignal()];
+    this.sponsorsSignal.set(updated);
+    this.saveSponsors(updated);
+    this.firebaseService.saveDocument('patrocinadores', newSp.id, newSp);
+    return newSp;
+  }
+
+  updateSponsor(id: string, data: Partial<Sponsor>): void {
+    const updated = this.sponsorsSignal().map(s => s.id === id ? { ...s, ...data } : s);
+    this.sponsorsSignal.set(updated);
+    this.saveSponsors(updated);
+    this.firebaseService.saveDocument('patrocinadores', id, data);
+  }
+
+  deleteSponsor(id: string): void {
+    const updated = this.sponsorsSignal().filter(s => s.id !== id);
+    this.sponsorsSignal.set(updated);
+    this.saveSponsors(updated);
   }
 
   getTestimonials(): Testimonial[] {
-    return [...this.testimonialsList];
+    return [...this.testimonialsSignal()];
+  }
+
+  addTestimonial(data: Omit<Testimonial, 'id'>): Testimonial {
+    const newDep: Testimonial = {
+      ...data,
+      id: 'dep_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)
+    };
+    const updated = [newDep, ...this.testimonialsSignal()];
+    this.testimonialsSignal.set(updated);
+    this.saveTestimonials(updated);
+    this.firebaseService.saveDocument('depoimentos', newDep.id, newDep);
+    return newDep;
+  }
+
+  deleteTestimonial(id: string): void {
+    const updated = this.testimonialsSignal().filter(d => d.id !== id);
+    this.testimonialsSignal.set(updated);
+    this.saveTestimonials(updated);
   }
 
   getGalleryItems(): PetGalleryItem[] {
@@ -348,6 +441,9 @@ export class RegistrationService {
     const updated = [newPet, ...this.adoptablePetsSignal()];
     this.adoptablePetsSignal.set(updated);
     this.saveAdoptablePets(updated);
+
+    // Sincronização em Nuvem (Firestore)
+    this.firebaseService.saveDocument('pets_adocao', newPet.id, newPet);
     return newPet;
   }
 
@@ -363,6 +459,18 @@ export class RegistrationService {
     const updated = [newApp, ...this.adoptionApplicationsSignal()];
     this.adoptionApplicationsSignal.set(updated);
     this.saveAdoptionApplications(updated);
+
+    // Sincronização em Nuvem (Firestore) & E-mail
+    this.firebaseService.saveDocument('pedidos_adocao', newApp.id, newApp);
+    this.notificationService.sendEmail('template_novo_pedido_adocao', {
+      protocol: newApp.protocol,
+      petName: newApp.petName,
+      adopterName: newApp.adopterName,
+      adopterPhone: newApp.adopterPhone,
+      adopterEmail: newApp.adopterEmail,
+      motivation: newApp.motivation
+    });
+
     return newApp;
   }
 
@@ -370,6 +478,7 @@ export class RegistrationService {
     const updated = this.adoptablePetsSignal().map(p => p.id === id ? { ...p, status } : p);
     this.adoptablePetsSignal.set(updated);
     this.saveAdoptablePets(updated);
+    this.firebaseService.saveDocument('pets_adocao', id, { status });
   }
 
   deleteAdoptablePet(id: string): void {
@@ -379,17 +488,18 @@ export class RegistrationService {
   }
 
   // --- GALERIA ANTES & DEPOIS ---
-  addGalleryItem(item: Omit<PetGalleryItem, 'id' | 'likesCount' | 'date'>): PetGalleryItem {
+  addGalleryItem(item: Omit<PetGalleryItem, 'id' | 'date'> & { date?: string; likesCount?: number }): PetGalleryItem {
     const newItem: PetGalleryItem = {
       ...item,
       id: 'gal_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-      date: new Date().toISOString(),
-      likesCount: 1
+      date: item.date || new Date().toISOString(),
+      likesCount: item.likesCount !== undefined ? item.likesCount : 1
     };
 
     const updated = [newItem, ...this.gallerySignal()];
     this.gallerySignal.set(updated);
     this.saveGallery(updated);
+    this.firebaseService.saveDocument('galeria_transformacoes', newItem.id, newItem);
     return newItem;
   }
 
@@ -400,6 +510,12 @@ export class RegistrationService {
       }
       return item;
     });
+    this.gallerySignal.set(updated);
+    this.saveGallery(updated);
+  }
+
+  deleteGalleryItem(id: string): void {
+    const updated = this.gallerySignal().filter(item => item.id !== id);
     this.gallerySignal.set(updated);
     this.saveGallery(updated);
   }
@@ -417,6 +533,8 @@ export class RegistrationService {
     const updated = [newProposal, ...this.sponsorProposalsSignal()];
     this.sponsorProposalsSignal.set(updated);
     this.saveProposals(updated);
+
+    this.firebaseService.saveDocument('propostas_patrocinio', newProposal.id, newProposal);
     return newProposal;
   }
 
@@ -433,6 +551,19 @@ export class RegistrationService {
     const updated = [newStudent, ...this.studentsSignal()];
     this.studentsSignal.set(updated);
     this.saveStudents(updated);
+
+    // Sincronização em Nuvem (Firestore) & E-mail
+    this.firebaseService.saveDocument('alunos', newStudent.id, newStudent);
+    this.notificationService.sendEmail('template_nova_inscricao', {
+      protocol: newStudent.protocol,
+      fullName: newStudent.fullName,
+      email: newStudent.email,
+      phone: newStudent.phone,
+      courseId: newStudent.courseId,
+      preferredShift: newStudent.preferredShift,
+      city: newStudent.city
+    });
+
     return newStudent;
   }
 
@@ -440,6 +571,7 @@ export class RegistrationService {
     const updated = this.studentsSignal().map(std => std.id === id ? { ...std, status } : std);
     this.studentsSignal.set(updated);
     this.saveStudents(updated);
+    this.firebaseService.saveDocument('alunos', id, { status });
   }
 
   deleteStudent(id: string): void {
@@ -461,6 +593,8 @@ export class RegistrationService {
     const updated = [newVol, ...this.volunteersSignal()];
     this.volunteersSignal.set(updated);
     this.saveVolunteers(updated);
+
+    this.firebaseService.saveDocument('voluntarios', newVol.id, newVol);
     return newVol;
   }
 
@@ -468,6 +602,7 @@ export class RegistrationService {
     const updated = this.volunteersSignal().map(v => v.id === id ? { ...v, status } : v);
     this.volunteersSignal.set(updated);
     this.saveVolunteers(updated);
+    this.firebaseService.saveDocument('voluntarios', id, { status });
   }
 
   deleteVolunteer(id: string): void {
@@ -489,6 +624,8 @@ export class RegistrationService {
     const updated = [newPet, ...this.petsSignal()];
     this.petsSignal.set(updated);
     this.savePets(updated);
+
+    this.firebaseService.saveDocument('pets_banho_social', newPet.id, newPet);
     return newPet;
   }
 
@@ -496,6 +633,7 @@ export class RegistrationService {
     const updated = this.petsSignal().map(p => p.id === id ? { ...p, status } : p);
     this.petsSignal.set(updated);
     this.savePets(updated);
+    this.firebaseService.saveDocument('pets_banho_social', id, { status });
   }
 
   deletePet(id: string): void {
@@ -561,6 +699,33 @@ export class RegistrationService {
       if (storedAdoptionApps) {
         this.adoptionApplicationsSignal.set(JSON.parse(storedAdoptionApps));
       }
+
+      const storedSponsors = localStorage.getItem(this.SPONSORS_KEY);
+      if (storedSponsors) {
+        this.sponsorsSignal.set(JSON.parse(storedSponsors));
+      } else {
+        const seed = this.getSeedSponsors();
+        this.sponsorsSignal.set(seed);
+        this.saveSponsors(seed);
+      }
+
+      const storedTestimonials = localStorage.getItem(this.TESTIMONIALS_KEY);
+      if (storedTestimonials) {
+        this.testimonialsSignal.set(JSON.parse(storedTestimonials));
+      } else {
+        const seed = this.getSeedTestimonials();
+        this.testimonialsSignal.set(seed);
+        this.saveTestimonials(seed);
+      }
+
+      const storedStats = localStorage.getItem(this.IMPACT_STATS_KEY);
+      if (storedStats) {
+        this.impactStatsSignal.set(JSON.parse(storedStats));
+      } else {
+        const seed = this.getSeedImpactStats();
+        this.impactStatsSignal.set(seed);
+        this.saveImpactStats(seed);
+      }
     } catch (e) {
       console.warn('Erro ao carregar do localStorage:', e);
       this.studentsSignal.set(this.getSeedStudents());
@@ -568,7 +733,22 @@ export class RegistrationService {
       this.petsSignal.set(this.getSeedPets());
       this.gallerySignal.set(this.getSeedGallery());
       this.adoptablePetsSignal.set(this.getSeedAdoptablePets());
+      this.sponsorsSignal.set(this.getSeedSponsors());
+      this.testimonialsSignal.set(this.getSeedTestimonials());
+      this.impactStatsSignal.set(this.getSeedImpactStats());
     }
+  }
+
+  private saveImpactStats(data: ImpactStat[]): void {
+    try { localStorage.setItem(this.IMPACT_STATS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+  }
+
+  private saveTestimonials(data: Testimonial[]): void {
+    try { localStorage.setItem(this.TESTIMONIALS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+  }
+
+  private saveSponsors(data: Sponsor[]): void {
+    try { localStorage.setItem(this.SPONSORS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
   }
 
   private saveStudents(data: StudentRegistration[]): void {
@@ -635,15 +815,17 @@ export class RegistrationService {
         isVaccinated: true,
         isDewormed: true,
         isSpecialNeeds: false,
+        aggressionHistory: 'Sem histórico de agressividade (Muito dócil e sociável)',
         temperament: 'Dócil, afetuoso e calmo em apartamento',
-        story: 'Pipoca foi resgatado e totalmente higienizado e cuidado pelos alunos da ONG. Agora está pronto para encontrar uma família cheia de amor!',
+        story: 'Pipoca foi resgatado e totalmente higienizado e cuidado pelos alunos da ONG. Agora está pronto para encontrar uma família cheia de amor em Macaé!',
         donorName: 'ONG Mãos que Cuidam',
-        donorPhone: '(11) 99999-8888',
+        donorPhone: '(22) 99848-1112',
         donorEmail: 'contato@maosquecuidam.org.br',
         donorType: 'ONG Mãos que Cuidam',
-        city: 'São Paulo',
-        neighborhood: 'Vila Esperança',
+        city: 'Macaé',
+        neighborhood: 'Barra',
         status: 'Disponível',
+        protectionDeclaration: true,
         createdAt: '2026-08-28T10:00:00.000Z'
       },
       {
@@ -660,15 +842,17 @@ export class RegistrationService {
         isVaccinated: true,
         isDewormed: true,
         isSpecialNeeds: false,
+        aggressionHistory: 'Sem histórico de agressividade (Mansa e brincalhona)',
         temperament: 'Super ronronante, brincalhona e acostumada com outros gatos',
         story: 'Luna foi acolhida por uma protetora parceira da ONG após ser encontrada filhote. É extremamente mansa e ama dormir no colo.',
         donorName: 'Patrícia Helena (Protetora)',
-        donorPhone: '(11) 99999-8888',
+        donorPhone: '(22) 99848-1112',
         donorEmail: 'patricia.resgates@email.com',
         donorType: 'Protetor Independente',
-        city: 'São Paulo',
-        neighborhood: 'Pinheiros',
+        city: 'Macaé',
+        neighborhood: 'Cavaleiros',
         status: 'Disponível',
+        protectionDeclaration: true,
         createdAt: '2026-08-29T15:30:00.000Z'
       },
       {
@@ -685,15 +869,17 @@ export class RegistrationService {
         isVaccinated: true,
         isDewormed: true,
         isSpecialNeeds: false,
+        aggressionHistory: 'Sem histórico de agressividade (Sociável com outros cães)',
         temperament: 'Alegre, sociável com outros cães e apaixonado por passeios',
         story: 'Max é o famoso vira-lata caramelo brasileiro: fiel, inteligente e muito companheiro. Recebeu banho e cuidados em aula e espera um quintal para brincar.',
         donorName: 'Marcos Vinícius',
-        donorPhone: '(11) 99999-8888',
+        donorPhone: '(22) 99848-1112',
         donorEmail: 'marcos.tutor@email.com',
         donorType: 'Tutor Temporário',
-        city: 'São Paulo',
+        city: 'Macaé',
         neighborhood: 'Centro',
         status: 'Disponível',
+        protectionDeclaration: true,
         createdAt: '2026-08-30T11:00:00.000Z'
       },
       {
@@ -710,16 +896,18 @@ export class RegistrationService {
         isVaccinated: true,
         isDewormed: true,
         isSpecialNeeds: false,
+        aggressionHistory: 'Sem histórico de agressividade (Calma e carinhosa com idosos)',
         temperament: 'Tranquila, adora uma caminha quentinha e quase não late',
         story: 'Belinha é ideal para pessoas idosas ou quem busca uma companheira sossegada para assistir TV juntinho no sofá. Já fez tosa bebê na ONG!',
         donorName: 'Dona Nair Silveira',
-        donorPhone: '(11) 99999-8888',
+        donorPhone: '(22) 99848-1112',
         donorEmail: 'nair.silveira@email.com',
         donorType: 'Protetor Independente',
-        city: 'São Paulo',
-        neighborhood: 'Tatuapé',
+        city: 'Macaé',
+        neighborhood: 'Praia Campista',
         status: 'Disponível',
-        createdAt: '2026-09-01T09:00:00.000Z'
+        protectionDeclaration: true,
+        createdAt: '2026-08-31T09:00:00.000Z'
       }
     ];
   }

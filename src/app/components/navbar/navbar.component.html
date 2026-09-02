@@ -21,14 +21,28 @@
         <span>⭐ Patrocinadores</span>
       </a>
       <span class="banner-divider">|</span>
+      <a routerLink="/consultar" class="banner-link">
+        <span>🔍 Consultar Inscrição</span>
+      </a>
+      <span class="banner-divider">|</span>
       <a routerLink="/doar" class="banner-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
         <span>Apoie com PIX</span>
       </a>
       <span class="banner-divider">|</span>
-      <a routerLink="/admin" class="banner-link admin-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/></svg>
-        <span>Painel</span>
+      <!-- Controles de Acessibilidade -->
+      <div class="accessibility-controls-top" aria-label="Acessibilidade">
+        <button class="access-btn" (click)="accessibility.decreaseFont()" title="Diminuir tamanho da fonte">A-</button>
+        <button class="access-btn" (click)="accessibility.resetFont()" title="Tamanho normal da fonte">A</button>
+        <button class="access-btn" (click)="accessibility.increaseFont()" title="Aumentar tamanho da fonte">A+</button>
+        <button class="access-btn contrast-toggle" (click)="accessibility.toggleHighContrast()" [class.active]="accessibility.isHighContrast()" title="Alternar Alto Contraste">
+          🌓
+        </button>
+      </div>
+      <span class="banner-divider">|</span>
+      <a routerLink="/admin" class="banner-link admin-pill" title="Acesso Exclusivo para a Equipe e Instrutores">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>🔒 Área do Colaborador</span>
       </a>
     </div>
   </div>
@@ -119,10 +133,11 @@
         <li><a routerLink="/adocao" (click)="closeMobileMenu()" routerLinkActive="active">🏡 Adoção & Doação de Animais</a></li>
         <li><a routerLink="/transformacoes" (click)="closeMobileMenu()" routerLinkActive="active">🐾 Galeria & Banho Grátis</a></li>
         <li><a routerLink="/cadastro" (click)="closeMobileMenu()" routerLinkActive="active">Portal de Inscrições</a></li>
+        <li><a routerLink="/consultar" (click)="closeMobileMenu()" routerLinkActive="active">🔍 Consultar Minha Inscrição</a></li>
         <li><a routerLink="/patrocinadores" (click)="closeMobileMenu()" routerLinkActive="active">⭐ Patrocinadores & Empresas</a></li>
         <li><a routerLink="/doar" (click)="closeMobileMenu()" routerLinkActive="active">Como Ajudar / Doações</a></li>
         <li><a routerLink="/contato" (click)="closeMobileMenu()" routerLinkActive="active">Contato & Localização</a></li>
-        <li><a routerLink="/admin" (click)="closeMobileMenu()" routerLinkActive="active" class="mobile-admin-link">⚙️ Painel de Gestão (Admin)</a></li>
+        <li><a routerLink="/admin" (click)="closeMobileMenu()" routerLinkActive="active" class="mobile-admin-link">🔒 Área do Colaborador</a></li>
       </ul>
       <div class="mobile-cta-box">
         <a routerLink="/cadastro" (click)="closeMobileMenu()" class="btn btn-primary" style="width: 100%;">

@@ -1,356 +1,1200 @@
-<!-- HEADER DO PAINEL DE GESTÃO -->
-<section class="admin-header-section">
-  <div class="container admin-header-flex">
-    <div>
-      <div class="section-tag" style="background: rgba(212, 154, 55, 0.15); border-color: rgba(212, 154, 55, 0.3); color: #f1cf94;">
-        <span>🔒 ÁREA ADMINISTRATIVA & COORDENAÇÃO</span>
+<!-- ================= CASO 1: NÃO AUTENTICADO -> TELA DE LOGIN ================= -->
+@if (!authService.isAuthenticated()) {
+  <section class="admin-login-section section-padding">
+    <div class="container">
+      <div class="admin-login-card card-modern animate-fade-in">
+        <div class="login-header">
+          <img src="assets/logo.jpg" alt="Logo ONG Mãos que Cuidam" class="login-logo">
+          <h2>Área do Colaborador</h2>
+          <p>Acesso exclusivo para Diretoria, Coordenação e Instrutores da ONG Mãos que Cuidam.</p>
+        </div>
+
+        @if (loginError()) {
+          <div class="login-error-alert animate-fade-in">
+            ⚠️ {{ loginError() }}
+          </div>
+        }
+
+        <form (ngSubmit)="onLogin()" class="login-form">
+          <div class="form-group">
+            <label class="form-label" for="adminEmail">E-mail Corporativo</label>
+            <input 
+              type="email" 
+              id="adminEmail" 
+              [ngModel]="loginEmail()" 
+              (ngModelChange)="loginEmail.set($event)" 
+              name="email" 
+              required 
+              placeholder="seuemail@maosquecuidam.org.br" 
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="adminPass">Senha de Acesso</label>
+            <input 
+              type="password" 
+              id="adminPass" 
+              [ngModel]="loginPassword()" 
+              (ngModelChange)="loginPassword.set($event)" 
+              name="password" 
+              required 
+              placeholder="Sua senha secreta" 
+              class="form-control">
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+            🔒 Entrar na Área do Colaborador
+          </button>
+        </form>
+
+        <div class="login-credentials-hint">
+          <span class="hint-title">💡 Acessos de Demonstração Pré-Configurados:</span>
+          <div class="hint-grid">
+            <div class="hint-box" (click)="loginEmail.set('admin@maosquecuidam.org.br'); loginPassword.set('admin')">
+              <strong>👑 Dono / Master:</strong>
+              <code>admin&#64;maosquecuidam.org.br</code>
+              <small>Senha: <strong>admin</strong> (Acesso Total + Gestão de Equipe)</small>
+            </div>
+            <div class="hint-box" (click)="loginEmail.set('coordenacao@maosquecuidam.org.br'); loginPassword.set('aluno')">
+              <strong>🎓 Coordenação:</strong>
+              <code>coordenacao&#64;maosquecuidam.org.br</code>
+              <small>Senha: <strong>aluno</strong> (Gestão de Inscrições)</small>
+            </div>
+          </div>
+        </div>
       </div>
-      <h1 class="admin-title">Painel de Gestão de Cadastros</h1>
-      <p class="admin-subtitle">Acompanhamento e triagem em tempo real de alunos, voluntários e pets cadastrados.</p>
     </div>
-
-    <div class="admin-top-actions">
-      <button class="btn btn-outline-gold" (click)="resetMockData()" title="Restaura os dados iniciais">
-        🔄 Restaurar Dados Modelo
-      </button>
-      <a routerLink="/cadastro" class="btn btn-primary">
-        + Nova Inscrição
-      </a>
+  </section>
+} @else {
+  <!-- ================= CASO 2: AUTENTICADO -> PAINEL COMPLETO ================= -->
+  <!-- TOAST DE NOTIFICAÇÃO -->
+  @if (toastMessage()) {
+    <div class="toast-notification animate-fade-in">
+      <span>{{ toastMessage() }}</span>
     </div>
-  </div>
-</section>
+  }
 
-<!-- TOAST FLUTUANTE -->
-@if (toastMessage()) {
-  <div class="toast-floating animate-fade-in">
-    <span>{{ toastMessage() }}</span>
-  </div>
-}
+  <!-- BANNER SUPERIOR DO PAINEL COM DADOS DO USUÁRIO LOGADO -->
+  <section class="admin-top-bar">
+    <div class="container">
+      <div class="admin-top-flex">
+        <div class="admin-user-badge">
+          <div class="user-avatar-circle">
+            {{ authService.currentUser()?.isOwner ? '👑' : '👤' }}
+          </div>
+          <div>
+            <div class="user-name-line">
+              <span class="live-dot-green" title="Conectado agora"></span>
+              <strong>{{ authService.currentUser()?.name }}</strong>
+              @if (authService.isOwner()) {
+                <span class="badge-owner">DIRETORIA / DONO</span>
+              } @else {
+                <span class="badge-staff">{{ authService.currentUser()?.role }}</span>
+              }
+            </div>
+            <div class="user-sub-details-line">
+              <span class="user-email-line">📧 Login: <strong>{{ authService.currentUser()?.email }}</strong></span>
+              <span class="user-login-time">🕒 Conectado em: {{ authService.currentUser()?.lastLogin ? (authService.currentUser()?.lastLogin | date:'dd/MM/yyyy às HH:mm:ss') : 'Hoje' }}</span>
+            </div>
+          </div>
+        </div>
 
-<!-- CONTEÚDO PRINCIPAL DO PAINEL -->
-<section class="admin-content-section section-padding">
-  <div class="container">
-    <!-- CARDS DE ESTATÍSTICAS RÁPIDAS -->
-    <div class="grid-3 stats-dashboard-grid">
-      <div class="dash-stat-card card-modern" [class.active-card]="activeView() === 'students'" (click)="setView('students')">
-        <div class="dash-stat-icon gold">🎓</div>
-        <div>
-          <span class="dash-stat-count">{{ registrationService.totalStudents() }}</span>
-          <span class="dash-stat-label">Alunos Inscritos</span>
+        <div class="admin-user-actions">
+          <button class="btn btn-outline-gold btn-sm" (click)="setView('logs')">
+            📋 Ver Histórico de Acessos
+          </button>
+          <button class="btn btn-outline-navy btn-sm" (click)="openPasswordModal(authService.currentUser()!)">
+            🔑 Trocar Minha Senha
+          </button>
+          <button class="btn btn-outline-navy btn-sm btn-logout" (click)="onLogout()">
+            🚪 Sair do Painel
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO DE RESUMO E CARDS DE MÉTRICAS -->
+  <section class="admin-dashboard-section section-padding">
+    <div class="container">
+      <!-- 5 CARDS DE ESTATÍSTICAS -->
+      <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));">
+        <div class="stat-card card-modern stat-students" (click)="setView('students')">
+          <div class="stat-icon">🎓</div>
+          <div class="stat-info">
+            <span class="stat-number">{{ registrationService.totalStudents() }}</span>
+            <span class="stat-label">Alunos Inscritos</span>
+          </div>
+        </div>
+
+        <div class="stat-card card-modern stat-volunteers" (click)="setView('volunteers')">
+          <div class="stat-icon">🤝</div>
+          <div class="stat-info">
+            <span class="stat-number">{{ registrationService.totalVolunteers() }}</span>
+            <span class="stat-label">Voluntários & Instrutores</span>
+          </div>
+        </div>
+
+        <div class="stat-card card-modern stat-pets" (click)="setView('pets')">
+          <div class="stat-icon">🐶</div>
+          <div class="stat-info">
+            <span class="stat-number">{{ registrationService.totalPets() }}</span>
+            <span class="stat-label">Pets para Banho Social</span>
+          </div>
+        </div>
+
+        <div class="stat-card card-modern stat-staff" (click)="setView('staff')">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <span class="stat-number">{{ authService.staffList().length }}</span>
+            <span class="stat-label">Equipe & Funcionários</span>
+          </div>
+        </div>
+
+        <div class="stat-card card-modern stat-logs" (click)="setView('logs')" style="border-left: 4px solid var(--color-gold);">
+          <div class="stat-icon">📋</div>
+          <div class="stat-info">
+            <span class="stat-number">{{ authService.accessLogs().length }}</span>
+            <span class="stat-label">Histórico de Acessos</span>
+          </div>
         </div>
       </div>
 
-      <div class="dash-stat-card card-modern" [class.active-card]="activeView() === 'volunteers'" (click)="setView('volunteers')">
-        <div class="dash-stat-icon navy">🤝</div>
-        <div>
-          <span class="dash-stat-count">{{ registrationService.totalVolunteers() }}</span>
-          <span class="dash-stat-label">Voluntários / Instrutores</span>
-        </div>
-      </div>
+      <!-- BARRA DE NAVEGAÇÃO ENTRE ABAS -->
+      <div class="admin-tab-bar card-modern">
+        <div class="tab-btn-group">
+          <button 
+            class="admin-tab-btn" 
+            [class.active]="activeView() === 'students'"
+            (click)="setView('students')">
+            <span>🎓 Alunos ({{ registrationService.totalStudents() }})</span>
+          </button>
 
-      <div class="dash-stat-card card-modern" [class.active-card]="activeView() === 'pets'" (click)="setView('pets')">
-        <div class="dash-stat-icon green">🐶</div>
-        <div>
-          <span class="dash-stat-count">{{ registrationService.totalPets() }}</span>
-          <span class="dash-stat-label">Pets para Banho Social</span>
-        </div>
-      </div>
-    </div>
+          <button 
+            class="admin-tab-btn" 
+            [class.active]="activeView() === 'volunteers'"
+            (click)="setView('volunteers')">
+            <span>🤝 Voluntários ({{ registrationService.totalVolunteers() }})</span>
+          </button>
 
-    <!-- BARRA DE CONTROLE & BUSCA -->
-    <div class="admin-control-bar card-modern">
-      <!-- Abas de visualização -->
-      <div class="view-switchers">
-        <button class="switch-btn" [class.active]="activeView() === 'students'" (click)="setView('students')">
-          🎓 Alunos ({{ registrationService.totalStudents() }})
-        </button>
-        <button class="switch-btn" [class.active]="activeView() === 'volunteers'" (click)="setView('volunteers')">
-          🤝 Voluntários ({{ registrationService.totalVolunteers() }})
-        </button>
-        <button class="switch-btn" [class.active]="activeView() === 'pets'" (click)="setView('pets')">
-          🐶 Pets Sociais ({{ registrationService.totalPets() }})
-        </button>
-      </div>
+          <button 
+            class="admin-tab-btn" 
+            [class.active]="activeView() === 'pets'"
+            (click)="setView('pets')">
+            <span>🐶 Pets Banho Social ({{ registrationService.totalPets() }})</span>
+          </button>
 
-      <!-- Campo de Busca e Filtro de Status -->
-      <div class="filter-inputs-group">
-        <div class="search-input-wrapper">
-          <input 
-            type="text" 
-            [(ngModel)]="searchQuery" 
-            placeholder="Buscar por nome, CPF ou protocolo..." 
-            class="form-control admin-search">
-        </div>
-
-        <select [(ngModel)]="statusFilter" class="form-select status-select">
-          <option value="all">Todos os Status</option>
-          <option value="Pendente">Pendente</option>
-          <option value="Em Análise">Em Análise</option>
-          <option value="Confirmado">Confirmado</option>
-          <option value="Concluído">Concluído</option>
-        </select>
-
-        <button class="btn btn-outline-navy" (click)="exportCurrentToCsv()" title="Exportar para Excel / CSV">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-          <span>Exportar CSV</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- ================= TABELA 1: ALUNOS ================= -->
-    @if (activeView() === 'students') {
-      <div class="table-responsive card-modern">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Protocolo</th>
-              <th>Nome do Aluno</th>
-              <th>Contato</th>
-              <th>Curso Desejado</th>
-              <th>Turno</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (filteredStudents().length === 0) {
-              <tr>
-                <td colspan="7" class="empty-table-cell">
-                  Nenhum aluno encontrado para a busca ou filtro selecionado.
-                </td>
-              </tr>
+          <button 
+            class="admin-tab-btn staff-tab-highlight" 
+            [class.active]="activeView() === 'staff'"
+            (click)="setView('staff')">
+            <span>👥 Equipe & Funcionários ({{ authService.staffList().length }})</span>
+            @if (authService.isOwner()) {
+              <span class="micro-badge-gold">👑 Total</span>
             }
-            @for (std of filteredStudents(); track std.id) {
+          </button>
+
+          <button 
+            class="admin-tab-btn" 
+            [class.active]="activeView() === 'logs'"
+            (click)="setView('logs')">
+            <span>📋 Histórico de Acessos & Logins ({{ authService.accessLogs().length }})</span>
+          </button>
+        </div>
+
+        <!-- FILTROS E EXPORTAÇÃO -->
+        <div class="admin-filter-bar">
+          <div class="search-input-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input 
+              type="text" 
+              [ngModel]="searchQuery()" 
+              (ngModelChange)="searchQuery.set($event)" 
+              placeholder="Buscar por nome, CPF ou função..." 
+              class="form-control admin-search">
+          </div>
+
+          @if (activeView() === 'students') {
+            <select [ngModel]="courseFilter()" (ngModelChange)="courseFilter.set($event)" class="form-select status-select">
+              <option value="all">Todos os Cursos</option>
+              @for (c of courses; track c.id) {
+                <option [value]="c.id">{{ c.title }}</option>
+              }
+            </select>
+
+            <select [ngModel]="shiftFilter()" (ngModelChange)="shiftFilter.set($event)" class="form-select status-select">
+              <option value="all">Todos os Turnos</option>
+              <option value="Manhã">Manhã</option>
+              <option value="Tarde">Tarde</option>
+              <option value="Noite">Noite</option>
+            </select>
+          }
+
+          @if (activeView() !== 'staff') {
+            <select [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)" class="form-select status-select">
+              <option value="all">Todos os Status</option>
+              <option value="Pendente">Pendente</option>
+              <option value="Em Análise">Em Análise</option>
+              <option value="Confirmado">Confirmado</option>
+              <option value="Concluído">Concluído</option>
+            </select>
+          }
+
+          @if (activeView() === 'students') {
+            <button class="btn btn-outline-navy" (click)="exportStudentsToExcel()" title="Exportar Alunos para Excel (.csv)">
+              <span>📊 Baixar Excel</span>
+            </button>
+            <button class="btn btn-outline-gold" (click)="openAttendanceModal('students')" title="Gerar Lista de Presença da Turma">
+              <span>🖨️ Lista de Presença</span>
+            </button>
+          }
+
+          @if (activeView() === 'volunteers') {
+            <button class="btn btn-outline-navy" (click)="exportVolunteersToExcel()" title="Exportar Voluntários para Excel (.csv)">
+              <span>📊 Baixar Excel</span>
+            </button>
+          }
+
+          @if (activeView() === 'pets') {
+            <button class="btn btn-outline-navy" (click)="exportPetsToExcel()" title="Exportar Pets para Excel (.csv)">
+              <span>📊 Baixar Excel</span>
+            </button>
+            <button class="btn btn-outline-gold" (click)="openAttendanceModal('pets')" title="Gerar Ficha de Atendimento do Banho">
+              <span>🖨️ Ficha de Atendimentos</span>
+            </button>
+          }
+
+          @if (activeView() === 'staff' && authService.isOwner()) {
+            <button class="btn btn-primary" (click)="openNewStaffModal()">
+              <span>+ Novo Colaborador</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- ================= TABELA 1: ALUNOS POR ORDEM CRONOLÓGICA DE INSCRIÇÃO ================= -->
+      @if (activeView() === 'students') {
+        <div class="queue-summary-banner card-modern mb-3">
+          <div class="queue-summary-flex">
+            <div>
+              <span class="queue-banner-title">🏆 Fila Prioritária de Inscrição (Ordem de Chegada)</span>
+              <p class="queue-banner-sub">Os primeiros cadastrados ocupam as 15 vagas titulares prioritárias de cada turma social.</p>
+            </div>
+            <div class="queue-metrics-pills">
+              <span class="badge badge-success" style="font-size: 0.85rem; padding: 6px 12px;">
+                🟢 Titulares Convocáveis: {{ titularStudentsCount() }}
+              </span>
+              <span class="badge badge-gold" style="font-size: 0.85rem; padding: 6px 12px;">
+                ⏳ Fila de Espera: {{ waitingListStudentsCount() }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive card-modern">
+          <table class="data-table">
+            <thead>
               <tr>
-                <td>
-                  <span class="protocol-chip">{{ std.protocol }}</span>
-                  <div class="table-date">{{ std.createdAt | date:'dd/MM/yy HH:mm' }}</div>
-                </td>
-                <td>
-                  <strong>{{ std.fullName }}</strong>
-                  <div class="table-sub">{{ std.cpf }} • {{ std.city }}/{{ std.neighborhood }}</div>
-                </td>
-                <td>
-                  <div>📱 {{ std.phone }}</div>
-                  <div class="table-sub">✉️ {{ std.email }}</div>
-                </td>
-                <td>
-                  <span class="course-badge-name">{{ std.courseName }}</span>
-                </td>
-                <td>
-                  <span class="shift-badge">{{ std.preferredShift }}</span>
-                </td>
-                <td>
-                  <select 
-                    [ngModel]="std.status" 
-                    (ngModelChange)="updateStudentStatus(std.id, $event)"
-                    class="status-pill-select"
-                    [class.st-confirmado]="std.status === 'Confirmado'"
-                    [class.st-pendente]="std.status === 'Pendente'"
-                    [class.st-analise]="std.status === 'Em Análise'">
-                    <option value="Pendente">Pendente</option>
-                    <option value="Em Análise">Em Análise</option>
-                    <option value="Confirmado">Confirmado</option>
-                    <option value="Concluído">Concluído</option>
-                  </select>
-                </td>
-                <td>
-                  <div class="action-btn-group">
-                    <button class="icon-action-btn view-btn" (click)="selectedStudent.set(std)" title="Ver Detalhes">
-                      👁️
-                    </button>
-                    <button class="icon-action-btn del-btn" (click)="deleteStudent(std.id, std.fullName)" title="Excluir">
-                      🗑️
-                    </button>
+                <th>Posição na Fila</th>
+                <th>Protocolo & Data</th>
+                <th>Nome do Aluno</th>
+                <th>Curso & Turno</th>
+                <th>Vaga</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (rankedStudents().length === 0) {
+                <tr>
+                  <td colspan="7" class="empty-table-cell">
+                    Nenhum aluno encontrado para os filtros selecionados.
+                  </td>
+                </tr>
+              }
+              @for (std of rankedStudents(); track std.id) {
+                <tr [class.row-titular]="std.isTitular" [class.row-waiting]="!std.isTitular">
+                  <td>
+                    <!-- BADGE DE POSIÇÃO -->
+                    @if (std.coursePosition === 1) {
+                      <span class="queue-rank-badge rank-gold">🏆 1º Lugar</span>
+                    } @else if (std.coursePosition === 2) {
+                      <span class="queue-rank-badge rank-silver">🥈 2º Lugar</span>
+                    } @else if (std.coursePosition === 3) {
+                      <span class="queue-rank-badge rank-bronze">🥉 3º Lugar</span>
+                    } @else if (std.isTitular) {
+                      <span class="queue-rank-badge rank-titular">✓ {{ std.coursePosition }}º Lugar</span>
+                    } @else {
+                      <span class="queue-rank-badge rank-waiting">⏳ Espera #{{ std.waitingListNumber }}</span>
+                    }
+                    <div class="table-sub" style="font-size: 0.72rem;">Geral: #{{ std.queuePosition }}</div>
+                  </td>
+                  <td>
+                    <span class="protocol-chip">{{ std.protocol }}</span>
+                    <div class="table-date">{{ std.createdAt | date:'dd/MM/yy HH:mm:ss' }}</div>
+                  </td>
+                  <td>
+                    <strong>{{ std.fullName }}</strong>
+                    <div class="table-sub">{{ std.cpf }} • 📱 {{ std.phone }}</div>
+                  </td>
+                  <td>
+                    <div class="course-badge-name">{{ std.courseName }}</div>
+                    <span class="shift-badge">{{ std.preferredShift }}</span>
+                  </td>
+                  <td>
+                    @if (std.isTitular) {
+                      <span class="badge badge-success">Vaga Titular</span>
+                    } @else {
+                      <span class="badge badge-gold">Lista de Espera</span>
+                    }
+                  </td>
+                  <td>
+                    <select 
+                      [ngModel]="std.status" 
+                      (ngModelChange)="updateStudentStatus(std.id, $event)"
+                      class="status-pill-select"
+                      [class.st-confirmado]="std.status === 'Confirmado'"
+                      [class.st-pendente]="std.status === 'Pendente'"
+                      [class.st-analise]="std.status === 'Em Análise'">
+                      <option value="Pendente">Pendente</option>
+                      <option value="Em Análise">Em Análise</option>
+                      <option value="Confirmado">Confirmado (Matriculado)</option>
+                      <option value="Concluído">Concluído</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div class="action-btn-group">
+                      <!-- Convocação Prioritária no WhatsApp -->
+                      <a [href]="getConvocationWhatsappLink(std)" target="_blank" class="btn btn-sm btn-primary" style="padding: 4px 8px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 3px;" title="Enviar Convocação Oficial de Matrícula no WhatsApp">
+                        📢 Convocar
+                      </a>
+                      <button class="btn btn-sm btn-outline-gold" (click)="openCertificateModal(std)" title="Emitir Certificado Oficial de Conclusão" style="padding: 4px 8px; font-size: 0.78rem;">
+                        🎓 Certificado
+                      </button>
+                      <a [href]="getWhatsappLink(std.phone, std.fullName)" target="_blank" class="icon-action-btn" style="background: rgba(37, 211, 102, 0.15); color: #25d366; text-decoration: none;" title="Conversar no WhatsApp">
+                        💬
+                      </a>
+                      <button class="icon-action-btn view-btn" (click)="selectedStudent.set(std)" title="Ver Detalhes">
+                        👁️
+                      </button>
+                      <button class="icon-action-btn del-btn" (click)="deleteStudent(std.id, std.fullName)" title="Excluir">
+                        🗑️
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- ================= TABELA 2: VOLUNTÁRIOS ================= -->
+      @if (activeView() === 'volunteers') {
+        <div class="table-responsive card-modern">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Protocolo</th>
+                <th>Nome</th>
+                <th>Profissão</th>
+                <th>Área de Apoio</th>
+                <th>Disponibilidade</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (filteredVolunteers().length === 0) {
+                <tr>
+                  <td colspan="7" class="empty-table-cell">Nenhum voluntário encontrado.</td>
+                </tr>
+              }
+              @for (vol of filteredVolunteers(); track vol.id) {
+                <tr>
+                  <td>
+                    <span class="protocol-chip">{{ vol.protocol }}</span>
+                    <div class="table-date">{{ vol.createdAt | date:'dd/MM/yy HH:mm' }}</div>
+                  </td>
+                  <td>
+                    <strong>{{ vol.fullName }}</strong>
+                    <div class="table-sub">📱 {{ vol.phone }} • ✉️ {{ vol.email }}</div>
+                  </td>
+                  <td>{{ vol.occupation }}</td>
+                  <td><span class="badge badge-gold">{{ vol.areaOfInterest }}</span></td>
+                  <td>{{ vol.availability }}</td>
+                  <td>
+                    <select 
+                      [ngModel]="vol.status" 
+                      (ngModelChange)="updateVolunteerStatus(vol.id, $event)"
+                      class="status-pill-select"
+                      [class.st-confirmado]="vol.status === 'Confirmado'"
+                      [class.st-analise]="vol.status === 'Em Análise'">
+                      <option value="Em Análise">Em Análise</option>
+                      <option value="Confirmado">Confirmado</option>
+                      <option value="Concluído">Concluído</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div class="action-btn-group">
+                      <a [href]="getWhatsappLink(vol.phone, vol.fullName)" target="_blank" class="icon-action-btn" style="background: rgba(37, 211, 102, 0.15); color: #25d366; text-decoration: none;" title="Chamar no WhatsApp">
+                        💬
+                      </a>
+                      <button class="icon-action-btn view-btn" (click)="selectedVolunteer.set(vol)">👁️</button>
+                      <button class="icon-action-btn del-btn" (click)="deleteVolunteer(vol.id, vol.fullName)">🗑️</button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- ================= TABELA 3: PETS SOCIAIS & AGENDA SEMANAL ================= -->
+      @if (activeView() === 'pets') {
+        <!-- Alternador de visualização Tabela vs Agenda Semanal -->
+        <div class="pet-view-mode-bar mb-3">
+          <div class="mode-toggle-group">
+            <button 
+              class="btn btn-sm" 
+              [class.btn-primary]="petViewMode() === 'table'" 
+              [class.btn-outline-navy]="petViewMode() !== 'table'" 
+              (click)="petViewMode.set('table')">
+              📋 Lista em Tabela ({{ filteredPets().length }})
+            </button>
+            <button 
+              class="btn btn-sm" 
+              [class.btn-primary]="petViewMode() === 'schedule'" 
+              [class.btn-outline-navy]="petViewMode() !== 'schedule'" 
+              (click)="petViewMode.set('schedule')">
+              📅 Agenda Semanal de Aulas Práticas
+            </button>
+          </div>
+        </div>
+
+        @if (petViewMode() === 'table') {
+          <div class="table-responsive card-modern">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Protocolo</th>
+                  <th>Nome do Pet</th>
+                  <th>Espécie & Raça</th>
+                  <th>Porte</th>
+                  <th>Dia de Aula</th>
+                  <th>Tutor & Contato</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (filteredPets().length === 0) {
+                  <tr>
+                    <td colspan="8" class="empty-table-cell">Nenhum pet cadastrado no filtro atual.</td>
+                  </tr>
+                }
+                @for (pet of filteredPets(); track pet.id) {
+                  <tr>
+                    <td>
+                      <span class="protocol-chip">{{ pet.protocol }}</span>
+                      <div class="table-date">{{ pet.createdAt | date:'dd/MM/yy HH:mm' }}</div>
+                    </td>
+                    <td>
+                      <strong>🐾 {{ pet.petName }}</strong>
+                      <div class="table-sub">{{ pet.petAge }}</div>
+                    </td>
+                    <td>{{ pet.petSpecies }} • {{ pet.petBreed }}</td>
+                    <td><span class="badge badge-navy">{{ pet.petSize }}</span></td>
+                    <td><span class="badge badge-gold">{{ pet.preferredDay }}</span></td>
+                    <td>
+                      <strong>{{ pet.tutorName }}</strong>
+                      <div class="table-sub">📱 {{ pet.tutorPhone }}</div>
+                    </td>
+                    <td>
+                      <select 
+                        [ngModel]="pet.status" 
+                        (ngModelChange)="updatePetStatus(pet.id, $event)"
+                        class="status-pill-select"
+                        [class.st-confirmado]="pet.status === 'Confirmado'"
+                        [class.st-pendente]="pet.status === 'Pendente'">
+                        <option value="Pendente">Pendente</option>
+                        <option value="Confirmado">Confirmado (Agendado)</option>
+                        <option value="Concluído">Banho Realizado</option>
+                      </select>
+                    </td>
+                    <td>
+                      <div class="action-btn-group">
+                        <a [href]="getWhatsappLink(pet.tutorPhone, pet.tutorName)" target="_blank" class="icon-action-btn" style="background: rgba(37, 211, 102, 0.15); color: #25d366; text-decoration: none;" title="Chamar no WhatsApp">
+                          💬
+                        </a>
+                        <button class="icon-action-btn view-btn" (click)="selectedPet.set(pet)">👁️</button>
+                        <button class="icon-action-btn del-btn" (click)="deletePet(pet.id, pet.petName)">🗑️</button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <!-- VISUALIZAÇÃO EM AGENDA SEMANAL DE AULAS PRÁTICAS -->
+          <div class="weekly-schedule-grid">
+            @for (day of weekDays; track day) {
+              <div class="schedule-column card-modern">
+                <div class="schedule-day-header">
+                  <strong>{{ day }}</strong>
+                  <span class="day-count-badge">{{ getPetsForDay(day).length }} pets</span>
+                </div>
+
+                <div class="schedule-pets-list">
+                  @if (getPetsForDay(day).length === 0) {
+                    <div class="empty-day-msg">Nenhum pet agendado</div>
+                  }
+                  @for (p of getPetsForDay(day); track p.id) {
+                    <div class="schedule-pet-card" (click)="selectedPet.set(p)">
+                      <div class="sched-pet-header">
+                        <strong>🐾 {{ p.petName }}</strong>
+                        <span class="badge badge-navy" style="font-size: 0.7rem;">{{ p.petSize }}</span>
+                      </div>
+                      <div class="sched-pet-sub">{{ p.petBreed }}</div>
+                      <div class="sched-tutor">👤 {{ p.tutorName }} (📱 {{ p.tutorPhone }})</div>
+                      <div class="sched-footer">
+                        <span class="sched-status">{{ p.status }}</span>
+                        <a [href]="getWhatsappLink(p.tutorPhone, p.tutorName)" target="_blank" (click)="$event.stopPropagation()" class="sched-wa-btn">
+                          💬 WhatsApp
+                        </a>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+
+      <!-- ================= TABELA 4: EQUIPE & FUNCIONÁRIOS ================= -->
+      @if (activeView() === 'staff') {
+        <div class="table-responsive card-modern">
+          @if (!authService.isOwner()) {
+            <div class="staff-readonly-banner p-3 mb-3">
+              <span>🔒 <strong>Modo Visualização:</strong> Somente a Diretoria / Dono tem permissão para cadastrar novos colaboradores ou redefinir senhas da equipe.</span>
+            </div>
+          }
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Cargo / Função</th>
+                <th>Nível de Acesso</th>
+                <th>Telefone</th>
+                <th>Status</th>
+                <th>Ações de Segurança</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (staff of filteredStaff(); track staff.id) {
+                <tr>
+                  <td>
+                    <strong>{{ staff.name }}</strong>
+                    <div class="table-sub">✉️ {{ staff.email }}</div>
+                  </td>
+                  <td>
+                    <span class="course-badge-name">{{ staff.role }}</span>
+                  </td>
+                  <td>
+                    @if (staff.isOwner) {
+                      <span class="badge badge-gold">👑 Dono / Master</span>
+                    } @else {
+                      <span class="badge badge-navy">👤 Colaborador</span>
+                    }
+                  </td>
+                  <td>📱 {{ staff.phone }}</td>
+                  <td>
+                    @if (staff.active) {
+                      <span class="badge badge-success">✓ Ativo</span>
+                    } @else {
+                      <span class="badge" style="background: #ef4444; color: #fff;">Inativo</span>
+                    }
+                  </td>
+                  <td>
+                    <div class="action-btn-group">
+                      <!-- Trocar Senha -->
+                      @if (authService.isOwner() || authService.currentUser()?.id === staff.id) {
+                        <button class="btn btn-sm btn-outline-gold" (click)="openPasswordModal(staff)" title="Alterar Senha">
+                          🔑 Senha
+                        </button>
+                      }
+
+                      <!-- Editar Dados -->
+                      @if (authService.isOwner()) {
+                        <button class="icon-action-btn view-btn" (click)="openEditStaffModal(staff)" title="Editar Dados & Cargo">
+                          ✏️
+                        </button>
+                        @if (!staff.isOwner) {
+                          <button class="icon-action-btn del-btn" (click)="deleteStaff(staff.id, staff.name)" title="Remover da Equipe">
+                            🗑️
+                          </button>
+                        }
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      <!-- ================= 5. TABELA DE HISTÓRICO DE ACESSOS & AUDITORIA DE LOGINS ================= -->
+      @if (activeView() === 'logs') {
+        <div class="admin-table-container card-modern animate-fade-in">
+          <div class="table-header-flex">
+            <div>
+              <h3>📋 Histórico Oficial de Acessos & Logins</h3>
+              <p class="table-desc">Registro seguro de auditoria com nome, e-mail de login, cargo e horário exato de cada entrada no sistema.</p>
+            </div>
+            <div class="table-header-actions">
+              <span class="badge badge-gold">🔒 Auditoria Ativa</span>
+            </div>
+          </div>
+
+          <table class="admin-data-table">
+            <thead>
+              <tr>
+                <th>Data & Horário de Entrada</th>
+                <th>Colaborador</th>
+                <th>Login / E-mail</th>
+                <th>Cargo / Função</th>
+                <th>Dispositivo / Segurança</th>
+                <th>Status da Sessão</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (log of authService.accessLogs(); track log.id) {
+                <tr>
+                  <td>
+                    <div style="font-weight: 700; color: var(--color-primary);">
+                      🕒 {{ log.accessedAt | date:'dd/MM/yyyy' }}
+                    </div>
+                    <small style="color: #64748b; font-weight: 600;">às {{ log.accessedAt | date:'HH:mm:ss' }}</small>
+                  </td>
+                  <td>
+                    <div class="user-avatar-inline" style="display: flex; align-items: center; gap: 8px;">
+                      <span>{{ log.isOwner ? '👑' : '👤' }}</span>
+                      <strong style="color: var(--color-primary);">{{ log.userName }}</strong>
+                    </div>
+                  </td>
+                  <td>
+                    <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; color: #0284c7;">
+                      {{ log.userEmail }}
+                    </code>
+                  </td>
+                  <td>
+                    @if (log.isOwner) {
+                      <span class="badge-owner">DIRETORIA / DONO</span>
+                    } @else {
+                      <span class="badge-staff">{{ log.role }}</span>
+                    }
+                  </td>
+                  <td>
+                    <small style="color: #475569; display: flex; align-items: center; gap: 4px;">
+                      🛡️ {{ log.deviceInfo || 'Sessão Web Segura • Macaé/RJ' }}
+                    </small>
+                  </td>
+                  <td>
+                    <span class="badge badge-success" style="font-size: 0.75rem;">
+                      <span class="live-dot-green" style="width: 6px; height: 6px; margin-right: 3px;"></span>
+                      Conectado com Sucesso
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ================= MODAL: CADASTRAR NOVO FUNCIONÁRIO ================= -->
+  @if (showNewStaffModal()) {
+    <div class="modal-backdrop" (click)="showNewStaffModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn" (click)="showNewStaffModal.set(false)">✕</button>
+        <div class="modal-header">
+          <span class="badge badge-gold">👑 Gestão de Equipe</span>
+          <h3>Cadastrar Novo Colaborador</h3>
+          <p class="modal-course-tagline">Crie o acesso de um novo funcionário ou instrutor da ONG.</p>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Nome Completo <span class="required">*</span></label>
+            <input type="text" [ngModel]="newStaffName()" (ngModelChange)="newStaffName.set($event)" placeholder="Nome do colaborador" class="form-control">
+          </div>
+
+          <div class="grid-2" style="gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">E-mail Corporativo <span class="required">*</span></label>
+              <input type="email" [ngModel]="newStaffEmail()" (ngModelChange)="newStaffEmail.set($event)" placeholder="email@maosquecuidam.org.br" class="form-control">
+            </div>
+            <div class="form-group">
+              <label class="form-label">WhatsApp / Telefone <span class="required">*</span></label>
+              <input type="tel" [ngModel]="newStaffPhone()" (ngModelChange)="newStaffPhone.set($event)" placeholder="(22) 99848-1112" class="form-control">
+            </div>
+          </div>
+
+          <div class="grid-2" style="gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Cargo / Função <span class="required">*</span></label>
+              <select [ngModel]="newStaffRole()" (ngModelChange)="newStaffRole.set($event)" class="form-select">
+                <option value="Instrutor de Banho e Tosa">Instrutor de Banho e Tosa</option>
+                <option value="Coordenador Pedagógico">Coordenador Pedagógico</option>
+                <option value="Atendente / Recepção">Atendente / Recepção</option>
+                <option value="Dono / Administrador Master">Dono / Administrador Master</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Senha Provisória <span class="required">*</span></label>
+              <input type="password" [ngModel]="newStaffPassword()" (ngModelChange)="newStaffPassword.set($event)" placeholder="Mínimo 4 dígitos" class="form-control">
+            </div>
+          </div>
+
+          <div class="terms-card mt-2">
+            <div class="checkbox-box">
+              <input type="checkbox" id="checkNewIsOwner" [ngModel]="newStaffIsOwner()" (ngModelChange)="newStaffIsOwner.set($event)" class="form-checkbox">
+              <label for="checkNewIsOwner" class="checkbox-text">
+                <strong>Permissão Total de Dono / Master:</strong> Permite que este usuário também cadastre outros colaboradores e altere senhas.
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline-navy" (click)="showNewStaffModal.set(false)">Cancelar</button>
+          <button class="btn btn-primary" (click)="saveNewStaff()">Salvar Colaborador &raquo;</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: EDITAR DADOS DO FUNCIONÁRIO ================= -->
+  @if (showEditStaffModal()) {
+    <div class="modal-backdrop" (click)="showEditStaffModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn" (click)="showEditStaffModal.set(false)">✕</button>
+        <div class="modal-header">
+          <span class="badge badge-gold">👑 Edição de Acesso</span>
+          <h3>Editar Dados do Colaborador</h3>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" [ngModel]="editStaffName()" (ngModelChange)="editStaffName.set($event)" class="form-control">
+          </div>
+
+          <div class="grid-2" style="gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Cargo / Função</label>
+              <select [ngModel]="editStaffRole()" (ngModelChange)="editStaffRole.set($event)" class="form-select">
+                <option value="Instrutor de Banho e Tosa">Instrutor de Banho e Tosa</option>
+                <option value="Coordenador Pedagógico">Coordenador Pedagógico</option>
+                <option value="Atendente / Recepção">Atendente / Recepção</option>
+                <option value="Dono / Administrador Master">Dono / Administrador Master</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Telefone</label>
+              <input type="tel" [ngModel]="editStaffPhone()" (ngModelChange)="editStaffPhone.set($event)" class="form-control">
+            </div>
+          </div>
+
+          <div class="grid-2" style="gap: 1rem; margin-top: 0.5rem;">
+            <div class="form-group">
+              <label class="form-label">Status da Conta</label>
+              <select [ngModel]="editStaffActive()" (ngModelChange)="editStaffActive.set($event)" class="form-select">
+                <option [ngValue]="true">Ativo (Acesso Liberado)</option>
+                <option [ngValue]="false">Inativo (Acesso Bloqueado)</option>
+              </select>
+            </div>
+
+            @if (authService.isOwner()) {
+              <div class="form-group">
+                <label class="form-label">Nível de Permissão</label>
+                <select [ngModel]="editStaffIsOwner()" (ngModelChange)="editStaffIsOwner.set($event)" class="form-select">
+                  <option [ngValue]="false">Colaborador / Staff Comum</option>
+                  <option [ngValue]="true">Dono / Administrador Master</option>
+                </select>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline-navy" (click)="showEditStaffModal.set(false)">Cancelar</button>
+          <button class="btn btn-primary" (click)="saveEditStaff()">Salvar Alterações &raquo;</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: ALTERAR SENHA ================= -->
+  @if (showPasswordModal()) {
+    <div class="modal-backdrop" (click)="showPasswordModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn" (click)="showPasswordModal.set(false)">✕</button>
+        <div class="modal-header">
+          <span class="badge badge-gold">🔑 Segurança</span>
+          <h3>Alterar Senha de {{ passwordTargetUserName() }}</h3>
+          <p class="modal-course-tagline">Defina uma nova senha para acesso ao painel.</p>
+        </div>
+
+        <div class="modal-body">
+          @if (!authService.isOwner() && authService.currentUser()?.id === passwordTargetUserId()) {
+            <div class="form-group">
+              <label class="form-label">Senha Atual / Antiga <span class="required">*</span></label>
+              <input type="password" [ngModel]="passwordOld()" (ngModelChange)="passwordOld.set($event)" placeholder="Sua senha atual" class="form-control">
+            </div>
+          }
+
+          <div class="form-group">
+            <label class="form-label">Nova Senha <span class="required">*</span></label>
+            <input type="password" [ngModel]="passwordNew()" (ngModelChange)="passwordNew.set($event)" placeholder="Mínimo 4 caracteres" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirmar Nova Senha <span class="required">*</span></label>
+            <input type="password" [ngModel]="passwordConfirm()" (ngModelChange)="passwordConfirm.set($event)" placeholder="Repita a nova senha" class="form-control">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline-navy" (click)="showPasswordModal.set(false)">Cancelar</button>
+          <button class="btn btn-primary" (click)="savePassword()">Atualizar Senha &raquo;</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: DETALHES DO ALUNO ================= -->
+  @if (selectedStudent()) {
+    <div class="modal-backdrop" (click)="selectedStudent.set(null)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn" (click)="selectedStudent.set(null)">✕</button>
+        <div class="modal-header">
+          <span class="badge badge-gold">Ficha de Inscrição</span>
+          <h3 class="modal-course-title">{{ selectedStudent()?.fullName }}</h3>
+          <p class="modal-course-tagline">Protocolo: <strong>{{ selectedStudent()?.protocol }}</strong></p>
+        </div>
+
+        <div class="modal-body">
+          <div class="modal-details-grid-custom">
+            <div><strong>CPF:</strong> {{ selectedStudent()?.cpf }}</div>
+            <div><strong>Data Nasc:</strong> {{ selectedStudent()?.birthDate | date:'dd/MM/yyyy' }}</div>
+            <div><strong>Telefone:</strong> {{ selectedStudent()?.phone }}</div>
+            <div><strong>E-mail:</strong> {{ selectedStudent()?.email }}</div>
+            <div><strong>Endereço:</strong> {{ selectedStudent()?.neighborhood }} - {{ selectedStudent()?.city }}</div>
+            <div><strong>Curso:</strong> {{ selectedStudent()?.courseName }}</div>
+            <div><strong>Turno:</strong> {{ selectedStudent()?.preferredShift }}</div>
+            <div><strong>Situação Atual:</strong> {{ selectedStudent()?.employmentStatus }}</div>
+            <div><strong>Exp. Prévia Pet:</strong> {{ selectedStudent()?.hasPetExperience ? 'Sim' : 'Não' }}</div>
+            <div><strong>Status:</strong> <span class="badge badge-navy">{{ selectedStudent()?.status }}</span></div>
+          </div>
+
+          <div class="modal-motivation-box">
+            <strong>Motivação / História do Aluno:</strong>
+            <p>{{ selectedStudent()?.motivation }}</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <a [href]="getWhatsappLink(selectedStudent()!.phone, selectedStudent()!.fullName)" target="_blank" class="btn btn-success" style="background-color: #25d366; color: #fff; border: none;">
+            💬 Chamar no WhatsApp
+          </a>
+          <button class="btn btn-outline-navy" (click)="selectedStudent.set(null)">Fechar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: DETALHES DO VOLUNTÁRIO ================= -->
+  @if (selectedVolunteer()) {
+    <div class="modal-backdrop" (click)="selectedVolunteer.set(null)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn" (click)="selectedVolunteer.set(null)">✕</button>
+        <div class="modal-header">
+          <span class="badge badge-gold">Ficha de Voluntário</span>
+          <h3 class="modal-course-title">{{ selectedVolunteer()?.fullName }}</h3>
+          <p class="modal-course-tagline">Protocolo: <strong>{{ selectedVolunteer()?.protocol }}</strong></p>
+        </div>
+
+        <div class="modal-body">
+          <div class="modal-details-grid-custom">
+            <div><strong>Profissão:</strong> {{ selectedVolunteer()?.occupation }}</div>
+            <div><strong>Área de Interesse:</strong> {{ selectedVolunteer()?.areaOfInterest }}</div>
+            <div><strong>Telefone:</strong> {{ selectedVolunteer()?.phone }}</div>
+            <div><strong>E-mail:</strong> {{ selectedVolunteer()?.email }}</div>
+            <div><strong>Disponibilidade:</strong> {{ selectedVolunteer()?.availability }}</div>
+            <div><strong>Status:</strong> <span class="badge badge-navy">{{ selectedVolunteer()?.status }}</span></div>
+          </div>
+
+          <div class="modal-motivation-box">
+            <strong>Experiência na Área Pet / Descrição:</strong>
+            <p>{{ selectedVolunteer()?.experienceDescription }}</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <a [href]="getWhatsappLink(selectedVolunteer()!.phone, selectedVolunteer()!.fullName)" target="_blank" class="btn btn-success" style="background-color: #25d366; color: #fff; border: none;">
+            💬 Chamar no WhatsApp
+          </a>
+          <button class="btn btn-outline-navy" (click)="selectedVolunteer.set(null)">Fechar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: DETALHES DO PET ================= -->
+  @if (selectedPet()) {
+    <div class="modal-backdrop" (click)="selectedPet.set(null)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn" (click)="selectedPet.set(null)">✕</button>
+        <div class="modal-header">
+          <span class="badge badge-gold">Ficha do Pet Social</span>
+          <h3 class="modal-course-title">🐾 {{ selectedPet()?.petName }}</h3>
+          <p class="modal-course-tagline">Protocolo: <strong>{{ selectedPet()?.protocol }}</strong></p>
+        </div>
+
+        <div class="modal-body">
+          <div class="modal-details-grid-custom">
+            <div><strong>Espécie / Raça:</strong> {{ selectedPet()?.petSpecies }} - {{ selectedPet()?.petBreed }}</div>
+            <div><strong>Porte:</strong> {{ selectedPet()?.petSize }}</div>
+            <div><strong>Idade:</strong> {{ selectedPet()?.petAge }}</div>
+            <div><strong>Vacinado:</strong> {{ selectedPet()?.isVaccinated ? 'Sim' : 'Não' }}</div>
+            <div><strong>Dia Preferencial:</strong> {{ selectedPet()?.preferredDay }}</div>
+            <div><strong>Tutor(a):</strong> {{ selectedPet()?.tutorName }}</div>
+            <div><strong>Telefone do Tutor:</strong> {{ selectedPet()?.tutorPhone }}</div>
+            <div><strong>Status:</strong> <span class="badge badge-navy">{{ selectedPet()?.status }}</span></div>
+          </div>
+
+          <div class="modal-motivation-box">
+            <strong>Cuidados Especiais / Observações:</strong>
+            <p>{{ selectedPet()?.specialCareNotes || 'Sem observações especiais relatadas.' }}</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <a [href]="getWhatsappLink(selectedPet()!.tutorPhone, selectedPet()!.tutorName)" target="_blank" class="btn btn-success" style="background-color: #25d366; color: #fff; border: none;">
+            💬 Agendar no WhatsApp
+          </a>
+          <button class="btn btn-outline-navy" (click)="selectedPet.set(null)">Fechar</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: 🎓 CERTIFICADO DIGITAL OFICIAL DE CONCLUSÃO ================= -->
+  @if (showCertificateModal() && certificateStudent()) {
+    <div class="modal-backdrop modal-certificate-backdrop" (click)="showCertificateModal.set(false)">
+      <div class="modal-box modal-certificate-box" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn no-print" (click)="showCertificateModal.set(false)">✕</button>
+        
+        <!-- DOCUMENTO DO CERTIFICADO OFICIAL -->
+        <div class="certificate-document-card" id="certificate-print-area">
+          <div class="certificate-inner-border">
+            <div class="certificate-header text-center">
+              <div class="cert-org-logo">🐾</div>
+              <span class="cert-org-title">ONG MÃOS QUE CUIDAM • MACAÉ/RJ</span>
+              <p class="cert-org-subtitle">PROJETO SOCIAL DE QUALIFICAÇÃO PROFISSIONAL & BEM-ESTAR ANIMAL</p>
+              <h1 class="cert-main-title">CERTIFICADO</h1>
+              <p class="cert-type-label">DE CONCLUSÃO E CAPACITAÇÃO PROFISSIONAL</p>
+            </div>
+
+            <div class="certificate-body text-center">
+              <p class="cert-text">
+                Certificamos para os devidos fins que
+              </p>
+              <h2 class="cert-student-name">{{ certificateStudent()?.fullName }}</h2>
+              <p class="cert-student-cpf">Portador(a) do CPF nº <strong>{{ certificateStudent()?.cpf }}</strong></p>
+              
+              <p class="cert-declaration">
+                concluiu com êxito e aproveitamento técnico o curso de capacitação profissional em
+              </p>
+              <h3 class="cert-course-name">{{ certificateStudent()?.courseName }}</h3>
+
+              <div class="cert-meta-grid">
+                <div>
+                  <span class="cert-m-lbl">CARGA HORÁRIA</span>
+                  <strong>80 Horas (Teórico-Prático)</strong>
+                </div>
+                <div>
+                  <span class="cert-m-lbl">TURNO / PERÍODO</span>
+                  <strong>{{ certificateStudent()?.preferredShift }}</strong>
+                </div>
+                <div>
+                  <span class="cert-m-lbl">LOCALIDADE</span>
+                  <strong>Macaé - RJ</strong>
+                </div>
+                <div>
+                  <span class="cert-m-lbl">CÓDIGO DE AUTENTICIDADE</span>
+                  <strong style="font-family: monospace;">{{ certificateCode() }}</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="certificate-footer">
+              <div class="cert-signatures">
+                <div class="signature-block text-center">
+                  <div class="sig-line"></div>
+                  <strong>Diretoria Geral</strong>
+                  <span>ONG Mãos que Cuidam</span>
+                </div>
+                <div class="cert-stamp-seal text-center">
+                  <div class="seal-circle">
+                    <span>SELO OFICIAL</span>
+                    <small>MACAÉ/RJ</small>
                   </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
-
-    <!-- ================= TABELA 2: VOLUNTÁRIOS ================= -->
-    @if (activeView() === 'volunteers') {
-      <div class="table-responsive card-modern">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Protocolo</th>
-              <th>Nome</th>
-              <th>Profissão</th>
-              <th>Área de Apoio</th>
-              <th>Disponibilidade</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (filteredVolunteers().length === 0) {
-              <tr>
-                <td colspan="7" class="empty-table-cell">Nenhum voluntário encontrado.</td>
-              </tr>
-            }
-            @for (vol of filteredVolunteers(); track vol.id) {
-              <tr>
-                <td>
-                  <span class="protocol-chip">{{ vol.protocol }}</span>
-                  <div class="table-date">{{ vol.createdAt | date:'dd/MM/yy HH:mm' }}</div>
-                </td>
-                <td>
-                  <strong>{{ vol.fullName }}</strong>
-                  <div class="table-sub">📱 {{ vol.phone }} • ✉️ {{ vol.email }}</div>
-                </td>
-                <td>{{ vol.occupation }}</td>
-                <td><span class="badge badge-gold">{{ vol.areaOfInterest }}</span></td>
-                <td>{{ vol.availability }}</td>
-                <td>
-                  <select 
-                    [ngModel]="vol.status" 
-                    (ngModelChange)="updateVolunteerStatus(vol.id, $event)"
-                    class="status-pill-select"
-                    [class.st-confirmado]="vol.status === 'Confirmado'"
-                    [class.st-analise]="vol.status === 'Em Análise'">
-                    <option value="Em Análise">Em Análise</option>
-                    <option value="Confirmado">Confirmado</option>
-                    <option value="Concluído">Concluído</option>
-                  </select>
-                </td>
-                <td>
-                  <div class="action-btn-group">
-                    <button class="icon-action-btn view-btn" (click)="selectedVolunteer.set(vol)">👁️</button>
-                    <button class="icon-action-btn del-btn" (click)="deleteVolunteer(vol.id, vol.fullName)">🗑️</button>
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
-
-    <!-- ================= TABELA 3: PETS SOCIAIS ================= -->
-    @if (activeView() === 'pets') {
-      <div class="table-responsive card-modern">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Protocolo</th>
-              <th>Nome do Pet</th>
-              <th>Espécie & Raça</th>
-              <th>Porte</th>
-              <th>Tutor & Contato</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            @if (filteredPets().length === 0) {
-              <tr>
-                <td colspan="7" class="empty-table-cell">Nenhum pet cadastrado no filtro atual.</td>
-              </tr>
-            }
-            @for (pet of filteredPets(); track pet.id) {
-              <tr>
-                <td>
-                  <span class="protocol-chip">{{ pet.protocol }}</span>
-                  <div class="table-date">{{ pet.createdAt | date:'dd/MM/yy HH:mm' }}</div>
-                </td>
-                <td>
-                  <strong>🐾 {{ pet.petName }}</strong>
-                  <div class="table-sub">{{ pet.petAge }}</div>
-                </td>
-                <td>{{ pet.petSpecies }} • {{ pet.petBreed }}</td>
-                <td><span class="badge badge-navy">{{ pet.petSize }}</span></td>
-                <td>
-                  <strong>{{ pet.tutorName }}</strong>
-                  <div class="table-sub">📱 {{ pet.tutorPhone }}</div>
-                </td>
-                <td>
-                  <select 
-                    [ngModel]="pet.status" 
-                    (ngModelChange)="updatePetStatus(pet.id, $event)"
-                    class="status-pill-select"
-                    [class.st-confirmado]="pet.status === 'Confirmado'"
-                    [class.st-pendente]="pet.status === 'Pendente'">
-                    <option value="Pendente">Pendente</option>
-                    <option value="Confirmado">Confirmado (Agendado)</option>
-                    <option value="Concluído">Banho Realizado</option>
-                  </select>
-                </td>
-                <td>
-                  <div class="action-btn-group">
-                    <button class="icon-action-btn view-btn" (click)="selectedPet.set(pet)">👁️</button>
-                    <button class="icon-action-btn del-btn" (click)="deletePet(pet.id, pet.petName)">🗑️</button>
-                  </div>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
-  </div>
-</section>
-
-<!-- MODAL DE DETALHES DO ALUNO -->
-@if (selectedStudent()) {
-  <div class="modal-backdrop" (click)="selectedStudent.set(null)">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <button class="modal-close-btn" (click)="selectedStudent.set(null)">✕</button>
-      <div class="modal-header">
-        <span class="badge badge-gold">Protocolo: {{ selectedStudent()?.protocol }}</span>
-        <h3 class="modal-course-title">{{ selectedStudent()?.fullName }}</h3>
-        <p class="modal-course-tagline">Curso: {{ selectedStudent()?.courseName }}</p>
-      </div>
-      <div class="modal-body">
-        <div class="modal-info-pills">
-          <div>CPF: <strong>{{ selectedStudent()?.cpf }}</strong></div>
-          <div>Telefone: <strong>{{ selectedStudent()?.phone }}</strong></div>
-          <div>E-mail: <strong>{{ selectedStudent()?.email }}</strong></div>
-          <div>Turno: <strong>{{ selectedStudent()?.preferredShift }}</strong></div>
-          <div>Local: <strong>{{ selectedStudent()?.city }} ({{ selectedStudent()?.neighborhood }})</strong></div>
-          <div>Situação: <strong>{{ selectedStudent()?.employmentStatus }}</strong></div>
+                </div>
+                <div class="signature-block text-center">
+                  <div class="sig-line"></div>
+                  <strong>Instrutor Técnico Responsável</strong>
+                  <span>Estética & Bem-Estar Animal</span>
+                </div>
+              </div>
+              <div class="cert-address-footer text-center">
+                <small>Sede Social: Rua Raymundo Peixoto Lins, nº 48, Barra • Macaé/RJ • Tel: (22) 99848-1112</small>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="p-3 bg-warm rounded">
-          <strong>Motivação do Aluno:</strong>
-          <p class="mt-2 text-muted">{{ selectedStudent()?.motivation }}</p>
+
+        <div class="modal-footer no-print" style="justify-content: center; gap: 1rem;">
+          <button class="btn btn-primary" (click)="printCertificate()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+            <span>🖨️ Imprimir Certificado Oficial / Salvar PDF</span>
+          </button>
+          <button class="btn btn-outline-navy" (click)="showCertificateModal.set(false)">
+            Fechar
+          </button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-navy" (click)="selectedStudent.set(null)">Fechar</button>
       </div>
     </div>
-  </div>
-}
+  }
 
-<!-- MODAL DE DETALHES DO PET -->
-@if (selectedPet()) {
-  <div class="modal-backdrop" (click)="selectedPet.set(null)">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <button class="modal-close-btn" (click)="selectedPet.set(null)">✕</button>
-      <div class="modal-header">
-        <span class="badge badge-gold">Protocolo: {{ selectedPet()?.protocol }}</span>
-        <h3 class="modal-course-title">🐾 {{ selectedPet()?.petName }} ({{ selectedPet()?.petSpecies }})</h3>
-      </div>
-      <div class="modal-body">
-        <div class="modal-info-pills">
-          <div>Raça: <strong>{{ selectedPet()?.petBreed }}</strong></div>
-          <div>Porte: <strong>{{ selectedPet()?.petSize }}</strong></div>
-          <div>Idade: <strong>{{ selectedPet()?.petAge }}</strong></div>
-          <div>Vacinado: <strong>{{ selectedPet()?.isVaccinated ? 'Sim' : 'Não' }}</strong></div>
-          <div>Tutor: <strong>{{ selectedPet()?.tutorName }}</strong></div>
-          <div>Telefone: <strong>{{ selectedPet()?.tutorPhone }}</strong></div>
+  <!-- ================= MODAL: LISTA DE PRESENÇA / FICHA DE ATENDIMENTO ================= -->
+  @if (showAttendanceModal()) {
+    <div class="modal-backdrop no-print-backdrop" (click)="showAttendanceModal.set(false)">
+      <div class="modal-box attendance-sheet-modal animate-fade-in" style="max-width: 900px; width: 95%; max-height: 92vh; overflow-y: auto;" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn no-print" (click)="showAttendanceModal.set(false)">✕</button>
+
+        <div class="attendance-sheet-document" id="printableAttendanceSheet">
+          <!-- CABEÇALHO OFICIAL DO DOCUMENTO -->
+          <div class="attendance-doc-header">
+            <div class="doc-header-brand">
+              <img src="assets/logo.jpg" alt="Logo ONG" class="doc-logo-img" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid #d49a37;">
+              <div>
+                <h3 class="doc-org-name" style="margin: 0; font-size: 1.3rem; color: #132a47;">ONG Mãos que Cuidam</h3>
+                <span class="doc-tagline" style="font-size: 0.78rem; color: #d49a37; font-weight: 700; letter-spacing: 0.5px;">AMOR • RESPEITO • PROTEÇÃO — MACAÉ/RJ</span>
+              </div>
+            </div>
+            <div class="doc-header-meta text-right" style="text-align: right;">
+              <strong style="display: block; font-size: 1rem; color: #132a47;">
+                {{ attendanceType() === 'students' ? '📋 LISTA OFICIAL DE PRESENÇA & FREQUÊNCIA' : '🐶 FICHA DE CONTROLE DE ATENDIMENTOS' }}
+              </strong>
+              <small style="color: #64748b;">Emitido em: {{ '' | date:'dd/MM/yyyy HH:mm' }} • Sede Barra</small>
+            </div>
+          </div>
+
+          <div class="attendance-doc-info-strip" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; margin: 1.25rem 0; display: flex; justify-content: space-between; font-size: 0.85rem;">
+            <span><strong>Instrutor / Responsável:</strong> ___________________________</span>
+            <span><strong>Data da Aula / Atendimento:</strong> ____/____/2026</span>
+            <span><strong>Turno:</strong> [  ] Manhã   [  ] Tarde   [  ] Noite</span>
+          </div>
+
+          <!-- TABELA DE ALUNOS -->
+          @if (attendanceType() === 'students') {
+            <table class="attendance-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 1.5rem;">
+              <thead>
+                <tr style="background: #132a47; color: #ffffff;">
+                  <th style="padding: 8px 6px; border: 1px solid #cbd5e1; width: 35px; text-align: center;">#</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; width: 110px;">Protocolo</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">Nome do Aluno(a)</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; width: 150px;">Curso / Turno</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; width: 110px;">Telefone</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; width: 160px; text-align: center;">Assinatura do Aluno</th>
+                  <th style="padding: 8px 4px; border: 1px solid #cbd5e1; width: 45px; text-align: center;">Pres.</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (s of rankedStudents(); track s.id; let idx = $index) {
+                  <tr [style.background]="idx % 2 === 0 ? '#ffffff' : '#fbfcfd'">
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700;">{{ idx + 1 }}</td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 0.76rem;">{{ s.protocol }}</td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; font-weight: 700; color: #1e293b;">{{ s.fullName }}</td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0;">{{ s.courseName }} ({{ s.preferredShift }})</td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0;">{{ s.phone }}</td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; border-bottom: 1px dashed #cbd5e1;"></td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; text-align: center;">[   ]</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
+          <!-- TABELA DE PETS -->
+          @if (attendanceType() === 'pets') {
+            <table class="attendance-table" style="width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 1.5rem;">
+              <thead>
+                <tr style="background: #132a47; color: #ffffff;">
+                  <th style="padding: 8px 6px; border: 1px solid #cbd5e1; width: 35px; text-align: center;">#</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; width: 110px;">Protocolo</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">Nome do Pet & Porte</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; width: 140px;">Serviço Solicitado</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">Tutor & Contato</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; width: 160px; text-align: center;">Assinatura na Retirada</th>
+                  <th style="padding: 8px 4px; border: 1px solid #cbd5e1; width: 45px; text-align: center;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (p of filteredPets(); track p.id; let idx = $index) {
+                  <tr [style.background]="idx % 2 === 0 ? '#ffffff' : '#fbfcfd'">
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; text-align: center; font-weight: 700;">{{ idx + 1 }}</td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; font-family: monospace; font-size: 0.76rem;">{{ p.protocol }}</td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; font-weight: 700; color: #1e293b;">
+                      🐶 {{ p.petName }} ({{ p.petSize }} - {{ p.petBreed }})
+                    </td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0;">{{ p.specialCareNotes || 'Banho & Tosa Social' }}</td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0;">{{ p.tutorName }} ({{ p.tutorPhone }})</td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; border-bottom: 1px dashed #cbd5e1;"></td>
+                    <td style="padding: 6px; border: 1px solid #e2e8f0; text-align: center; font-size: 0.75rem;">[   ] Concl.</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
+          <div class="attendance-doc-footer" style="margin-top: 2rem; display: flex; justify-content: space-between; border-top: 1px solid #cbd5e1; padding-top: 1rem; font-size: 0.78rem; color: #64748b;">
+            <span>Sede: Rua Raymundo Peixoto Lins, 48 - Barra, Macaé/RJ</span>
+            <span>Coordenação de Ensino Social • ONG Mãos que Cuidam</span>
+          </div>
         </div>
-        <div class="p-3 bg-warm rounded">
-          <strong>Observações de Manejo e Comportamento:</strong>
-          <p class="mt-2 text-muted">{{ selectedPet()?.specialCareNotes }}</p>
+
+        <div class="modal-footer no-print" style="justify-content: center; gap: 1rem; margin-top: 1.5rem;">
+          <button class="btn btn-primary" (click)="printAttendanceSheet()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+            <span>🖨️ Imprimir Lista de Presença / Salvar PDF</span>
+          </button>
+          <button class="btn btn-outline-navy" (click)="showAttendanceModal.set(false)">
+            Fechar
+          </button>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-navy" (click)="selectedPet.set(null)">Fechar</button>
       </div>
     </div>
-  </div>
+  }
 }

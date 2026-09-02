@@ -83,11 +83,17 @@
   </div>
 </section>
 
-<!-- NÚMEROS DE IMPACTO SOCIAL -->
+<!-- ================= 1. NÚMEROS DE IMPACTO SOCIAL (EDITÁVEL PELO ADMIN) ================= -->
 <section class="stats-section">
-  <div class="container">
+  <div class="container" style="position: relative;">
+    @if (authService.isAuthenticated()) {
+      <button class="btn-floating-edit-stats" (click)="openEditStatsModal()" title="Editar dados de impacto">
+        <span>✏️ Editar Métricas</span>
+      </button>
+    }
+
     <div class="stats-grid">
-      @for (st of stats; track st.label) {
+      @for (st of stats(); track st.id) {
         <div class="stat-card">
           <div class="stat-number">{{ st.number }}</div>
           <div class="stat-label">{{ st.label }}</div>
@@ -98,28 +104,107 @@
   </div>
 </section>
 
-<!-- BARRA DE MARCAS E PATROCINADORES OFICIAIS -->
-<section class="home-sponsors-strip">
+<!-- ================= 2. CARROSSEL GIRATÓRIO AUTOMÁTICO DE PATROCINADORES ================= -->
+<section class="home-sponsors-carousel-section">
   <div class="container">
-    <div class="sponsors-strip-header">
-      <span class="strip-tag">GRANDES MARCAS PARCEIRAS</span>
-      <p class="strip-text">Empresas líderes do mercado pet que apoiam e viabilizam os cursos da ONG</p>
+    <div class="sponsors-carousel-header">
+      <span class="strip-tag">✨ GRANDES MARCAS PARCEIRAS & PATROCINADORES OFICIAIS</span>
+      <p class="strip-text">Empresas líderes do mercado pet que apoiam e viabilizam os cursos e projetos da ONG</p>
     </div>
-    <div class="home-sponsors-logos">
-      @for (sp of sponsors; track sp.id) {
-        <a routerLink="/patrocinadores" class="brand-chip" [title]="sp.name">
-          <span class="brand-chip-icon">{{ sp.logoIcon }}</span>
-          <span class="brand-chip-name">{{ sp.name }}</span>
+  </div>
+
+  <div class="sponsors-marquee-wrapper">
+    <!-- Trilha com animação contínua e loop infinito -->
+    <div class="sponsors-marquee-track">
+      @for (sp of sponsors(); track sp.id) {
+        <a routerLink="/patrocinadores" class="sponsor-marquee-card" [title]="sp.name">
+          <div class="marquee-logo-box">
+            <img [src]="sp.logoUrl" [alt]="sp.name" class="marquee-logo-img">
+          </div>
+          <div class="marquee-info">
+            <strong class="marquee-name">{{ sp.name }}</strong>
+            <span class="marquee-tier-badge" [class.badge-diamante]="sp.category === 'Diamante'" [class.badge-ouro]="sp.category === 'Ouro'">
+              {{ sp.category || 'Parceiro Oficial' }}
+            </span>
+          </div>
+        </a>
+      }
+      <!-- Duplicação para continuidade perfeita do carrossel -->
+      @for (sp of sponsors(); track 'dup_' + sp.id) {
+        <a routerLink="/patrocinadores" class="sponsor-marquee-card" [title]="sp.name">
+          <div class="marquee-logo-box">
+            <img [src]="sp.logoUrl" [alt]="sp.name" class="marquee-logo-img">
+          </div>
+          <div class="marquee-info">
+            <strong class="marquee-name">{{ sp.name }}</strong>
+            <span class="marquee-tier-badge" [class.badge-diamante]="sp.category === 'Diamante'" [class.badge-ouro]="sp.category === 'Ouro'">
+              {{ sp.category || 'Parceiro Oficial' }}
+            </span>
+          </div>
         </a>
       }
     </div>
-    <div class="text-center" style="margin-top: 1.5rem;">
-      <a routerLink="/patrocinadores" class="strip-link">
-        Conheça todos os nossos patrocinadores &raquo;
-      </a>
-    </div>
+  </div>
+
+  <div class="text-center" style="margin-top: 1rem;">
+    <a routerLink="/patrocinadores" class="strip-link">
+      Conheça todos os nossos patrocinadores ou seja um parceiro &raquo;
+    </a>
   </div>
 </section>
+
+<!-- ================= MODAL: EDITAR MÉTRICAS DE IMPACTO (ADMIN) ================= -->
+@if (showEditStatsModal()) {
+  <div class="modal-backdrop" (click)="showEditStatsModal.set(false)">
+    <div class="modal-box testimonial-modal-lux animate-fade-in" style="max-width: 780px;" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn-styled" (click)="showEditStatsModal.set(false)">✕</button>
+
+      <div class="modal-header-premium">
+        <div class="header-badge-row">
+          <span class="badge-gold-pill">⚙️ PAINEL DO ADMINISTRADOR</span>
+        </div>
+        <h3 class="modal-header-title">Editar Números de Impacto Social</h3>
+        <p class="modal-header-subtitle">
+          Altere os dados exibidos na barra principal da Home (números, títulos e descrições).
+        </p>
+      </div>
+
+      <div class="modal-body-premium">
+        <div class="grid-2" style="gap: 1.5rem;">
+          @for (item of editStatsList(); track item.id; let idx = $index) {
+            <div class="form-section-group" style="padding-top: 1.75rem;">
+              <div class="section-label-chip">
+                <span>{{ idx + 1 }}</span> Métrica {{ idx + 1 }}
+              </div>
+
+              <div class="form-group mb-2">
+                <label class="form-label" style="font-size: 0.82rem;">Número / Destaque (ex: +520, 94%):</label>
+                <input type="text" [(ngModel)]="item.number" class="form-control lux-input" style="padding-left: 1rem !important; font-weight: 800; font-size: 1.1rem; color: #d49a37;">
+              </div>
+
+              <div class="form-group mb-2">
+                <label class="form-label" style="font-size: 0.82rem;">Título Principal:</label>
+                <input type="text" [(ngModel)]="item.label" class="form-control lux-input" style="padding-left: 1rem !important; font-weight: 700;">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" style="font-size: 0.82rem;">Subtítulo / Descrição Curta:</label>
+                <input type="text" [(ngModel)]="item.sublabel" class="form-control lux-input" style="padding-left: 1rem !important; font-size: 0.85rem;">
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="modal-footer-lux">
+        <button type="button" class="btn btn-outline-cancel" (click)="showEditStatsModal.set(false)">Cancelar</button>
+        <button type="button" class="btn btn-gold-submit" (click)="saveEditedStats()">
+          <span>💾 Salvar Alterações</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}
 
 <!-- OS 3 PILARES INSTITUCIONAIS (Amor • Respeito • Proteção) -->
 <section class="pillars-section section-padding">
@@ -285,26 +370,39 @@
   </div>
 </section>
 
-<!-- DEPOIMENTOS DE FORMANDOS -->
+<!-- DEPOIMENTOS DE FORMANDOS & TUTORES -->
 <section class="testimonials-section section-padding bg-warm">
   <div class="container">
     <div class="section-header">
       <div class="section-tag">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span>Vidas Transformadas</span>
+        <span>Vidas Transformadas em Macaé</span>
       </div>
-      <h2 class="section-title">Histórias de Sucesso dos Nossos Alunos</h2>
+      <h2 class="section-title">O Que Dizem Nossos Formandos & Tutores</h2>
       <p class="section-subtitle">
-        Veja como o aprendizado na ONG Mãos que Cuidam abriu portas de trabalho e gerou renda com carinho pelos animais.
+        Histórias reais de quem transformou a paixão por animais em profissão com renda ou recebeu nosso cuidado solidário.
       </p>
       <div class="gold-divider"></div>
+      
+      <div class="text-center mt-3">
+        <button class="btn btn-primary btn-sm" (click)="openReviewModal()" style="display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(212, 154, 55, 0.3);">
+          <span>⭐ + Deixar Meu Depoimento / Avaliação</span>
+        </button>
+      </div>
     </div>
 
     <div class="grid-3 testimonials-grid">
-      @for (t of testimonials; track t.id) {
-        <div class="testimonial-card card-modern">
+      @for (t of testimonials(); track t.id) {
+        <div class="testimonial-card card-modern" style="position: relative;">
+          @if (authService.isAuthenticated()) {
+            <button class="btn-delete-testimonial" (click)="deleteTestimonial(t.id, t.authorName)" title="Excluir Depoimento">
+              🗑️
+            </button>
+          }
           <div class="testimonial-rating">
-            <span>★★★★★</span>
+            <span style="color: #f59e0b; font-size: 1.1rem; letter-spacing: 2px;">
+              {{ '★'.repeat(t.rating || 5) }}
+            </span>
           </div>
           <p class="testimonial-quote">"{{ t.story }}"</p>
           <div class="testimonial-author">
@@ -312,7 +410,7 @@
             <div class="author-details">
               <h5 class="author-name">{{ t.authorName }}</h5>
               <span class="author-role">{{ t.currentRole }}</span>
-              <span class="author-course">Formada em {{ t.courseCompleted }} ({{ t.year }})</span>
+              <span class="author-course">{{ t.courseCompleted }}</span>
             </div>
           </div>
         </div>
@@ -320,6 +418,120 @@
     </div>
   </div>
 </section>
+
+<!-- ================= MODAL: DEIXAR DEPOIMENTO REAL ================= -->
+@if (showAddReviewModal()) {
+  <div class="modal-backdrop" (click)="showAddReviewModal.set(false)">
+    <div class="modal-box testimonial-modal-lux animate-fade-in" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn-styled" (click)="showAddReviewModal.set(false)">✕</button>
+
+      <div class="modal-header-premium">
+        <div class="header-badge-row">
+          <span class="badge-gold-pill">🌟 HISTÓRIAS REAIS DE MACAÉ</span>
+        </div>
+        <h3 class="modal-header-title">Deixar Meu Depoimento</h3>
+        <p class="modal-header-subtitle">
+          Conte como a ONG Mãos que Cuidam impactou sua vida, sua carreira ou o cuidado com seu pet.
+        </p>
+      </div>
+
+      <form [formGroup]="reviewForm" (ngSubmit)="saveReview()">
+        <div class="modal-body-premium">
+          <div class="form-section-group">
+            <div class="section-label-chip">
+              <span>1</span> Sua Identificação
+            </div>
+
+            <div class="grid-2" style="gap: 1.25rem;">
+              <div class="form-group">
+                <label class="form-label">Seu Nome Completo <span class="required">*</span></label>
+                <div class="input-with-icon">
+                  <span class="input-prefix-icon">👤</span>
+                  <input type="text" formControlName="authorName" placeholder="Ex: Camila Rodrigues" class="form-control lux-input" [class.is-invalid]="reviewForm.get('authorName')?.invalid && reviewForm.get('authorName')?.touched">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Sua Ocupação / Perfil em Macaé <span class="required">*</span></label>
+                <div class="input-with-icon">
+                  <span class="input-prefix-icon">💼</span>
+                  <input type="text" formControlName="currentRole" placeholder="Ex: Tosadora Profissional (Macaé / RJ)" class="form-control lux-input" [class.is-invalid]="reviewForm.get('currentRole')?.invalid && reviewForm.get('currentRole')?.touched">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label class="form-label">Curso Concluído ou Atendimento Recebido <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <span class="input-prefix-icon">🎓</span>
+                <input type="text" formControlName="courseCompleted" placeholder="Ex: Especialização em Tosa Comercial & Tesoura" class="form-control lux-input" [class.is-invalid]="reviewForm.get('courseCompleted')?.invalid && reviewForm.get('courseCompleted')?.touched">
+              </div>
+            </div>
+          </div>
+
+          <!-- AVALIAÇÃO EM ESTRELAS E FOTO -->
+          <div class="form-section-group">
+            <div class="section-label-chip">
+              <span>2</span> Avaliação & Foto
+            </div>
+
+            <div class="grid-2" style="gap: 1.5rem; align-items: center;">
+              <div>
+                <label class="form-label">Sua Nota para a ONG:</label>
+                <div class="star-rating-selector" style="display: flex; gap: 8px; font-size: 1.8rem; cursor: pointer;">
+                  @for (star of [1, 2, 3, 4, 5]; track star) {
+                    <span (click)="setRating(star)" [style.color]="star <= selectedRating() ? '#f59e0b' : '#cbd5e1'" style="transition: transform 0.15s ease;">
+                      ★
+                    </span>
+                  }
+                </div>
+                <small style="color: #64748b; font-weight: 600;">Nota selecionada: {{ selectedRating() }} de 5 estrelas</small>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 56px; height: 56px; border-radius: 50%; overflow: hidden; border: 2px solid var(--color-gold); flex-shrink: 0; box-shadow: var(--shadow-sm);">
+                  <img [src]="authorPhotoPreview()" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div>
+                  <input type="file" accept="image/*" (change)="onPhotoFileSelected($event)" id="authorPhotoInput" style="display: none;">
+                  <label for="authorPhotoInput" class="btn btn-sm btn-outline-navy" style="cursor: pointer; font-size: 0.8rem;">
+                    📷 Escolher Minha Foto
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DEPOIMENTO -->
+          <div class="form-section-group">
+            <div class="section-label-chip">
+              <span>3</span> Seu Relato / Experiência
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Conte sua História com a ONG <span class="required">*</span></label>
+              <textarea formControlName="story" rows="3" placeholder="Escreva como foi sua experiência, o que aprendeu ou como seus animais foram tratados..." class="form-textarea lux-input" style="padding-left: 1rem !important;" [class.is-invalid]="reviewForm.get('story')?.invalid && reviewForm.get('story')?.touched"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-lux">
+          <button type="button" class="btn btn-outline-cancel" (click)="showAddReviewModal.set(false)">Cancelar</button>
+          <button type="submit" class="btn btn-gold-submit" [disabled]="reviewForm.invalid">
+            <span>✨ Publicar Meu Depoimento</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}
+
+<!-- TOAST FLUTUANTE -->
+@if (toastMessage()) {
+  <div class="admin-toast animate-fade-in" style="position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: #132a47; color: #ffffff; padding: 0.75rem 1.5rem; border-radius: var(--radius-full); box-shadow: var(--shadow-lg); z-index: 10000; font-size: 0.9rem; border-left: 4px solid var(--color-gold);">
+    <span>{{ toastMessage() }}</span>
+  </div>
+}
 
 <!-- 3 PASSOS PARA PARTICIPAR -->
 <section class="how-it-works-section section-padding">

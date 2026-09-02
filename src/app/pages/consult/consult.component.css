@@ -1,0 +1,228 @@
+.consult-hero-section {
+  background: linear-gradient(135deg, #10243e 0%, #173860 100%);
+  color: #ffffff;
+  padding: 4.5rem 0 3.5rem 0;
+  border-bottom: 3px solid var(--color-gold);
+}
+
+.consult-hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.consult-hero-title {
+  color: #ffffff;
+  font-size: 2.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.consult-hero-desc {
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.consult-search-card {
+  background: #ffffff;
+  padding: 1.5rem 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  border-top: 4px solid var(--color-gold);
+}
+
+.search-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--color-text-muted);
+}
+
+.consult-input {
+  height: 52px;
+  padding-left: 3rem !important;
+  font-size: 1.05rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  flex: 1;
+}
+
+.consult-input:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(212, 154, 55, 0.2);
+}
+
+.btn-search {
+  height: 52px;
+  padding: 0 2rem;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.search-helper-hints {
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.search-helper-hints code {
+  background: var(--color-bg-warm);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--color-primary);
+}
+
+/* ================= RESULTADOS ================= */
+.results-title {
+  color: var(--color-primary);
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.5rem;
+}
+
+.result-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.result-card-header {
+  padding: 1.25rem 1.5rem;
+  background: var(--color-bg-warm);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.result-type-badge {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--color-primary);
+}
+
+.status-pill {
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.status-pill.st-confirmado { background: #d1fae5; color: #065f46; }
+.status-pill.st-analise { background: #e0f2fe; color: #0369a1; }
+.status-pill.st-pendente { background: #fef3c7; color: #92400e; }
+
+.result-card-body {
+  padding: 1.5rem;
+  flex: 1;
+}
+
+.result-protocol-box {
+  background: rgba(19, 42, 71, 0.05);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.prot-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.prot-code {
+  font-family: monospace;
+  font-size: 1.05rem;
+  color: var(--color-primary);
+}
+
+.result-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+  margin-bottom: 1.25rem;
+}
+
+.r-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.r-lbl {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.status-explanation-card {
+  margin-top: 1rem;
+}
+
+.status-msg {
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.msg-yellow { background: #fffbeb; border: 1px solid #fef08a; color: #854d0e; }
+.msg-blue { background: #f0f9ff; border: 1px solid #bae6fd; color: #075985; }
+.msg-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.msg-gold { background: #fffdf5; border: 1px solid #fed7aa; color: #9a3412; }
+
+.result-card-footer {
+  padding: 1rem 1.5rem;
+  background: var(--color-bg-warm);
+  border-top: 1px solid var(--color-border);
+}
+
+.consult-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.guide-card {
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.guide-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.guide-card h4 {
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.guide-card p {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+@media (max-width: 640px) {
+  .search-input-group { flex-direction: column; }
+  .btn-search { width: 100%; }
+}

@@ -6,9 +6,9 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         <span>Fale Conosco</span>
       </div>
-      <h1 class="page-header-title">Contato & Informações</h1>
+      <h1 class="page-header-title">Contato & Sede Oficial</h1>
       <p class="page-header-desc">
-        Tire suas dúvidas, conheça nossa estrutura ou envie uma mensagem direta para a coordenação.
+        Tire suas dúvidas, conheça nossa sede em Macaé/RJ ou mande uma mensagem direta para nossa coordenação.
       </p>
     </div>
   </div>
@@ -46,7 +46,7 @@
               </div>
               <div class="form-group">
                 <label class="form-label" for="contactPhone">WhatsApp / Telefone</label>
-                <input type="tel" id="contactPhone" [(ngModel)]="phone" name="phone" placeholder="(11) 99999-8888" class="form-control">
+                <input type="tel" id="contactPhone" [(ngModel)]="phone" name="phone" placeholder="(22) 99848-1112" class="form-control">
               </div>
             </div>
 
@@ -89,8 +89,8 @@
             <div class="info-row">
               <div class="info-icon">📍</div>
               <div>
-                <strong>Sede & Laboratório de Aulas:</strong>
-                <p>Av. dos Animais com Amor, 1250 • Centro</p>
+                <strong>Sede Oficial & Laboratório de Aulas:</strong>
+                <p>Rua Raymundo Peixoto Lins, nº 48, Barra<br>CEP: 27961-074 • Macaé / RJ</p>
               </div>
             </div>
 
@@ -99,8 +99,20 @@
               <div>
                 <strong>WhatsApp & Telefone de Contato:</strong>
                 <p>
-                  <a href="https://wa.me/5511999998888" target="_blank" style="color: var(--color-primary); font-weight: 700; text-decoration: none;">
-                    (11) 99999-8888
+                  <a href="https://wa.me/5522998481112" target="_blank" style="color: var(--color-primary); font-weight: 700; text-decoration: none;">
+                    (22) 99848-1112
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-icon">📷</div>
+              <div>
+                <strong>Instagram Oficial:</strong>
+                <p>
+                  <a href="https://www.instagram.com/maosquecuidam_4/" target="_blank" style="color: var(--color-gold-hover); font-weight: 700; text-decoration: underline;">
+                    &#64;maosquecuidam_4
                   </a>
                 </p>
               </div>
@@ -124,15 +136,50 @@
           </div>
 
           <div class="quick-links-box">
-            <a href="https://wa.me/5511999998888" target="_blank" class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 0.75rem;">
-              💬 Chamar no WhatsApp
+            <div class="grid-2 mb-2" style="gap: 0.5rem;">
+              <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Raymundo+Peixoto+Lins,+48+-+Barra,+Macae+-+RJ,+27961-074" target="_blank" class="btn btn-outline-navy" style="font-size: 0.85rem; padding: 0.6rem 0.5rem; justify-content: center;">
+                📍 Rota Google Maps
+              </a>
+              <a href="https://waze.com/ul?q=Rua+Raymundo+Peixoto+Lins+48+Barra+Macae+RJ" target="_blank" class="btn btn-outline-gold" style="font-size: 0.85rem; padding: 0.6rem 0.5rem; justify-content: center;">
+                🚗 Abrir no Waze
+              </a>
+            </div>
+            <a href="https://wa.me/5522998481112" target="_blank" class="btn btn-primary" style="width: 100%; justify-content: center; margin-bottom: 0.75rem;">
+              💬 Chamar no WhatsApp Oficial
             </a>
-            <a routerLink="/cadastro" class="btn btn-outline-gold" style="width: 100%; justify-content: center;">
+            <a routerLink="/cadastro" class="btn btn-white" style="width: 100%; justify-content: center; border: 1.5px solid var(--color-border);">
               Ir para Inscrição de Cursos
             </a>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- SEÇÃO MAPA INTERATIVO COMO CHEGAR -->
+    <div class="map-interactive-container card-modern mt-5" style="margin-top: 3rem; overflow: hidden; border: 2px solid var(--color-gold-border);">
+      <div class="map-header-bar" style="background: var(--color-primary); color: #ffffff; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h4 style="color: #ffffff; margin-bottom: 0.2rem; font-size: 1.15rem;">📍 Localização da Sede Oficial & Polo Prático</h4>
+          <p style="color: #cbd5e1; margin-bottom: 0; font-size: 0.88rem;">Rua Raymundo Peixoto Lins, nº 48, Barra • Macaé / RJ (Próximo à Ponte da Barra)</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Raymundo+Peixoto+Lins,+48+-+Barra,+Macae+-+RJ,+27961-074" target="_blank" class="btn btn-primary btn-sm">
+            <span>🗺️ Traçar Rota (GPS)</span>
+          </a>
+          <a href="https://waze.com/ul?q=Rua+Raymundo+Peixoto+Lins+48+Barra+Macae+RJ" target="_blank" class="btn btn-outline-gold btn-sm" style="background: rgba(255,255,255,0.1); color: #ffffff; border-color: #ffffff;">
+            <span>🚗 Waze</span>
+          </a>
+        </div>
+      </div>
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3688.757134212513!2d-41.77651062402123!3d-22.381665279628045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9631ce59265f23%3A0x6a2c3a5ef59f234c!2sRua%20Raymundo%20Peixoto%20Lins%2C%2048%20-%20Barra%20de%20Maca%C3%A9%2C%20Maca%C3%A9%20-%20RJ%2C%2027961-074!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" 
+        width="100%" 
+        height="350" 
+        style="border:0; display: block;" 
+        allowfullscreen="" 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
     </div>
   </div>
 </section>
@@ -147,7 +194,7 @@
       </div>
       <h2 class="section-title">Perguntas Frequentes (FAQ)</h2>
       <p class="section-subtitle">
-        Tudo o que você precisa saber sobre o funcionamento das turmas, banhos sociais e certificação.
+        Tudo o que você precisa saber sobre o funcionamento das turmas em Macaé/RJ, banhos sociais e certificação.
       </p>
       <div class="gold-divider"></div>
     </div>

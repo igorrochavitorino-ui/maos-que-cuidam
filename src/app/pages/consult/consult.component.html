@@ -1,0 +1,152 @@
+<section class="consult-hero-section">
+  <div class="container">
+    <div class="consult-hero-content text-center">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>Transparência & Acompanhamento</span>
+      </div>
+      <h1 class="consult-hero-title">Consultar Status da Inscrição</h1>
+      <p class="consult-hero-desc">
+        Acompanhe o andamento da sua vaga em cursos, agendamento de banho social do seu pet ou pedido de adoção em Macaé.
+      </p>
+
+      <!-- Caixa de Busca -->
+      <div class="consult-search-card card-modern">
+        <form (ngSubmit)="onSearch()" class="consult-search-form">
+          <div class="search-input-group">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input 
+              type="text" 
+              [ngModel]="searchQuery()" 
+              (ngModelChange)="searchQuery.set($event)" 
+              name="query" 
+              placeholder="Digite seu CPF (apenas números) ou Protocolo (ex: ALU-2026-xxxxx)..." 
+              class="form-control consult-input"
+              autofocus>
+            <button type="submit" class="btn btn-primary btn-search">
+              <span>🔍 Consultar</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="search-helper-hints">
+          <span>💡 Exemplos de busca: <code>ALU-2026</code>, <code>PET-2026</code>, ou digite o <strong>CPF cadastrado</strong>.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTADOS DA BUSCA -->
+<section class="consult-results-section section-padding">
+  <div class="container">
+    @if (hasSearched()) {
+      @if (results().length === 0) {
+        <div class="empty-consult-state card-modern text-center animate-fade-in">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">🔍</div>
+          <h3 style="color: var(--color-primary);">Nenhuma Inscrição Encontrada</h3>
+          <p style="color: var(--color-text-muted); max-width: 520px; margin: 0 auto 1.5rem auto;">
+            Não encontramos nenhum cadastro ativo com o termo "<strong>{{ searchQuery() }}</strong>". Verifique se digitou o CPF ou protocolo corretamente.
+          </p>
+          <div class="empty-actions">
+            <a routerLink="/cadastro" class="btn btn-primary">Fazer Nova Inscrição</a>
+            <a href="https://wa.me/5522998481112" target="_blank" class="btn btn-outline-navy">Falar no WhatsApp da ONG</a>
+          </div>
+        </div>
+      } @else {
+        <div class="results-container animate-fade-in">
+          <h3 class="results-title">
+            Encontramos <strong>{{ results().length }}</strong> registro(s) para sua consulta:
+          </h3>
+
+          <div class="results-grid">
+            @for (item of results(); track item.protocol) {
+              <div class="result-card card-modern">
+                <div class="result-card-header">
+                  <span class="result-type-badge">{{ item.title }}</span>
+                  <span class="status-pill" [class.st-confirmado]="item.status === 'Confirmado' || item.status === 'Concluído'" [class.st-analise]="item.status === 'Em Análise'" [class.st-pendente]="item.status === 'Pendente'">
+                    {{ item.status }}
+                  </span>
+                </div>
+
+                <div class="result-card-body">
+                  <div class="result-protocol-box">
+                    <span class="prot-label">PROTOCOLO OFICIAL</span>
+                    <strong class="prot-code">{{ item.protocol }}</strong>
+                  </div>
+
+                  <div class="result-info-list">
+                    <div class="r-row">
+                      <span class="r-lbl">Titular:</span>
+                      <strong>{{ item.maskedName }}</strong>
+                    </div>
+                    <div class="r-row">
+                      <span class="r-lbl">Curso / Finalidade:</span>
+                      <strong class="text-gold">{{ item.category }}</strong>
+                    </div>
+                    <div class="r-row">
+                      <span class="r-lbl">Detalhes:</span>
+                      <span>{{ item.detail }}</span>
+                    </div>
+                    <div class="r-row">
+                      <span class="r-lbl">Data do Registro:</span>
+                      <span>{{ item.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                    </div>
+                  </div>
+
+                  <!-- AVISO DE ORIENTAÇÃO CONFORME STATUS -->
+                  <div class="status-explanation-card">
+                    @if (item.status === 'Pendente') {
+                      <div class="status-msg msg-yellow">
+                        ⏳ <strong>Aguardando Análise:</strong> Sua inscrição foi recebida por ordem de chegada e aguarda conferência de turmas pela coordenação.
+                      </div>
+                    } @else if (item.status === 'Em Análise') {
+                      <div class="status-msg msg-blue">
+                        📋 <strong>Em Análise Pedagógica:</strong> Seus dados estão sendo triados para a próxima turma social com vagas liberadas.
+                      </div>
+                    } @else if (item.status === 'Confirmado') {
+                      <div class="status-msg msg-green">
+                        🎉 <strong>Matrícula / Vaga Confirmada:</strong> Sua vaga foi aprovada! Compareça à sede da ONG na data orientada via WhatsApp com documento com foto.
+                      </div>
+                    } @else {
+                      <div class="status-msg msg-gold">
+                        🎓 <strong>Concluído / Formado:</strong> Etapa finalizada com sucesso junto à ONG Mãos que Cuidam!
+                      </div>
+                    }
+                  </div>
+                </div>
+
+                <div class="result-card-footer">
+                  <a [href]="getHelpWhatsappLink(item)" target="_blank" class="btn btn-sm btn-outline-gold" style="width: 100%; text-align: center; justify-content: center; display: inline-flex;">
+                    💬 Falar com a Coordenação sobre este Protocolo
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    } @else {
+      <!-- ESTADO INICIAL ANTES DE BUSCAR -->
+      <div class="consult-guide-grid">
+        <div class="guide-card card-modern">
+          <div class="guide-icon">🎓</div>
+          <h4>Inscrições de Cursos</h4>
+          <p>Consulte sua vaga nas turmas sociais de Banho & Tosa, Estética Felina ou Primeiros Socorros.</p>
+        </div>
+
+        <div class="guide-card card-modern">
+          <div class="guide-icon">🐾</div>
+          <h4>Banho Social do Pet</h4>
+          <p>Verifique o status do agendamento do banho gratuito do seu animalzinho de estimação.</p>
+        </div>
+
+        <div class="guide-card card-modern">
+          <div class="guide-icon">🏡</div>
+          <h4>Mural de Adoção</h4>
+          <p>Acompanhe o andamento da sua solicitação de adoção responsável de cães e gatos.</p>
+        </div>
+      </div>
+    }
+  </div>
+</section>

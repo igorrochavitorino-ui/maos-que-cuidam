@@ -88,17 +88,25 @@ export interface Testimonial {
   rating: number;
 }
 
+export interface ImpactStat {
+  id: string;
+  number: string;
+  label: string;
+  sublabel: string;
+  icon?: string;
+}
+
 export interface Sponsor {
   id: string;
   name: string;
-  category: 'Diamante' | 'Ouro' | 'Prata' | 'Parceiro Técnico';
+  category: 'Diamante' | 'Ouro' | 'Prata' | 'Parceiro Técnico' | 'Apoiador Oficial' | string;
+  badgeLabel?: string;
   tagline: string;
   description: string;
-  logoIcon: string;
+  logoUrl: string;
   websiteUrl: string;
   contributionType: string;
-  studentsSupported: number;
-  sinceYear: number;
+  studentsSupported?: number;
 }
 
 export interface SponsorProposal {
@@ -126,8 +134,9 @@ export interface PetGalleryItem {
   studentName: string;
   instructorName: string;
   date: string;
-  category: 'Antes & Depois' | 'Tosa Bebê' | 'Banho & Desembolo' | 'Pet Resgatado';
+  category: 'Antes & Depois' | 'Tosa Bebê' | 'Banho & Desembolo' | 'Pet Resgatado' | string;
   likesCount: number;
+  instagramPostUrl?: string;
 }
 
 export interface AdoptablePet {
@@ -144,15 +153,18 @@ export interface AdoptablePet {
   isVaccinated: boolean;
   isDewormed: boolean;
   isSpecialNeeds: boolean;
+  aggressionHistory: string; // Histórico de agressividade ou comportamento com outros animais e crianças
   temperament: string;
   story: string;
   donorName: string;
+  donorCpf?: string;
   donorPhone: string;
   donorEmail: string;
   donorType: 'Protetor Independente' | 'Tutor Temporário' | 'Abrigo Parceiro' | 'ONG Mãos que Cuidam';
   city: string;
   neighborhood: string;
   status: 'Disponível' | 'Adotado' | 'Em Processo';
+  protectionDeclaration: boolean; // Declaração de responsabilidade do protetor
   createdAt: string;
 }
 
@@ -165,9 +177,41 @@ export interface AdoptionApplication {
   adopterEmail: string;
   adopterPhone: string;
   adopterCpf: string;
+  adopterAddress?: string;
   residenceType: 'Casa com Quintal Murado' | 'Apartamento com Redes de Proteção' | 'Chácara / Sítio Seguro';
   hasOtherPets: boolean;
   motivation: string;
   status: RegistrationStatus;
   createdAt: string;
 }
+
+export type AdminRole = 
+  | 'Dono / Administrador Master' 
+  | 'Coordenador Pedagógico' 
+  | 'Instrutor de Banho e Tosa' 
+  | 'Atendente / Recepção';
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  password: string; // Senha interna
+  role: AdminRole;
+  isOwner: boolean; // True = Apenas Dono / Master tem poder total de alterar outros usuários
+  phone: string;
+  active: boolean;
+  createdAt: string;
+  lastLogin?: string;
+}
+
+export interface AccessLogEntry {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  role: string;
+  isOwner: boolean;
+  accessedAt: string;
+  deviceInfo?: string;
+}
+
