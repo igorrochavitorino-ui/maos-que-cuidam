@@ -129,3 +129,45 @@ export interface PetGalleryItem {
   category: 'Antes & Depois' | 'Tosa Bebê' | 'Banho & Desembolo' | 'Pet Resgatado';
   likesCount: number;
 }
+
+export interface AdoptablePet {
+  id: string;
+  name: string;
+  species: 'Cão' | 'Gato';
+  gender: 'Macho' | 'Fêmea';
+  ageCategory: 'Filhote' | 'Adulto' | 'Idoso';
+  ageText: string;
+  size: 'Porte Pequeno' | 'Porte Médio' | 'Porte Grande';
+  breed: string;
+  photoUrl: string;
+  isCastrated: boolean;
+  isVaccinated: boolean;
+  isDewormed: boolean;
+  isSpecialNeeds: boolean;
+  temperament: string;
+  story: string;
+  donorName: string;
+  donorPhone: string;
+  donorEmail: string;
+  donorType: 'Protetor Independente' | 'Tutor Temporário' | 'Abrigo Parceiro' | 'ONG Mãos que Cuidam';
+  city: string;
+  neighborhood: string;
+  status: 'Disponível' | 'Adotado' | 'Em Processo';
+  createdAt: string;
+}
+
+export interface AdoptionApplication {
+  id: string;
+  protocol: string;
+  petId: string;
+  petName: string;
+  adopterName: string;
+  adopterEmail: string;
+  adopterPhone: string;
+  adopterCpf: string;
+  residenceType: 'Casa com Quintal Murado' | 'Apartamento com Redes de Proteção' | 'Chácara / Sítio Seguro';
+  hasOtherPets: boolean;
+  motivation: string;
+  status: RegistrationStatus;
+  createdAt: string;
+}

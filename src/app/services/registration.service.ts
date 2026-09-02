@@ -1,5 +1,17 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Course, StudentRegistration, VolunteerRegistration, PetRegistration, Testimonial, Sponsor, SponsorProposal, PetGalleryItem, RegistrationStatus } from '../models/registration.model';
+import { 
+  Course, 
+  StudentRegistration, 
+  VolunteerRegistration, 
+  PetRegistration, 
+  Testimonial, 
+  Sponsor, 
+  SponsorProposal, 
+  PetGalleryItem, 
+  AdoptablePet, 
+  AdoptionApplication, 
+  RegistrationStatus 
+} from '../models/registration.model';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +22,8 @@ export class RegistrationService {
   private readonly PETS_KEY = 'mqc_pets_data';
   private readonly SPONSOR_PROPOSALS_KEY = 'mqc_sponsor_proposals_data';
   private readonly GALLERY_KEY = 'mqc_gallery_data';
+  private readonly ADOPTABLE_PETS_KEY = 'mqc_adoptable_pets_data';
+  private readonly ADOPTION_APPLICATIONS_KEY = 'mqc_adoption_applications_data';
 
   // Signals para reatividade pura
   private studentsSignal = signal<StudentRegistration[]>([]);
@@ -17,6 +31,8 @@ export class RegistrationService {
   private petsSignal = signal<PetRegistration[]>([]);
   private sponsorProposalsSignal = signal<SponsorProposal[]>([]);
   private gallerySignal = signal<PetGalleryItem[]>([]);
+  private adoptablePetsSignal = signal<AdoptablePet[]>([]);
+  private adoptionApplicationsSignal = signal<AdoptionApplication[]>([]);
 
   // Computed signals
   readonly students = computed(() => this.studentsSignal());
@@ -24,12 +40,16 @@ export class RegistrationService {
   readonly pets = computed(() => this.petsSignal());
   readonly sponsorProposals = computed(() => this.sponsorProposalsSignal());
   readonly galleryItems = computed(() => this.gallerySignal());
+  readonly adoptablePets = computed(() => this.adoptablePetsSignal());
+  readonly adoptionApplications = computed(() => this.adoptionApplicationsSignal());
 
   readonly totalStudents = computed(() => this.studentsSignal().length);
   readonly totalVolunteers = computed(() => this.volunteersSignal().length);
   readonly totalPets = computed(() => this.petsSignal().length);
   readonly totalProposals = computed(() => this.sponsorProposalsSignal().length);
   readonly totalGalleryPets = computed(() => this.gallerySignal().length);
+  readonly totalAdoptablePets = computed(() => this.adoptablePetsSignal().length);
+  readonly totalAdoptionApplications = computed(() => this.adoptionApplicationsSignal().length);
 
   // Lista oficial de cursos da ONG Mãos que Cuidam
   private readonly coursesList: Course[] = [
@@ -110,7 +130,7 @@ export class RegistrationService {
       title: 'Workshop de Primeiros Socorros & Bem-Estar Pet',
       tagline: 'Capacitação essencial para identificar emergências e promover a saúde física e emocional.',
       shortDescription: 'Identificação de problemas dermatológicos, primeiros socorros em engasgos ou quedas de pressão, e cuidados especiais com filhotes e cães idosos.',
-      fullDescription: 'Ministrado com apoio de médicos veterinários voluntários parceiros da ONG para capacitar profissionais e protetores a agir com rapidez e segurança diante de imprevistos.',
+      fullDescription: 'Capacita profissionais e protetores a agir com rapidez e segurança diante de imprevistos do dia a dia nos atendimentos.',
       durationHours: 16,
       durationWeeks: 2,
       modality: 'Workshop',
@@ -201,7 +221,7 @@ export class RegistrationService {
       description: 'Disponibiliza médicos veterinários residentes para suporte em aula, triagem preventiva dos pets e contratação direta dos alunos formados.',
       logoIcon: '🏥',
       websiteUrl: 'https://petcare.vet.br',
-      contributionType: 'Supervisão Veterinária & Encaminhamento de Empregos',
+      contributionType: 'Acompanhamento & Encaminhamento de Empregos',
       studentsSupported: 160,
       sinceYear: 2024
     },
@@ -312,6 +332,53 @@ export class RegistrationService {
     return [...this.gallerySignal()];
   }
 
+  getAdoptablePets(): AdoptablePet[] {
+    return [...this.adoptablePetsSignal()];
+  }
+
+  // --- MÉTODOS DE ADOÇÃO E DOAÇÃO DE PETS ---
+  registerPetForDonation(data: Omit<AdoptablePet, 'id' | 'createdAt' | 'status'>): AdoptablePet {
+    const newPet: AdoptablePet = {
+      ...data,
+      id: 'ado_pet_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      status: 'Disponível',
+      createdAt: new Date().toISOString()
+    };
+
+    const updated = [newPet, ...this.adoptablePetsSignal()];
+    this.adoptablePetsSignal.set(updated);
+    this.saveAdoptablePets(updated);
+    return newPet;
+  }
+
+  registerAdoptionApplication(data: Omit<AdoptionApplication, 'id' | 'protocol' | 'createdAt' | 'status'>): AdoptionApplication {
+    const newApp: AdoptionApplication = {
+      ...data,
+      id: 'app_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      protocol: 'ADO-' + new Date().getFullYear() + '-' + Math.floor(10000 + Math.random() * 90000),
+      status: 'Em Análise',
+      createdAt: new Date().toISOString()
+    };
+
+    const updated = [newApp, ...this.adoptionApplicationsSignal()];
+    this.adoptionApplicationsSignal.set(updated);
+    this.saveAdoptionApplications(updated);
+    return newApp;
+  }
+
+  updateAdoptablePetStatus(id: string, status: 'Disponível' | 'Adotado' | 'Em Processo'): void {
+    const updated = this.adoptablePetsSignal().map(p => p.id === id ? { ...p, status } : p);
+    this.adoptablePetsSignal.set(updated);
+    this.saveAdoptablePets(updated);
+  }
+
+  deleteAdoptablePet(id: string): void {
+    const updated = this.adoptablePetsSignal().filter(p => p.id !== id);
+    this.adoptablePetsSignal.set(updated);
+    this.saveAdoptablePets(updated);
+  }
+
+  // --- GALERIA ANTES & DEPOIS ---
   addGalleryItem(item: Omit<PetGalleryItem, 'id' | 'likesCount' | 'date'>): PetGalleryItem {
     const newItem: PetGalleryItem = {
       ...item,
@@ -337,7 +404,7 @@ export class RegistrationService {
     this.saveGallery(updated);
   }
 
-  // --- MÉTODOS DE PROPOSTAS DE PATROCÍNIO ---
+  // --- PROPOSTAS DE PATROCÍNIO ---
   registerSponsorProposal(data: Omit<SponsorProposal, 'id' | 'protocol' | 'createdAt' | 'status'>): SponsorProposal {
     const newProposal: SponsorProposal = {
       ...data,
@@ -353,7 +420,7 @@ export class RegistrationService {
     return newProposal;
   }
 
-  // --- MÉTODOS DE ALUNOS ---
+  // --- ALUNOS ---
   registerStudent(data: Omit<StudentRegistration, 'id' | 'protocol' | 'createdAt' | 'status'>): StudentRegistration {
     const newStudent: StudentRegistration = {
       ...data,
@@ -381,7 +448,7 @@ export class RegistrationService {
     this.saveStudents(updated);
   }
 
-  // --- MÉTODOS DE VOLUNTÁRIOS ---
+  // --- VOLUNTÁRIOS ---
   registerVolunteer(data: Omit<VolunteerRegistration, 'id' | 'protocol' | 'createdAt' | 'status'>): VolunteerRegistration {
     const newVol: VolunteerRegistration = {
       ...data,
@@ -409,7 +476,7 @@ export class RegistrationService {
     this.saveVolunteers(updated);
   }
 
-  // --- MÉTODOS DE PETS SOCIAIS ---
+  // --- PETS SOCIAIS ---
   registerPet(data: Omit<PetRegistration, 'id' | 'protocol' | 'createdAt' | 'status'>): PetRegistration {
     const newPet: PetRegistration = {
       ...data,
@@ -444,27 +511,27 @@ export class RegistrationService {
       if (storedStudents) {
         this.studentsSignal.set(JSON.parse(storedStudents));
       } else {
-        const seedStudents = this.getSeedStudents();
-        this.studentsSignal.set(seedStudents);
-        this.saveStudents(seedStudents);
+        const seed = this.getSeedStudents();
+        this.studentsSignal.set(seed);
+        this.saveStudents(seed);
       }
 
       const storedVolunteers = localStorage.getItem(this.VOLUNTEERS_KEY);
       if (storedVolunteers) {
         this.volunteersSignal.set(JSON.parse(storedVolunteers));
       } else {
-        const seedVolunteers = this.getSeedVolunteers();
-        this.volunteersSignal.set(seedVolunteers);
-        this.saveVolunteers(seedVolunteers);
+        const seed = this.getSeedVolunteers();
+        this.volunteersSignal.set(seed);
+        this.saveVolunteers(seed);
       }
 
       const storedPets = localStorage.getItem(this.PETS_KEY);
       if (storedPets) {
         this.petsSignal.set(JSON.parse(storedPets));
       } else {
-        const seedPets = this.getSeedPets();
-        this.petsSignal.set(seedPets);
-        this.savePets(seedPets);
+        const seed = this.getSeedPets();
+        this.petsSignal.set(seed);
+        this.savePets(seed);
       }
 
       const storedProposals = localStorage.getItem(this.SPONSOR_PROPOSALS_KEY);
@@ -476,9 +543,23 @@ export class RegistrationService {
       if (storedGallery) {
         this.gallerySignal.set(JSON.parse(storedGallery));
       } else {
-        const seedGallery = this.getSeedGallery();
-        this.gallerySignal.set(seedGallery);
-        this.saveGallery(seedGallery);
+        const seed = this.getSeedGallery();
+        this.gallerySignal.set(seed);
+        this.saveGallery(seed);
+      }
+
+      const storedAdoptablePets = localStorage.getItem(this.ADOPTABLE_PETS_KEY);
+      if (storedAdoptablePets) {
+        this.adoptablePetsSignal.set(JSON.parse(storedAdoptablePets));
+      } else {
+        const seed = this.getSeedAdoptablePets();
+        this.adoptablePetsSignal.set(seed);
+        this.saveAdoptablePets(seed);
+      }
+
+      const storedAdoptionApps = localStorage.getItem(this.ADOPTION_APPLICATIONS_KEY);
+      if (storedAdoptionApps) {
+        this.adoptionApplicationsSignal.set(JSON.parse(storedAdoptionApps));
       }
     } catch (e) {
       console.warn('Erro ao carregar do localStorage:', e);
@@ -486,6 +567,7 @@ export class RegistrationService {
       this.volunteersSignal.set(this.getSeedVolunteers());
       this.petsSignal.set(this.getSeedPets());
       this.gallerySignal.set(this.getSeedGallery());
+      this.adoptablePetsSignal.set(this.getSeedAdoptablePets());
     }
   }
 
@@ -509,21 +591,137 @@ export class RegistrationService {
     try { localStorage.setItem(this.GALLERY_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
   }
 
+  private saveAdoptablePets(data: AdoptablePet[]): void {
+    try { localStorage.setItem(this.ADOPTABLE_PETS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+  }
+
+  private saveAdoptionApplications(data: AdoptionApplication[]): void {
+    try { localStorage.setItem(this.ADOPTION_APPLICATIONS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+  }
+
   resetAllData(): void {
     const seedStudents = this.getSeedStudents();
     const seedVolunteers = this.getSeedVolunteers();
     const seedPets = this.getSeedPets();
     const seedGallery = this.getSeedGallery();
+    const seedAdoptablePets = this.getSeedAdoptablePets();
 
     this.studentsSignal.set(seedStudents);
     this.volunteersSignal.set(seedVolunteers);
     this.petsSignal.set(seedPets);
     this.gallerySignal.set(seedGallery);
+    this.adoptablePetsSignal.set(seedAdoptablePets);
 
     this.saveStudents(seedStudents);
     this.saveVolunteers(seedVolunteers);
     this.savePets(seedPets);
     this.saveGallery(seedGallery);
+    this.saveAdoptablePets(seedAdoptablePets);
+  }
+
+  private getSeedAdoptablePets(): AdoptablePet[] {
+    return [
+      {
+        id: 'ado_1',
+        name: 'Pipoca',
+        species: 'Cão',
+        gender: 'Macho',
+        ageCategory: 'Adulto',
+        ageText: '2 anos',
+        size: 'Porte Pequeno',
+        breed: 'Poodle Toy / SRD',
+        photoUrl: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600&auto=format&fit=crop&q=80',
+        isCastrated: true,
+        isVaccinated: true,
+        isDewormed: true,
+        isSpecialNeeds: false,
+        temperament: 'Dócil, afetuoso e calmo em apartamento',
+        story: 'Pipoca foi resgatado e totalmente higienizado e cuidado pelos alunos da ONG. Agora está pronto para encontrar uma família cheia de amor!',
+        donorName: 'ONG Mãos que Cuidam',
+        donorPhone: '(11) 98765-4321',
+        donorEmail: 'adocao@maosquecuidam.org.br',
+        donorType: 'ONG Mãos que Cuidam',
+        city: 'São Paulo',
+        neighborhood: 'Vila Mariana',
+        status: 'Disponível',
+        createdAt: '2026-08-28T10:00:00.000Z'
+      },
+      {
+        id: 'ado_2',
+        name: 'Luna',
+        species: 'Gato',
+        gender: 'Fêmea',
+        ageCategory: 'Filhote',
+        ageText: '8 meses',
+        size: 'Porte Pequeno',
+        breed: 'Frajolinha Muito Carinhosa',
+        photoUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&auto=format&fit=crop&q=80',
+        isCastrated: true,
+        isVaccinated: true,
+        isDewormed: true,
+        isSpecialNeeds: false,
+        temperament: 'Super ronronante, brincalhona e acostumada com outros gatos',
+        story: 'Luna foi acolhida por uma protetora parceira da ONG após ser encontrada filhote. É extremamente mansa e ama dormir no colo.',
+        donorName: 'Patrícia Helena (Protetora Independente)',
+        donorPhone: '(11) 97654-3210',
+        donorEmail: 'patricia.resgates@email.com',
+        donorType: 'Protetor Independente',
+        city: 'São Paulo',
+        neighborhood: 'Pinheiros',
+        status: 'Disponível',
+        createdAt: '2026-08-29T15:30:00.000Z'
+      },
+      {
+        id: 'ado_3',
+        name: 'Max',
+        species: 'Cão',
+        gender: 'Macho',
+        ageCategory: 'Adulto',
+        ageText: '3 anos',
+        size: 'Porte Médio',
+        breed: 'Vira-lata Caramelo Dourado',
+        photoUrl: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&auto=format&fit=crop&q=80',
+        isCastrated: true,
+        isVaccinated: true,
+        isDewormed: true,
+        isSpecialNeeds: false,
+        temperament: 'Alegre, sociável com outros cães e apaixonado por passeios',
+        story: 'Max é o famoso vira-lata caramelo brasileiro: fiel, inteligente e muito companheiro. Recebeu banho e cuidados em aula e espera um quintal para brincar.',
+        donorName: 'Marcos Vinícius',
+        donorPhone: '(11) 98112-2334',
+        donorEmail: 'marcos.tutor@email.com',
+        donorType: 'Tutor Temporário',
+        city: 'Guarulhos',
+        neighborhood: 'Centro',
+        status: 'Disponível',
+        createdAt: '2026-08-30T11:00:00.000Z'
+      },
+      {
+        id: 'ado_4',
+        name: 'Belinha',
+        species: 'Cão',
+        gender: 'Fêmea',
+        ageCategory: 'Idoso',
+        ageText: '7 anos',
+        size: 'Porte Pequeno',
+        breed: 'Maltês / Poodle Macia',
+        photoUrl: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=600&auto=format&fit=crop&q=80',
+        isCastrated: true,
+        isVaccinated: true,
+        isDewormed: true,
+        isSpecialNeeds: false,
+        temperament: 'Tranquila, adora uma caminha quentinha e quase não late',
+        story: 'Belinha é ideal para pessoas idosas ou quem busca uma companheira sossegada para assistir TV juntinho no sofá. Já fez tosa bebê na ONG!',
+        donorName: 'Dona Nair Silveira',
+        donorPhone: '(11) 99443-3221',
+        donorEmail: 'nair.silveira@email.com',
+        donorType: 'Protetor Independente',
+        city: 'São Paulo',
+        neighborhood: 'Tatuapé',
+        status: 'Disponível',
+        createdAt: '2026-09-01T09:00:00.000Z'
+      }
+    ];
   }
 
   private getSeedGallery(): PetGalleryItem[] {
@@ -538,7 +736,7 @@ export class RegistrationService {
         afterImageUrl: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=500&auto=format&fit=crop&q=80',
         story: 'Pipoca foi resgatado com pelos extremamente embolados e medo de barulho. Com manejo positivo e muito carinho, nossos alunos fizeram um desembolo indolor e uma tosa bebê impecável!',
         studentName: 'Juliana Mendes (Turma Manhã)',
-        instructorName: 'Prof. Carlos Eduardo (Master Groomer)',
+        instructorName: 'Prof. Carlos Eduardo',
         date: '2026-08-25T10:00:00.000Z',
         category: 'Tosa Bebê',
         likesCount: 38
@@ -553,7 +751,7 @@ export class RegistrationService {
         afterImageUrl: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=500&auto=format&fit=crop&q=80',
         story: 'Thor pertence a uma família carente da comunidade. Ele recebeu uma hidratação profunda com produtos doados pela GroomerPro e saiu super cheiroso e aliviado do calor.',
         studentName: 'Lucas Oliveira (Turma Sábado)',
-        instructorName: 'Dra. Gabriela Castro (Veterinária)',
+        instructorName: 'Instrutora Renata Silveira',
         date: '2026-08-28T14:30:00.000Z',
         category: 'Banho & Desembolo',
         likesCount: 52
@@ -661,9 +859,9 @@ export class RegistrationService {
         fullName: 'Dra. Gabriela Castro',
         email: 'gabriela.vet@clinica.com.br',
         phone: '(11) 98877-6655',
-        occupation: 'Médica Veterinária Dermatologista',
+        occupation: 'Médica Veterinária',
         areaOfInterest: 'Médico Veterinário Parceiro',
-        experienceDescription: '8 anos de experiência em clínica médica e dermatologia animal. Quero ministrar palestras sobre cuidados de pele e primeiros socorros.',
+        experienceDescription: '8 anos de experiência em clínica médica e dermatologia animal.',
         availability: 'Quintas-feiras pela manhã e sábados alternados',
         status: 'Confirmado',
         createdAt: '2026-08-20T16:00:00.000Z'
@@ -676,7 +874,7 @@ export class RegistrationService {
         phone: '(11) 97766-5544',
         occupation: 'Master Groomer Especialista',
         areaOfInterest: 'Instrutor de Banho e Tosa',
-        experienceDescription: '12 anos como tosador e juiz em competições. Desejo ensinar tosa na tesoura e padrão de raças para a nova geração.',
+        experienceDescription: '12 anos como tosador e instrutor prático.',
         availability: 'Sábados o dia todo',
         status: 'Confirmado',
         createdAt: '2026-08-25T11:20:00.000Z'

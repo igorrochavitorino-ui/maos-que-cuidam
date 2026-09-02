@@ -9,8 +9,12 @@
       <span>Cursos Gratuitos de Banho & Tosa • Vagas Sociais para Capacitação Profissional</span>
     </div>
     <div class="banner-actions">
+      <a routerLink="/adocao" class="banner-link">
+        <span>🏡 Adote um Amigo</span>
+      </a>
+      <span class="banner-divider">|</span>
       <a routerLink="/transformacoes" class="banner-link">
-        <span>🐾 Banho & Tosa Grátis para seu Pet</span>
+        <span>🐾 Banho Grátis para seu Pet</span>
       </a>
       <span class="banner-divider">|</span>
       <a routerLink="/patrocinadores" class="banner-link">
@@ -55,6 +59,11 @@
         <li>
           <a routerLink="/cursos" routerLinkActive="active" class="nav-item">
             Cursos
+          </a>
+        </li>
+        <li>
+          <a routerLink="/adocao" routerLinkActive="active" class="nav-item">
+            Adoção de Pets
           </a>
         </li>
         <li>
@@ -107,6 +116,7 @@
       <ul class="mobile-nav-links">
         <li><a routerLink="/" (click)="closeMobileMenu()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Início</a></li>
         <li><a routerLink="/cursos" (click)="closeMobileMenu()" routerLinkActive="active">Cursos & Oficinas</a></li>
+        <li><a routerLink="/adocao" (click)="closeMobileMenu()" routerLinkActive="active">🏡 Adoção & Doação de Animais</a></li>
         <li><a routerLink="/transformacoes" (click)="closeMobileMenu()" routerLinkActive="active">🐾 Galeria & Banho Grátis</a></li>
         <li><a routerLink="/cadastro" (click)="closeMobileMenu()" routerLinkActive="active">Portal de Inscrições</a></li>
         <li><a routerLink="/patrocinadores" (click)="closeMobileMenu()" routerLinkActive="active">⭐ Patrocinadores & Empresas</a></li>
