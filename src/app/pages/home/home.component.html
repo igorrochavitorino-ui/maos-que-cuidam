@@ -1,0 +1,339 @@
+<!-- HERO BANNER PRINCIPAL -->
+<section class="hero-section">
+  <div class="hero-bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
+
+  <div class="container hero-container">
+    <!-- Coluna de Texto Principal -->
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-icon">🐾</span>
+        <span>ONG MÃOS QUE CUIDAM • EDUCAÇÃO & BEM-ESTAR ANIMAL</span>
+      </div>
+
+      <h1 class="hero-title">
+        Capacitando Pessoas, <br>
+        <span class="text-gold-gradient">Cuidando de Vidas</span> com Amor e Respeito.
+      </h1>
+
+      <p class="hero-description">
+        Oferecemos <strong>cursos profissionalizantes e gratuitos em Banho e Tosa de Animais</strong> para pessoas em busca de uma nova profissão, enquanto proporcionamos carinho, higiene e dignidade para cães e gatos da nossa comunidade.
+      </p>
+
+      <div class="hero-actions">
+        <a routerLink="/cadastro" class="btn btn-primary btn-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+          <span>Quero me Inscrever</span>
+        </a>
+        <a routerLink="/cursos" class="btn btn-outline-navy btn-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <span>Conhecer os Cursos</span>
+        </a>
+      </div>
+
+      <!-- Selos de Confiança -->
+      <div class="hero-trust-bar">
+        <div class="trust-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d49a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Aulas 100% Práticas</span>
+        </div>
+        <div class="trust-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d49a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Certificado Válido Nacionalmente</span>
+        </div>
+        <div class="trust-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d49a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Manejo Sem Estresse & Proteção</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coluna do Card Visual / Logotipo da ONG -->
+    <div class="hero-visual">
+      <div class="hero-card-frame">
+        <div class="hero-logo-box">
+          <img src="assets/logo.jpg" alt="Logo Oficial ONG Mãos que Cuidam - Amor, Respeito, Proteção" class="hero-logo-image">
+        </div>
+
+        <!-- Floating Badge 1 -->
+        <div class="floating-badge badge-top-right animate-float">
+          <div class="float-icon-circle gold">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+          </div>
+          <div>
+            <div class="float-title">Cursos Gratuitos</div>
+            <div class="float-sub">Vagas Sociais Abertas</div>
+          </div>
+        </div>
+
+        <!-- Floating Badge 2 -->
+        <div class="floating-badge badge-bottom-left animate-float" style="animation-delay: 1.5s;">
+          <div class="float-icon-circle navy">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </div>
+          <div>
+            <div class="float-title">+2.850 Pets</div>
+            <div class="float-sub">Atendidos com Carinho</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NÚMEROS DE IMPACTO SOCIAL -->
+<section class="stats-section">
+  <div class="container">
+    <div class="stats-grid">
+      @for (st of stats; track st.label) {
+        <div class="stat-card">
+          <div class="stat-number">{{ st.number }}</div>
+          <div class="stat-label">{{ st.label }}</div>
+          <div class="stat-sublabel">{{ st.sublabel }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- OS 3 PILARES INSTITUCIONAIS (Amor • Respeito • Proteção) -->
+<section class="pillars-section section-padding">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        <span>Nossa Filosofia</span>
+      </div>
+      <h2 class="section-title">O Lema que Guia Cada Ação da ONG</h2>
+      <p class="section-subtitle">
+        Acreditamos que o cuidado com os animais e a qualificação de pessoas andam de mãos dadas para construir uma sociedade mais empática e justa.
+      </p>
+      <div class="gold-divider"></div>
+    </div>
+
+    <div class="grid-3 pillars-grid">
+      @for (pillar of pillars; track pillar.title) {
+        <div class="pillar-card card-modern">
+          <div class="pillar-header">
+            <div class="pillar-icon-box">
+              @if (pillar.title === 'Amor') {
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d49a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              } @else if (pillar.title === 'Respeito') {
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d49a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l10 7 1-1"/></svg>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d49a37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
+              }
+            </div>
+            <h3 class="pillar-title">{{ pillar.title }}</h3>
+          </div>
+          <div class="pillar-tagline">{{ pillar.tagline }}</div>
+          <p class="pillar-desc">{{ pillar.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CURSOS EM DESTAQUE -->
+<section class="courses-preview-section section-padding bg-warm">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        <span>Capacitação Profissional</span>
+      </div>
+      <h2 class="section-title">Cursos de Banho e Tosa em Destaque</h2>
+      <p class="section-subtitle">
+        Metodologia prática estruturada em laboratórios equipados. Formamos profissionais prontos para atender com excelência estética e cuidado afetivo.
+      </p>
+      <div class="gold-divider"></div>
+    </div>
+
+    <div class="grid-2 courses-grid">
+      @for (course of courses; track course.id) {
+        <div class="course-home-card card-modern">
+          <div class="course-card-top">
+            @if (course.badge) {
+              <span class="badge badge-gold">{{ course.badge }}</span>
+            }
+            <span class="badge badge-navy">{{ course.modality }}</span>
+            <span class="course-duration">⏱️ {{ course.durationHours }}h de carga horária</span>
+          </div>
+
+          <h3 class="course-card-title">{{ course.title }}</h3>
+          <p class="course-card-tagline">{{ course.tagline }}</p>
+          <p class="course-card-desc">{{ course.shortDescription }}</p>
+
+          <div class="course-topics-preview">
+            <h5 class="topics-title">O que você vai aprender na prática:</h5>
+            <ul class="topics-list">
+              @for (mod of course.modules.slice(0, 3); track mod.title) {
+                <li>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>{{ mod.title }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+
+          <div class="course-card-footer">
+            <div class="course-fee-info">
+              <span class="fee-label">Investimento:</span>
+              <span class="fee-val">100% Social / Gratuito</span>
+            </div>
+            <a [routerLink]="['/cadastro']" [queryParams]="{curso: course.id}" class="btn btn-primary">
+              Inscrever-se Neste Curso
+            </a>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="courses-cta-bottom text-center">
+      <a routerLink="/cursos" class="btn btn-outline-navy btn-lg">
+        Ver Todos os Detalhes da Grade Curricular &raquo;
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE A ONG & ESTRUTURA DE AULAS -->
+<section class="about-section section-padding">
+  <div class="container">
+    <div class="about-grid">
+      <!-- Coluna Visual com Destaque -->
+      <div class="about-visual-side">
+        <div class="about-image-collage">
+          <div class="collage-main-card">
+            <img src="assets/logo.jpg" alt="Logo Mãos que Cuidam" class="collage-logo">
+            <h4 class="collage-title">ONG Mãos que Cuidam</h4>
+            <p class="collage-text">Uma corrente de solidariedade para transformar realidades através da estética e cuidado pet.</p>
+          </div>
+          <div class="collage-feature-badge">
+            <div class="feature-num">100%</div>
+            <div class="feature-txt">Compromisso com o Bem-Estar Animal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna de Texto e Metodologia -->
+      <div class="about-text-side">
+        <div class="section-tag">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <span>Quem Somos</span>
+        </div>
+        <h2 class="section-title text-left">Como a ONG "Mãos que Cuidam" Transforma o Futuro</h2>
+        <p class="about-lead">
+          Nascemos do sonho de unir duas grandes necessidades sociais: a <strong>geração de emprego e renda</strong> para famílias em vulnerabilidade e o <strong>atendimento digno e carinhoso</strong> a animais que muitas vezes nunca tiveram um banho adequado.
+        </p>
+        <p class="about-paragraph">
+          Nossas turmas contam com instrutores voluntários de alta capacitação técnica (Groomers premiados e Médicos Veterinários). Nas aulas práticas, os animais atendidos são cães de abrigos parceiros ou de moradores da região sem condições financeiras. Assim, cada aula é também um ato de amor e higienização para um pet necessitado.
+        </p>
+
+        <div class="features-checklist">
+          <div class="check-item">
+            <div class="check-icon">✓</div>
+            <div>
+              <strong>Equipamentos Profissionais:</strong> Banheiras de inox, sopradores silenciosos e tesouras importadas para os alunos praticarem com o que há de melhor.
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon">✓</div>
+            <div>
+              <strong>Encaminhamento para o Mercado:</strong> Parcerias com clínicas veterinárias e pet shops para indicação direta de formandos.
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon">✓</div>
+            <div>
+              <strong>Certificado de Conclusão:</strong> Documento reconhecido para comprovação de horas e experiência profissional.
+            </div>
+          </div>
+        </div>
+
+        <div class="about-actions">
+          <a routerLink="/cadastro" class="btn btn-primary">Fazer Parte Como Aluno</a>
+          <a routerLink="/doar" class="btn btn-outline-gold">Quero Ajudar com Doações</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS DE FORMANDOS -->
+<section class="testimonials-section section-padding bg-warm">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Vidas Transformadas</span>
+      </div>
+      <h2 class="section-title">Histórias de Sucesso dos Nossos Alunos</h2>
+      <p class="section-subtitle">
+        Veja como o aprendizado na ONG Mãos que Cuidam abriu portas de trabalho e gerou renda com carinho pelos animais.
+      </p>
+      <div class="gold-divider"></div>
+    </div>
+
+    <div class="grid-3 testimonials-grid">
+      @for (t of testimonials; track t.id) {
+        <div class="testimonial-card card-modern">
+          <div class="testimonial-rating">
+            <span>★★★★★</span>
+          </div>
+          <p class="testimonial-quote">"{{ t.story }}"</p>
+          <div class="testimonial-author">
+            <img [src]="t.avatarUrl" [alt]="t.authorName" class="author-avatar">
+            <div class="author-details">
+              <h5 class="author-name">{{ t.authorName }}</h5>
+              <span class="author-role">{{ t.currentRole }}</span>
+              <span class="author-course">Formada em {{ t.courseCompleted }} ({{ t.year }})</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- 3 PASSOS PARA PARTICIPAR -->
+<section class="how-it-works-section section-padding">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Como Funciona</span>
+      </div>
+      <h2 class="section-title">Como Participar da ONG Mãos que Cuidam</h2>
+      <p class="section-subtitle">
+        Confira os 3 caminhos para se envolver e fazer parte desse projeto transformador.
+      </p>
+      <div class="gold-divider"></div>
+    </div>
+
+    <div class="grid-3 steps-grid">
+      <div class="step-card card-modern">
+        <div class="step-number">01</div>
+        <h3 class="step-title">Inscreva-se em um Curso</h3>
+        <p class="step-desc">Preencha o formulário online com seus dados e escolha o curso e horário desejado. Receba seu protocolo digital de inscrição.</p>
+        <a routerLink="/cadastro" class="btn btn-outline-gold btn-sm">Quero ser Aluno</a>
+      </div>
+
+      <div class="step-card card-modern">
+        <div class="step-number">02</div>
+        <h3 class="step-title">Seja Voluntário / Instrutor</h3>
+        <p class="step-desc">Se você é tosador profissional, veterinário ou deseja ajudar no apoio e acolhimento dos animais, junte-se à nossa equipe voluntária.</p>
+        <a routerLink="/cadastro" [queryParams]="{tab: 'voluntario'}" class="btn btn-outline-navy btn-sm">Ser Voluntário</a>
+      </div>
+
+      <div class="step-card card-modern">
+        <div class="step-number">03</div>
+        <h3 class="step-title">Cadastre seu Pet para Banho</h3>
+        <p class="step-desc">Tem um cãozinho ou gatinho e não tem condições de arcar com o banho? Traga-o para receber banho gratuito com amor nas aulas práticas.</p>
+        <a routerLink="/cadastro" [queryParams]="{tab: 'pet'}" class="btn btn-outline-gold btn-sm">Cadastrar Pet</a>
+      </div>
+    </div>
+  </div>
+</section>

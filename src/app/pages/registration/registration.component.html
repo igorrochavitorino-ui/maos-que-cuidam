@@ -1,0 +1,596 @@
+<!-- BANNER SUPERIOR DE CADASTRO -->
+<section class="page-header-section">
+  <div class="container">
+    <div class="page-header-content">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+        <span>Portal de Inscrições 2026</span>
+      </div>
+      <h1 class="page-header-title">Cadastro & Inscrição Online</h1>
+      <p class="page-header-desc">
+        Faça sua inscrição gratuita para os cursos de Banho e Tosa, candidate-se como voluntário ou cadastre seu pet para receber atendimento nas aulas práticas.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="registration-main-section section-padding">
+  <div class="container">
+    <!-- NAVEGAÇÃO ENTRE AS 3 ABAS DE CADASTRO -->
+    <div class="tabs-container">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab() === 'aluno'"
+        (click)="setTab('aluno')">
+        <span class="tab-icon">🎓</span>
+        <div class="tab-texts">
+          <strong class="tab-title">Inscrição para Cursos</strong>
+          <span class="tab-desc">Alunos & Bolsas Sociais</span>
+        </div>
+      </button>
+
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab() === 'voluntario'"
+        (click)="setTab('voluntario')">
+        <span class="tab-icon">🤝</span>
+        <div class="tab-texts">
+          <strong class="tab-title">Seja Voluntário</strong>
+          <span class="tab-desc">Groomers & Veterinários</span>
+        </div>
+      </button>
+
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab() === 'pet'"
+        (click)="setTab('pet')">
+        <span class="tab-icon">🐶</span>
+        <div class="tab-texts">
+          <strong class="tab-title">Banho Social para Pet</strong>
+          <span class="tab-desc">Atendimento Gratuito</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- ================= ABA 1: CADASTRO DE ALUNO ================= -->
+    @if (activeTab() === 'aluno') {
+      <div class="form-wrapper">
+        @if (submittedStudent()) {
+          <!-- PROTOCOLO DE CONFIRMAÇÃO DO ALUNO -->
+          <div class="protocol-card card-modern animate-fade-in">
+            <div class="protocol-header">
+              <div class="protocol-badge-success">✓ INSCRIÇÃO REALIZADA COM SUCESSO</div>
+              <h2 class="protocol-title">Comprovante de Inscrição Social</h2>
+              <p class="protocol-subtitle">ONG Mãos que Cuidam • Capacitação em Banho e Tosa</p>
+            </div>
+
+            <div class="protocol-body">
+              <div class="protocol-code-box">
+                <span class="code-label">SEU PROTOCOLO OFICIAL:</span>
+                <span class="code-value">{{ submittedStudent()?.protocol }}</span>
+                <span class="code-status">Status: <strong>{{ submittedStudent()?.status }}</strong></span>
+              </div>
+
+              <div class="protocol-details-grid">
+                <div class="p-detail">
+                  <span class="label">Nome Completo:</span>
+                  <strong>{{ submittedStudent()?.fullName }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">CPF:</span>
+                  <strong>{{ submittedStudent()?.cpf }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Curso Escolhido:</span>
+                  <strong class="text-gold">{{ submittedStudent()?.courseName }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Turno Selecionado:</span>
+                  <strong>{{ submittedStudent()?.preferredShift }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">WhatsApp / Telefone:</span>
+                  <strong>{{ submittedStudent()?.phone }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">E-mail:</span>
+                  <strong>{{ submittedStudent()?.email }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Cidade / Bairro:</span>
+                  <strong>{{ submittedStudent()?.city }} - {{ submittedStudent()?.neighborhood }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Data de Registro:</span>
+                  <strong>{{ submittedStudent()?.createdAt | date:'dd/MM/yyyy HH:mm' }}</strong>
+                </div>
+              </div>
+
+              <div class="protocol-instructions">
+                <h4>📌 Próximos Passos Importantes:</h4>
+                <ol>
+                  <li>Nossa coordenação pedagógica entrará em contato via <strong>WhatsApp</strong> em até 48 horas úteis para confirmar a sua vaga e turma.</li>
+                  <li>No primeiro dia de aula, tenha em mãos seu documento com foto (RG ou CNH) e comprovante de residência.</li>
+                  <li>Você também pode acompanhar todos os cadastros no nosso <a routerLink="/admin" class="text-gold underline">Painel de Gestão</a>.</li>
+                </ol>
+              </div>
+            </div>
+
+            <div class="protocol-actions">
+              <button class="btn btn-navy" (click)="printProtocol()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                <span>Imprimir Comprovante</span>
+              </button>
+              <button class="btn btn-outline-gold" (click)="resetCurrentSubmission()">
+                Fazer Nova Inscrição
+              </button>
+              <a routerLink="/admin" class="btn btn-primary">
+                Acessar Painel de Gestão &raquo;
+              </a>
+            </div>
+          </div>
+        } @else {
+          <!-- FORMULÁRIO DE INSCRIÇÃO DE ALUNO -->
+          <div class="form-card card-modern">
+            <div class="form-header-card">
+              <div class="form-title-group">
+                <h3>Formulário de Inscrição para Formação Profissional</h3>
+                <p>Preencha os dados abaixo com atenção. Os cursos são 100% gratuitos para vagas sociais.</p>
+              </div>
+              <div class="form-logo-badge">
+                <img src="assets/logo.jpg" alt="Logo ONG" class="badge-logo-img">
+              </div>
+            </div>
+
+            <form [formGroup]="studentForm" (ngSubmit)="submitStudent()" novalidate>
+              <!-- Bloco 1: Seleção do Curso -->
+              <div class="form-section-title">
+                <span class="step-num">1</span>
+                <h4>Escolha do Curso & Horário</h4>
+              </div>
+
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="courseId">
+                    Selecione o Curso Desejado <span class="required">*</span>
+                  </label>
+                  <select id="courseId" formControlName="courseId" class="form-select" [class.is-invalid]="studentForm.get('courseId')?.invalid && studentForm.get('courseId')?.touched">
+                    @for (c of courses; track c.id) {
+                      <option [value]="c.id">{{ c.title }} ({{ c.durationHours }}h - {{ c.level }})</option>
+                    }
+                  </select>
+                  <span class="form-hint">Todas as aulas são presenciais com práticas em laboratório.</span>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="preferredShift">
+                    Turno de Preferência <span class="required">*</span>
+                  </label>
+                  <select id="preferredShift" formControlName="preferredShift" class="form-select">
+                    <option value="Manhã (08h às 12h)">Manhã (08h às 12h) - Seg a Sex</option>
+                    <option value="Tarde (13h30 às 17h30)">Tarde (13h30 às 17h30) - Seg a Sex</option>
+                    <option value="Noite (18h30 às 22h)">Noite (18h30 às 22h) - Seg a Sex</option>
+                    <option value="Sábados (08h às 17h)">Turma Intensiva aos Sábados (08h às 17h)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Bloco 2: Dados Pessoais -->
+              <div class="form-section-title">
+                <span class="step-num">2</span>
+                <h4>Dados Pessoais do Aluno</h4>
+              </div>
+
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="fullName">
+                    Nome Completo <span class="required">*</span>
+                  </label>
+                  <input type="text" id="fullName" formControlName="fullName" placeholder="Ex: Maria Aparecida da Silva" class="form-control" [class.is-invalid]="studentForm.get('fullName')?.invalid && studentForm.get('fullName')?.touched">
+                  @if (studentForm.get('fullName')?.invalid && studentForm.get('fullName')?.touched) {
+                    <div class="form-error">Por favor, informe seu nome completo (mínimo 3 caracteres).</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="cpf">
+                    CPF (somente números ou formatado) <span class="required">*</span>
+                  </label>
+                  <input type="text" id="cpf" formControlName="cpf" placeholder="000.000.000-00" class="form-control" [class.is-invalid]="studentForm.get('cpf')?.invalid && studentForm.get('cpf')?.touched">
+                  @if (studentForm.get('cpf')?.invalid && studentForm.get('cpf')?.touched) {
+                    <div class="form-error">Informe um CPF válido.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="email">
+                    E-mail <span class="required">*</span>
+                  </label>
+                  <input type="email" id="email" formControlName="email" placeholder="seuemail@exemplo.com" class="form-control" [class.is-invalid]="studentForm.get('email')?.invalid && studentForm.get('email')?.touched">
+                  @if (studentForm.get('email')?.invalid && studentForm.get('email')?.touched) {
+                    <div class="form-error">Informe um e-mail válido.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="phone">
+                    WhatsApp / Telefone para Contato <span class="required">*</span>
+                  </label>
+                  <input type="tel" id="phone" formControlName="phone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="studentForm.get('phone')?.invalid && studentForm.get('phone')?.touched">
+                  @if (studentForm.get('phone')?.invalid && studentForm.get('phone')?.touched) {
+                    <div class="form-error">Informe seu WhatsApp para contato.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="birthDate">
+                    Data de Nascimento <span class="required">*</span>
+                  </label>
+                  <input type="date" id="birthDate" formControlName="birthDate" class="form-control" [class.is-invalid]="studentForm.get('birthDate')?.invalid && studentForm.get('birthDate')?.touched">
+                  @if (studentForm.get('birthDate')?.invalid && studentForm.get('birthDate')?.touched) {
+                    <div class="form-error">Data de nascimento obrigatória.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="city">
+                    Cidade / Bairro <span class="required">*</span>
+                  </label>
+                  <div class="grid-2" style="gap: 0.5rem;">
+                    <input type="text" id="city" formControlName="city" placeholder="Cidade" class="form-control">
+                    <input type="text" formControlName="neighborhood" placeholder="Bairro" class="form-control" [class.is-invalid]="studentForm.get('neighborhood')?.invalid && studentForm.get('neighborhood')?.touched">
+                  </div>
+                  @if (studentForm.get('neighborhood')?.invalid && studentForm.get('neighborhood')?.touched) {
+                    <div class="form-error">Informe seu bairro.</div>
+                  }
+                </div>
+              </div>
+
+              <!-- Bloco 3: Perfil Social & Motivação -->
+              <div class="form-section-title">
+                <span class="step-num">3</span>
+                <h4>Perfil Social & Motivação</h4>
+              </div>
+
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="employmentStatus">
+                    Situação Atual de Trabalho
+                  </label>
+                  <select id="employmentStatus" formControlName="employmentStatus" class="form-select">
+                    <option value="Buscando primeira oportunidade na área">Buscando primeira oportunidade na área</option>
+                    <option value="Desempregado(a) no momento">Desempregado(a) no momento</option>
+                    <option value="Trabalhador autônomo / Informal">Trabalhador autônomo / Informal</option>
+                    <option value="Empregado em outro setor (transição de carreira)">Empregado em outro setor (transição de carreira)</option>
+                    <option value="Estudante">Estudante</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">
+                    Você já teve contato ou experiência cuidando de animais?
+                  </label>
+                  <div class="checkbox-box">
+                    <input type="checkbox" id="hasPetExperience" formControlName="hasPetExperience" class="form-checkbox">
+                    <label for="hasPetExperience" class="checkbox-text">
+                      Sim, já tenho pets ou já atuei informalmente cuidando de cães/gatos.
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="motivation">
+                  Por que você deseja fazer este curso na ONG Mãos que Cuidam? <span class="required">*</span>
+                </label>
+                <textarea id="motivation" formControlName="motivation" rows="3" placeholder="Conte-nos um pouco sobre seu amor por animais e seus planos para o futuro com esta capacitação..." class="form-textarea" [class.is-invalid]="studentForm.get('motivation')?.invalid && studentForm.get('motivation')?.touched"></textarea>
+                @if (studentForm.get('motivation')?.invalid && studentForm.get('motivation')?.touched) {
+                  <div class="form-error">Por favor, descreva sua motivação (mínimo 15 caracteres).</div>
+                }
+              </div>
+
+              <!-- Termo de Compromisso -->
+              <div class="terms-card">
+                <div class="checkbox-box">
+                  <input type="checkbox" id="agreeTermsStudent" formControlName="agreeTerms" class="form-checkbox" [class.is-invalid]="studentForm.get('agreeTerms')?.invalid && studentForm.get('agreeTerms')?.touched">
+                  <label for="agreeTermsStudent" class="checkbox-text">
+                    Declaro que li e concordo com os princípios de <strong>Amor, Respeito e Proteção Animal</strong> da ONG, comprometendo-me a frequentar as aulas práticas com assiduidade e pontualidade. <span class="required">*</span>
+                  </label>
+                </div>
+                @if (studentForm.get('agreeTerms')?.invalid && studentForm.get('agreeTerms')?.touched) {
+                  <div class="form-error">É necessário aceitar os termos da ONG para enviar a inscrição.</div>
+                }
+              </div>
+
+              <div class="form-submit-row">
+                <button type="submit" class="btn btn-primary btn-lg submit-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <span>Confirmar e Enviar Inscrição</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ================= ABA 2: CADASTRO DE VOLUNTÁRIO ================= -->
+    @if (activeTab() === 'voluntario') {
+      <div class="form-wrapper">
+        @if (submittedVolunteer()) {
+          <div class="protocol-card card-modern animate-fade-in">
+            <div class="protocol-header">
+              <div class="protocol-badge-success">✓ CADASTRO DE VOLUNTÁRIO RECEBIDO</div>
+              <h2 class="protocol-title">Obrigado por Fazer Parte da Corrente do Bem!</h2>
+              <p class="protocol-subtitle">ONG Mãos que Cuidam • Equipe de Voluntariado</p>
+            </div>
+
+            <div class="protocol-body">
+              <div class="protocol-code-box">
+                <span class="code-label">PROTOCOLO DE VOLUNTARIADO:</span>
+                <span class="code-value">{{ submittedVolunteer()?.protocol }}</span>
+              </div>
+
+              <div class="protocol-details-grid">
+                <div class="p-detail">
+                  <span class="label">Nome do Voluntário:</span>
+                  <strong>{{ submittedVolunteer()?.fullName }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Área de Apoio:</span>
+                  <strong class="text-gold">{{ submittedVolunteer()?.areaOfInterest }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Profissão:</span>
+                  <strong>{{ submittedVolunteer()?.occupation }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Disponibilidade:</span>
+                  <strong>{{ submittedVolunteer()?.availability }}</strong>
+                </div>
+              </div>
+
+              <div class="protocol-instructions">
+                <p>Nossa equipe de recursos humanos e coordenação de voluntários entrará em contato via WhatsApp para uma conversa de boas-vindas e agendamento da visita à nossa sede.</p>
+              </div>
+            </div>
+
+            <div class="protocol-actions">
+              <button class="btn btn-outline-gold" (click)="resetCurrentSubmission()">Novo Cadastro</button>
+              <a routerLink="/admin" class="btn btn-primary">Ver no Painel de Gestão &raquo;</a>
+            </div>
+          </div>
+        } @else {
+          <div class="form-card card-modern">
+            <div class="form-header-card">
+              <div class="form-title-group">
+                <h3>Cadastro de Voluntários & Especialistas</h3>
+                <p>Compartilhe seu conhecimento ou seu tempo para transformar a vida de animais e alunos.</p>
+              </div>
+              <div class="form-logo-badge">
+                <img src="assets/logo.jpg" alt="Logo ONG" class="badge-logo-img">
+              </div>
+            </div>
+
+            <form [formGroup]="volunteerForm" (ngSubmit)="submitVolunteer()" novalidate>
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="volFullName">Nome Completo <span class="required">*</span></label>
+                  <input type="text" id="volFullName" formControlName="fullName" placeholder="Ex: Dr. Roberto Alcantara" class="form-control" [class.is-invalid]="volunteerForm.get('fullName')?.invalid && volunteerForm.get('fullName')?.touched">
+                  @if (volunteerForm.get('fullName')?.invalid && volunteerForm.get('fullName')?.touched) {
+                    <div class="form-error">Nome completo é obrigatório.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="volOccupation">Sua Profissão / Atuação <span class="required">*</span></label>
+                  <input type="text" id="volOccupation" formControlName="occupation" placeholder="Ex: Tosador Profissional / Médico Veterinário / Administrador" class="form-control" [class.is-invalid]="volunteerForm.get('occupation')?.invalid && volunteerForm.get('occupation')?.touched">
+                  @if (volunteerForm.get('occupation')?.invalid && volunteerForm.get('occupation')?.touched) {
+                    <div class="form-error">Informe sua profissão.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="volEmail">E-mail <span class="required">*</span></label>
+                  <input type="email" id="volEmail" formControlName="email" placeholder="email@exemplo.com" class="form-control" [class.is-invalid]="volunteerForm.get('email')?.invalid && volunteerForm.get('email')?.touched">
+                  @if (volunteerForm.get('email')?.invalid && volunteerForm.get('email')?.touched) {
+                    <div class="form-error">E-mail válido obrigatório.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="volPhone">WhatsApp / Telefone <span class="required">*</span></label>
+                  <input type="tel" id="volPhone" formControlName="phone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="volunteerForm.get('phone')?.invalid && volunteerForm.get('phone')?.touched">
+                  @if (volunteerForm.get('phone')?.invalid && volunteerForm.get('phone')?.touched) {
+                    <div class="form-error">WhatsApp é obrigatório.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="areaOfInterest">Área de Interesse de Apoio <span class="required">*</span></label>
+                  <select id="areaOfInterest" formControlName="areaOfInterest" class="form-select">
+                    <option value="Instrutor de Banho e Tosa">Instrutor de Banho e Tosa</option>
+                    <option value="Médico Veterinário Parceiro">Médico Veterinário Parceiro</option>
+                    <option value="Auxiliar e Manejo Pet">Auxiliar e Manejo Pet</option>
+                    <option value="Eventos e Comunicação">Eventos e Comunicação / Redes Sociais</option>
+                    <option value="Apoio Administrativo / Triagem">Apoio Administrativo / Triagem</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="availability">Disponibilidade de Dias e Horários <span class="required">*</span></label>
+                  <input type="text" id="availability" formControlName="availability" placeholder="Ex: Sábados de manhã / Terças à tarde" class="form-control" [class.is-invalid]="volunteerForm.get('availability')?.invalid && volunteerForm.get('availability')?.touched">
+                  @if (volunteerForm.get('availability')?.invalid && volunteerForm.get('availability')?.touched) {
+                    <div class="form-error">Informe sua disponibilidade.</div>
+                  }
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="experienceDescription">Resumo de Experiência e Como Deseja Contribuir <span class="required">*</span></label>
+                <textarea id="experienceDescription" formControlName="experienceDescription" rows="3" placeholder="Fale um pouco sobre suas habilidades, trajetória profissional e projetos que gostaria de desenvolver conosco..." class="form-textarea" [class.is-invalid]="volunteerForm.get('experienceDescription')?.invalid && volunteerForm.get('experienceDescription')?.touched"></textarea>
+                @if (volunteerForm.get('experienceDescription')?.invalid && volunteerForm.get('experienceDescription')?.touched) {
+                  <div class="form-error">Descreva sua experiência (mínimo 15 caracteres).</div>
+                }
+              </div>
+
+              <div class="terms-card">
+                <div class="checkbox-box">
+                  <input type="checkbox" id="agreeTermsVol" formControlName="agreeTerms" class="form-checkbox">
+                  <label for="agreeTermsVol" class="checkbox-text">
+                    Estou ciente do caráter voluntário da atividade e concordo com os valores éticos da ONG Mãos que Cuidam. <span class="required">*</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-submit-row">
+                <button type="submit" class="btn btn-primary btn-lg submit-btn">
+                  Enviar Cadastro de Voluntário &raquo;
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ================= ABA 3: CADASTRO DE PET SOCIAL ================= -->
+    @if (activeTab() === 'pet') {
+      <div class="form-wrapper">
+        @if (submittedPet()) {
+          <div class="protocol-card card-modern animate-fade-in">
+            <div class="protocol-header">
+              <div class="protocol-badge-success">✓ PET CADASTRADO PARA BANHO SOCIAL</div>
+              <h2 class="protocol-title">O {{ submittedPet()?.petName }} Foi Cadastrado com Sucesso!</h2>
+              <p class="protocol-subtitle">ONG Mãos que Cuidam • Programa Banho e Higiene Solidária</p>
+            </div>
+
+            <div class="protocol-body">
+              <div class="protocol-code-box">
+                <span class="code-label">PROTOCOLO DO PET:</span>
+                <span class="code-value">{{ submittedPet()?.protocol }}</span>
+              </div>
+
+              <div class="protocol-details-grid">
+                <div class="p-detail">
+                  <span class="label">Nome do Pet:</span>
+                  <strong class="text-gold">{{ submittedPet()?.petName }} ({{ submittedPet()?.petSpecies }})</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Porte & Raça:</span>
+                  <strong>{{ submittedPet()?.petBreed }} - {{ submittedPet()?.petSize }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Tutor(a) Responsável:</span>
+                  <strong>{{ submittedPet()?.tutorName }}</strong>
+                </div>
+                <div class="p-detail">
+                  <span class="label">Telefone de Contato:</span>
+                  <strong>{{ submittedPet()?.tutorPhone }}</strong>
+                </div>
+              </div>
+
+              <div class="protocol-instructions">
+                <p>Nossa equipe entrará em contato via WhatsApp para confirmar a data e horário da aula prática em que seu pet será atendido gratuitamente por nossos alunos sob supervisão de tosadores e veterinários.</p>
+              </div>
+            </div>
+
+            <div class="protocol-actions">
+              <button class="btn btn-outline-gold" (click)="resetCurrentSubmission()">Cadastrar Outro Pet</button>
+              <a routerLink="/admin" class="btn btn-primary">Ver no Painel de Gestão &raquo;</a>
+            </div>
+          </div>
+        } @else {
+          <div class="form-card card-modern">
+            <div class="form-header-card">
+              <div class="form-title-group">
+                <h3>Cadastro de Pet para Banho Social Gratuito</h3>
+                <p>Destinado a famílias de baixa renda ou protetores independentes. Cuidado com amor e produtos de alta qualidade.</p>
+              </div>
+              <div class="form-logo-badge">
+                <img src="assets/logo.jpg" alt="Logo ONG" class="badge-logo-img">
+              </div>
+            </div>
+
+            <form [formGroup]="petForm" (ngSubmit)="submitPet()" novalidate>
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="tutorName">Nome do(a) Tutor(a) <span class="required">*</span></label>
+                  <input type="text" id="tutorName" formControlName="tutorName" placeholder="Seu nome completo" class="form-control" [class.is-invalid]="petForm.get('tutorName')?.invalid && petForm.get('tutorName')?.touched">
+                  @if (petForm.get('tutorName')?.invalid && petForm.get('tutorName')?.touched) {
+                    <div class="form-error">Nome do tutor é obrigatório.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="tutorPhone">WhatsApp do Tutor <span class="required">*</span></label>
+                  <input type="tel" id="tutorPhone" formControlName="tutorPhone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="petForm.get('tutorPhone')?.invalid && petForm.get('tutorPhone')?.touched">
+                  @if (petForm.get('tutorPhone')?.invalid && petForm.get('tutorPhone')?.touched) {
+                    <div class="form-error">Telefone obrigatório.</div>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="tutorCpf">CPF do Tutor <span class="required">*</span></label>
+                  <input type="text" id="tutorCpf" formControlName="tutorCpf" placeholder="000.000.000-00" class="form-control" [class.is-invalid]="petForm.get('tutorCpf')?.invalid && petForm.get('tutorCpf')?.touched">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="petName">Nome do Pet <span class="required">*</span></label>
+                  <input type="text" id="petName" formControlName="petName" placeholder="Ex: Mel, Bob, Pipoca" class="form-control" [class.is-invalid]="petForm.get('petName')?.invalid && petForm.get('petName')?.touched">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="petSpecies">Espécie <span class="required">*</span></label>
+                  <select id="petSpecies" formControlName="petSpecies" class="form-select">
+                    <option value="Cão">Cão (Cachorro)</option>
+                    <option value="Gato">Gato (Felino)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="petSize">Porte do Animal <span class="required">*</span></label>
+                  <select id="petSize" formControlName="petSize" class="form-select">
+                    <option value="Porte Pequeno (até 10kg)">Porte Pequeno (até 10kg)</option>
+                    <option value="Porte Médio (10kg a 25kg)">Porte Médio (10kg a 25kg)</option>
+                    <option value="Porte Grande (acima de 25kg)">Porte Grande (acima de 25kg)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="petBreed">Raça / Tipo <span class="required">*</span></label>
+                  <input type="text" id="petBreed" formControlName="petBreed" placeholder="Ex: SRD / Poodle / Shih Tzu / Labrador" class="form-control">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="petAge">Idade Aproximada <span class="required">*</span></label>
+                  <input type="text" id="petAge" formControlName="petAge" placeholder="Ex: 2 anos, 8 meses, idoso" class="form-control">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="specialCareNotes">Observações de Comportamento e Cuidados Especiais</label>
+                <textarea id="specialCareNotes" formControlName="specialCareNotes" rows="2" placeholder="O pet é dócil? Tem medo de secador? Tem alguma alergia ou problema de pele?" class="form-textarea"></textarea>
+              </div>
+
+              <div class="terms-card">
+                <div class="checkbox-box">
+                  <input type="checkbox" id="agreeTermsPet" formControlName="agreeTerms" class="form-checkbox">
+                  <label for="agreeTermsPet" class="checkbox-text">
+                    Autorizo a realização de banho e higienização supervisionada pela equipe da ONG Mãos que Cuidam. <span class="required">*</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-submit-row">
+                <button type="submit" class="btn btn-primary btn-lg submit-btn">
+                  Cadastrar Pet para Atendimento &raquo;
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

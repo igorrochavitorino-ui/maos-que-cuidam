@@ -1,0 +1,104 @@
+<!-- Faixa Superior de Aviso Social -->
+<div class="top-banner">
+  <div class="container top-banner-content">
+    <div class="banner-tag">
+      <span class="pulse-dot"></span>
+      <span>INSCRIÇÕES ABERTAS 2026</span>
+    </div>
+    <div class="banner-text">
+      <span>Cursos Gratuitos de Banho & Tosa • Vagas Sociais para Capacitação Profissional</span>
+    </div>
+    <div class="banner-actions">
+      <a routerLink="/doar" class="banner-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <span>Apoie com PIX</span>
+      </a>
+      <span class="banner-divider">|</span>
+      <a routerLink="/admin" class="banner-link admin-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/></svg>
+        <span>Painel de Gestão</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Header Principal com Logotipo e Menus -->
+<header class="main-header">
+  <div class="container header-container">
+    <!-- Logotipo Institucional -->
+    <a routerLink="/" (click)="closeMobileMenu()" class="brand-logo-wrapper">
+      <div class="logo-image-box">
+        <img src="assets/logo.jpg" alt="Logo Mãos que Cuidam - Amor, Respeito e Proteção" class="logo-img">
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">Mãos que Cuidam</span>
+        <span class="brand-sub">AMOR • RESPEITO • PROTEÇÃO</span>
+      </div>
+    </a>
+
+    <!-- Menu Desktop -->
+    <nav class="desktop-nav">
+      <ul class="nav-links">
+        <li>
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+            Início
+          </a>
+        </li>
+        <li>
+          <a routerLink="/cursos" routerLinkActive="active" class="nav-item">
+            Cursos & Oficinas
+          </a>
+        </li>
+        <li>
+          <a routerLink="/cadastro" routerLinkActive="active" class="nav-item">
+            Inscrições
+          </a>
+        </li>
+        <li>
+          <a routerLink="/doar" routerLinkActive="active" class="nav-item">
+            Como Ajudar
+          </a>
+        </li>
+        <li>
+          <a routerLink="/contato" routerLinkActive="active" class="nav-item">
+            Contato & FAQ
+          </a>
+        </li>
+      </ul>
+
+      <!-- Botão de Inscrição Imediata -->
+      <div class="header-cta-group">
+        <a routerLink="/cadastro" class="btn btn-primary btn-cta">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+          <span>Quero me Inscrever</span>
+        </a>
+      </div>
+    </nav>
+
+    <!-- Botão Hamburger Mobile -->
+    <button class="mobile-toggle-btn" (click)="toggleMobileMenu()" aria-label="Abrir Menu">
+      <span class="hamburger-bar" [class.open]="isMobileMenuOpen()"></span>
+      <span class="hamburger-bar" [class.open]="isMobileMenuOpen()"></span>
+      <span class="hamburger-bar" [class.open]="isMobileMenuOpen()"></span>
+    </button>
+  </div>
+
+  <!-- Menu Mobile Dropdown -->
+  @if (isMobileMenuOpen()) {
+    <div class="mobile-menu-drawer">
+      <ul class="mobile-nav-links">
+        <li><a routerLink="/" (click)="closeMobileMenu()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Início</a></li>
+        <li><a routerLink="/cursos" (click)="closeMobileMenu()" routerLinkActive="active">Cursos & Oficinas</a></li>
+        <li><a routerLink="/cadastro" (click)="closeMobileMenu()" routerLinkActive="active">Portal de Inscrições</a></li>
+        <li><a routerLink="/doar" (click)="closeMobileMenu()" routerLinkActive="active">Como Ajudar / Doações</a></li>
+        <li><a routerLink="/contato" (click)="closeMobileMenu()" routerLinkActive="active">Contato & Localização</a></li>
+        <li><a routerLink="/admin" (click)="closeMobileMenu()" routerLinkActive="active" class="mobile-admin-link">⚙️ Painel de Gestão (Admin)</a></li>
+      </ul>
+      <div class="mobile-cta-box">
+        <a routerLink="/cadastro" (click)="closeMobileMenu()" class="btn btn-primary" style="width: 100%;">
+          Inscreva-se Agora
+        </a>
+      </div>
+    </div>
+  }
+</header>

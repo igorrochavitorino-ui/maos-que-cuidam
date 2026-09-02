@@ -1,0 +1,154 @@
+<!-- BANNER DE DOAÇÕES -->
+<section class="page-header-section">
+  <div class="container">
+    <div class="page-header-content">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <span>Solidariedade & Amor Animal</span>
+      </div>
+      <h1 class="page-header-title">Como Ajudar a ONG Mãos que Cuidam</h1>
+      <p class="page-header-desc">
+        Sua contribuição mantém nossos cursos gratuitos para jovens e famílias de baixa renda, e garante atendimento digno a milhares de pets resgatados.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SEÇÃO PRINCIPAL DO PIX & KITS -->
+<section class="donate-main-section section-padding">
+  <div class="container">
+    <div class="donate-grid">
+      <!-- Coluna PIX -->
+      <div class="pix-card card-modern">
+        <div class="pix-card-header">
+          <span class="badge badge-success">⚡ DOAÇÃO INSTANTÂNEA</span>
+          <h3>Doe Qualquer Valor via PIX</h3>
+          <p>Toda doação, de qualquer valor, faz uma enorme diferença no dia a dia da ONG.</p>
+        </div>
+
+        <div class="pix-box">
+          <div class="qr-mockup">
+            <!-- QR Code Ilustrativo SVG -->
+            <svg viewBox="0 0 100 100" width="160" height="160" class="qr-code-svg">
+              <rect width="100" height="100" fill="#ffffff"/>
+              <!-- Quadrados de posicionamento -->
+              <rect x="10" y="10" width="25" height="25" fill="#132a47"/>
+              <rect x="15" y="15" width="15" height="15" fill="#ffffff"/>
+              <rect x="18" y="18" width="9" height="9" fill="#d49a37"/>
+
+              <rect x="65" y="10" width="25" height="25" fill="#132a47"/>
+              <rect x="70" y="15" width="15" height="15" fill="#ffffff"/>
+              <rect x="73" y="18" width="9" height="9" fill="#d49a37"/>
+
+              <rect x="10" y="65" width="25" height="25" fill="#132a47"/>
+              <rect x="15" y="70" width="15" height="15" fill="#ffffff"/>
+              <rect x="18" y="73" width="9" height="9" fill="#d49a37"/>
+
+              <!-- Pontos de dados simulados -->
+              <rect x="42" y="12" width="6" height="6" fill="#132a47"/>
+              <rect x="52" y="18" width="6" height="6" fill="#132a47"/>
+              <rect x="42" y="28" width="6" height="6" fill="#d49a37"/>
+              <rect x="12" y="42" width="6" height="6" fill="#132a47"/>
+              <rect x="24" y="48" width="6" height="6" fill="#132a47"/>
+              <rect x="42" y="42" width="16" height="16" fill="#132a47"/>
+              <rect x="46" y="46" width="8" height="8" fill="#ffffff"/>
+              <rect x="65" y="42" width="6" height="6" fill="#132a47"/>
+              <rect x="78" y="48" width="6" height="6" fill="#d49a37"/>
+              <rect x="42" y="65" width="6" height="6" fill="#132a47"/>
+              <rect x="52" y="75" width="6" height="6" fill="#132a47"/>
+              <rect x="68" y="68" width="6" height="6" fill="#132a47"/>
+              <rect x="78" y="78" width="12" height="12" fill="#132a47"/>
+            </svg>
+          </div>
+
+          <div class="pix-key-display">
+            <span class="pix-key-label">Chave PIX Oficial (E-mail):</span>
+            <div class="key-container">
+              <code class="pix-key-text">{{ pixKey }}</code>
+              <button class="btn btn-primary btn-sm copy-btn" (click)="copyPixKey()">
+                @if (copied()) {
+                  <span>✓ Copiado!</span>
+                } @else {
+                  <span>Copiar Chave</span>
+                }
+              </button>
+            </div>
+            <span class="pix-dest-info">Favorecido: <strong>ONG Mãos que Cuidam</strong> • Banco Solidário</span>
+          </div>
+        </div>
+
+        <div class="transparency-note">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+          <span>Prestação de contas mensal pública e auditada em nossas redes sociais.</span>
+        </div>
+      </div>
+
+      <!-- Coluna Kits de Apadrinhamento -->
+      <div class="kits-container">
+        <h3 class="kits-main-title">Kits de Apadrinhamento Social</h3>
+        <p class="kits-subtitle">Escolha um valor específico e saiba exatamente o impacto da sua ajuda:</p>
+
+        <div class="kits-grid">
+          @for (kit of donationKits; track kit.id) {
+            <div class="kit-card card-modern" [class.popular-kit]="kit.popular">
+              @if (kit.badge) {
+                <span class="kit-badge-top">{{ kit.badge }}</span>
+              }
+              <div class="kit-header">
+                <span class="kit-icon">{{ kit.icon }}</span>
+                <div>
+                  <h4 class="kit-title">{{ kit.title }}</h4>
+                  <div class="kit-price">R$ {{ kit.amount }} <span>/ doação única</span></div>
+                </div>
+              </div>
+              <p class="kit-desc">{{ kit.desc }}</p>
+              <button class="btn btn-outline-gold" (click)="copyPixKey()">
+                Doar R$ {{ kit.amount }} via PIX
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTRAS FORMAS DE AJUDAR -->
+<section class="other-ways-section section-padding bg-warm">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+        <span>Outras Formas</span>
+      </div>
+      <h2 class="section-title">Como Mais Você Pode Contribuir</h2>
+      <p class="section-subtitle">
+        Doações físicas de materiais e voluntariado são essenciais para a nossa rotina.
+      </p>
+      <div class="gold-divider"></div>
+    </div>
+
+    <div class="grid-3">
+      <div class="other-card card-modern">
+        <div class="other-icon">🧴</div>
+        <h4>Doação de Materiais Físicos</h4>
+        <p>Recebemos toalhas de banho limpas (novas ou usadas em bom estado), shampoos pet, rasqueadeiras e tesouras.</p>
+        <a routerLink="/contato" class="card-link">Ver pontos de entrega &raquo;</a>
+      </div>
+
+      <div class="other-card card-modern">
+        <div class="other-icon">🐾</div>
+        <h4>Parceria com Pet Shops e Clínicas</h4>
+        <p>Sua empresa pet pode contratar nossos formandos certificados ou apadrinhar uma turma inteira com sua marca.</p>
+        <a routerLink="/contato" class="card-link">Fale com nossa coordenação &raquo;</a>
+      </div>
+
+      <div class="other-card card-modern">
+        <div class="other-icon">📢</div>
+        <h4>Divulgação nas Redes Sociais</h4>
+        <p>Siga nossa página, compartilhe as fotos dos cães higienizados e ajude mais pessoas a conhecerem nossos cursos.</p>
+        <a routerLink="/contato" class="card-link">Acompanhar nossas redes &raquo;</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,356 @@
+<!-- HEADER DO PAINEL DE GESTÃO -->
+<section class="admin-header-section">
+  <div class="container admin-header-flex">
+    <div>
+      <div class="section-tag" style="background: rgba(212, 154, 55, 0.15); border-color: rgba(212, 154, 55, 0.3); color: #f1cf94;">
+        <span>🔒 ÁREA ADMINISTRATIVA & COORDENAÇÃO</span>
+      </div>
+      <h1 class="admin-title">Painel de Gestão de Cadastros</h1>
+      <p class="admin-subtitle">Acompanhamento e triagem em tempo real de alunos, voluntários e pets cadastrados.</p>
+    </div>
+
+    <div class="admin-top-actions">
+      <button class="btn btn-outline-gold" (click)="resetMockData()" title="Restaura os dados iniciais">
+        🔄 Restaurar Dados Modelo
+      </button>
+      <a routerLink="/cadastro" class="btn btn-primary">
+        + Nova Inscrição
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TOAST FLUTUANTE -->
+@if (toastMessage()) {
+  <div class="toast-floating animate-fade-in">
+    <span>{{ toastMessage() }}</span>
+  </div>
+}
+
+<!-- CONTEÚDO PRINCIPAL DO PAINEL -->
+<section class="admin-content-section section-padding">
+  <div class="container">
+    <!-- CARDS DE ESTATÍSTICAS RÁPIDAS -->
+    <div class="grid-3 stats-dashboard-grid">
+      <div class="dash-stat-card card-modern" [class.active-card]="activeView() === 'students'" (click)="setView('students')">
+        <div class="dash-stat-icon gold">🎓</div>
+        <div>
+          <span class="dash-stat-count">{{ registrationService.totalStudents() }}</span>
+          <span class="dash-stat-label">Alunos Inscritos</span>
+        </div>
+      </div>
+
+      <div class="dash-stat-card card-modern" [class.active-card]="activeView() === 'volunteers'" (click)="setView('volunteers')">
+        <div class="dash-stat-icon navy">🤝</div>
+        <div>
+          <span class="dash-stat-count">{{ registrationService.totalVolunteers() }}</span>
+          <span class="dash-stat-label">Voluntários / Instrutores</span>
+        </div>
+      </div>
+
+      <div class="dash-stat-card card-modern" [class.active-card]="activeView() === 'pets'" (click)="setView('pets')">
+        <div class="dash-stat-icon green">🐶</div>
+        <div>
+          <span class="dash-stat-count">{{ registrationService.totalPets() }}</span>
+          <span class="dash-stat-label">Pets para Banho Social</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BARRA DE CONTROLE & BUSCA -->
+    <div class="admin-control-bar card-modern">
+      <!-- Abas de visualização -->
+      <div class="view-switchers">
+        <button class="switch-btn" [class.active]="activeView() === 'students'" (click)="setView('students')">
+          🎓 Alunos ({{ registrationService.totalStudents() }})
+        </button>
+        <button class="switch-btn" [class.active]="activeView() === 'volunteers'" (click)="setView('volunteers')">
+          🤝 Voluntários ({{ registrationService.totalVolunteers() }})
+        </button>
+        <button class="switch-btn" [class.active]="activeView() === 'pets'" (click)="setView('pets')">
+          🐶 Pets Sociais ({{ registrationService.totalPets() }})
+        </button>
+      </div>
+
+      <!-- Campo de Busca e Filtro de Status -->
+      <div class="filter-inputs-group">
+        <div class="search-input-wrapper">
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            placeholder="Buscar por nome, CPF ou protocolo..." 
+            class="form-control admin-search">
+        </div>
+
+        <select [(ngModel)]="statusFilter" class="form-select status-select">
+          <option value="all">Todos os Status</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Em Análise">Em Análise</option>
+          <option value="Confirmado">Confirmado</option>
+          <option value="Concluído">Concluído</option>
+        </select>
+
+        <button class="btn btn-outline-navy" (click)="exportCurrentToCsv()" title="Exportar para Excel / CSV">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          <span>Exportar CSV</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= TABELA 1: ALUNOS ================= -->
+    @if (activeView() === 'students') {
+      <div class="table-responsive card-modern">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Protocolo</th>
+              <th>Nome do Aluno</th>
+              <th>Contato</th>
+              <th>Curso Desejado</th>
+              <th>Turno</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredStudents().length === 0) {
+              <tr>
+                <td colspan="7" class="empty-table-cell">
+                  Nenhum aluno encontrado para a busca ou filtro selecionado.
+                </td>
+              </tr>
+            }
+            @for (std of filteredStudents(); track std.id) {
+              <tr>
+                <td>
+                  <span class="protocol-chip">{{ std.protocol }}</span>
+                  <div class="table-date">{{ std.createdAt | date:'dd/MM/yy HH:mm' }}</div>
+                </td>
+                <td>
+                  <strong>{{ std.fullName }}</strong>
+                  <div class="table-sub">{{ std.cpf }} • {{ std.city }}/{{ std.neighborhood }}</div>
+                </td>
+                <td>
+                  <div>📱 {{ std.phone }}</div>
+                  <div class="table-sub">✉️ {{ std.email }}</div>
+                </td>
+                <td>
+                  <span class="course-badge-name">{{ std.courseName }}</span>
+                </td>
+                <td>
+                  <span class="shift-badge">{{ std.preferredShift }}</span>
+                </td>
+                <td>
+                  <select 
+                    [ngModel]="std.status" 
+                    (ngModelChange)="updateStudentStatus(std.id, $event)"
+                    class="status-pill-select"
+                    [class.st-confirmado]="std.status === 'Confirmado'"
+                    [class.st-pendente]="std.status === 'Pendente'"
+                    [class.st-analise]="std.status === 'Em Análise'">
+                    <option value="Pendente">Pendente</option>
+                    <option value="Em Análise">Em Análise</option>
+                    <option value="Confirmado">Confirmado</option>
+                    <option value="Concluído">Concluído</option>
+                  </select>
+                </td>
+                <td>
+                  <div class="action-btn-group">
+                    <button class="icon-action-btn view-btn" (click)="selectedStudent.set(std)" title="Ver Detalhes">
+                      👁️
+                    </button>
+                    <button class="icon-action-btn del-btn" (click)="deleteStudent(std.id, std.fullName)" title="Excluir">
+                      🗑️
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- ================= TABELA 2: VOLUNTÁRIOS ================= -->
+    @if (activeView() === 'volunteers') {
+      <div class="table-responsive card-modern">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Protocolo</th>
+              <th>Nome</th>
+              <th>Profissão</th>
+              <th>Área de Apoio</th>
+              <th>Disponibilidade</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredVolunteers().length === 0) {
+              <tr>
+                <td colspan="7" class="empty-table-cell">Nenhum voluntário encontrado.</td>
+              </tr>
+            }
+            @for (vol of filteredVolunteers(); track vol.id) {
+              <tr>
+                <td>
+                  <span class="protocol-chip">{{ vol.protocol }}</span>
+                  <div class="table-date">{{ vol.createdAt | date:'dd/MM/yy HH:mm' }}</div>
+                </td>
+                <td>
+                  <strong>{{ vol.fullName }}</strong>
+                  <div class="table-sub">📱 {{ vol.phone }} • ✉️ {{ vol.email }}</div>
+                </td>
+                <td>{{ vol.occupation }}</td>
+                <td><span class="badge badge-gold">{{ vol.areaOfInterest }}</span></td>
+                <td>{{ vol.availability }}</td>
+                <td>
+                  <select 
+                    [ngModel]="vol.status" 
+                    (ngModelChange)="updateVolunteerStatus(vol.id, $event)"
+                    class="status-pill-select"
+                    [class.st-confirmado]="vol.status === 'Confirmado'"
+                    [class.st-analise]="vol.status === 'Em Análise'">
+                    <option value="Em Análise">Em Análise</option>
+                    <option value="Confirmado">Confirmado</option>
+                    <option value="Concluído">Concluído</option>
+                  </select>
+                </td>
+                <td>
+                  <div class="action-btn-group">
+                    <button class="icon-action-btn view-btn" (click)="selectedVolunteer.set(vol)">👁️</button>
+                    <button class="icon-action-btn del-btn" (click)="deleteVolunteer(vol.id, vol.fullName)">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- ================= TABELA 3: PETS SOCIAIS ================= -->
+    @if (activeView() === 'pets') {
+      <div class="table-responsive card-modern">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Protocolo</th>
+              <th>Nome do Pet</th>
+              <th>Espécie & Raça</th>
+              <th>Porte</th>
+              <th>Tutor & Contato</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredPets().length === 0) {
+              <tr>
+                <td colspan="7" class="empty-table-cell">Nenhum pet cadastrado no filtro atual.</td>
+              </tr>
+            }
+            @for (pet of filteredPets(); track pet.id) {
+              <tr>
+                <td>
+                  <span class="protocol-chip">{{ pet.protocol }}</span>
+                  <div class="table-date">{{ pet.createdAt | date:'dd/MM/yy HH:mm' }}</div>
+                </td>
+                <td>
+                  <strong>🐾 {{ pet.petName }}</strong>
+                  <div class="table-sub">{{ pet.petAge }}</div>
+                </td>
+                <td>{{ pet.petSpecies }} • {{ pet.petBreed }}</td>
+                <td><span class="badge badge-navy">{{ pet.petSize }}</span></td>
+                <td>
+                  <strong>{{ pet.tutorName }}</strong>
+                  <div class="table-sub">📱 {{ pet.tutorPhone }}</div>
+                </td>
+                <td>
+                  <select 
+                    [ngModel]="pet.status" 
+                    (ngModelChange)="updatePetStatus(pet.id, $event)"
+                    class="status-pill-select"
+                    [class.st-confirmado]="pet.status === 'Confirmado'"
+                    [class.st-pendente]="pet.status === 'Pendente'">
+                    <option value="Pendente">Pendente</option>
+                    <option value="Confirmado">Confirmado (Agendado)</option>
+                    <option value="Concluído">Banho Realizado</option>
+                  </select>
+                </td>
+                <td>
+                  <div class="action-btn-group">
+                    <button class="icon-action-btn view-btn" (click)="selectedPet.set(pet)">👁️</button>
+                    <button class="icon-action-btn del-btn" (click)="deletePet(pet.id, pet.petName)">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- MODAL DE DETALHES DO ALUNO -->
+@if (selectedStudent()) {
+  <div class="modal-backdrop" (click)="selectedStudent.set(null)">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="selectedStudent.set(null)">✕</button>
+      <div class="modal-header">
+        <span class="badge badge-gold">Protocolo: {{ selectedStudent()?.protocol }}</span>
+        <h3 class="modal-course-title">{{ selectedStudent()?.fullName }}</h3>
+        <p class="modal-course-tagline">Curso: {{ selectedStudent()?.courseName }}</p>
+      </div>
+      <div class="modal-body">
+        <div class="modal-info-pills">
+          <div>CPF: <strong>{{ selectedStudent()?.cpf }}</strong></div>
+          <div>Telefone: <strong>{{ selectedStudent()?.phone }}</strong></div>
+          <div>E-mail: <strong>{{ selectedStudent()?.email }}</strong></div>
+          <div>Turno: <strong>{{ selectedStudent()?.preferredShift }}</strong></div>
+          <div>Local: <strong>{{ selectedStudent()?.city }} ({{ selectedStudent()?.neighborhood }})</strong></div>
+          <div>Situação: <strong>{{ selectedStudent()?.employmentStatus }}</strong></div>
+        </div>
+        <div class="p-3 bg-warm rounded">
+          <strong>Motivação do Aluno:</strong>
+          <p class="mt-2 text-muted">{{ selectedStudent()?.motivation }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-navy" (click)="selectedStudent.set(null)">Fechar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL DE DETALHES DO PET -->
+@if (selectedPet()) {
+  <div class="modal-backdrop" (click)="selectedPet.set(null)">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="selectedPet.set(null)">✕</button>
+      <div class="modal-header">
+        <span class="badge badge-gold">Protocolo: {{ selectedPet()?.protocol }}</span>
+        <h3 class="modal-course-title">🐾 {{ selectedPet()?.petName }} ({{ selectedPet()?.petSpecies }})</h3>
+      </div>
+      <div class="modal-body">
+        <div class="modal-info-pills">
+          <div>Raça: <strong>{{ selectedPet()?.petBreed }}</strong></div>
+          <div>Porte: <strong>{{ selectedPet()?.petSize }}</strong></div>
+          <div>Idade: <strong>{{ selectedPet()?.petAge }}</strong></div>
+          <div>Vacinado: <strong>{{ selectedPet()?.isVaccinated ? 'Sim' : 'Não' }}</strong></div>
+          <div>Tutor: <strong>{{ selectedPet()?.tutorName }}</strong></div>
+          <div>Telefone: <strong>{{ selectedPet()?.tutorPhone }}</strong></div>
+        </div>
+        <div class="p-3 bg-warm rounded">
+          <strong>Observações de Manejo e Comportamento:</strong>
+          <p class="mt-2 text-muted">{{ selectedPet()?.specialCareNotes }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-navy" (click)="selectedPet.set(null)">Fechar</button>
+      </div>
+    </div>
+  </div>
+}

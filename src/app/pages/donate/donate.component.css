@@ -1,0 +1,254 @@
+.page-header-section {
+  background: linear-gradient(135deg, #10243e 0%, #173860 100%);
+  color: #ffffff;
+  padding: 4.5rem 0 3.5rem 0;
+  border-bottom: 3px solid var(--color-gold);
+  text-align: center;
+}
+
+.page-header-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header-title {
+  color: #ffffff;
+  font-size: 2.75rem;
+  margin-bottom: 1rem;
+}
+
+.page-header-desc {
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* Grid de Doação */
+.donate-grid {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 3rem;
+  align-items: flex-start;
+}
+
+.pix-card {
+  padding: 3rem 2.5rem;
+  border-top: 5px solid var(--color-gold);
+  position: sticky;
+  top: 90px;
+}
+
+.pix-card-header {
+  margin-bottom: 2rem;
+}
+
+.pix-card-header h3 {
+  font-size: 1.75rem;
+  color: var(--color-primary);
+  margin-top: 0.75rem;
+  margin-bottom: 0.4rem;
+}
+
+.pix-card-header p {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+
+.pix-box {
+  background-color: var(--color-bg-warm);
+  border: 1px solid var(--color-gold-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.qr-mockup {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.qr-code-svg {
+  padding: 10px;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+.pix-key-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+}
+
+.key-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.pix-key-text {
+  font-family: monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  flex-grow: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copy-btn {
+  white-space: nowrap;
+}
+
+.pix-dest-info {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.transparency-note {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  color: #065f46;
+  background: #ecfdf5;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+}
+
+/* Kits de Apadrinhamento */
+.kits-main-title {
+  font-size: 1.75rem;
+  color: var(--color-primary);
+  margin-bottom: 0.35rem;
+}
+
+.kits-subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+.kits-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.kit-card {
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  border-left: 4px solid var(--color-gold);
+}
+
+.kit-card.popular-kit {
+  border-color: var(--color-gold-border);
+  box-shadow: var(--shadow-md);
+}
+
+.kit-badge-top {
+  position: absolute;
+  top: -12px;
+  right: 15px;
+  background: #059669;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+}
+
+.kit-header {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.kit-icon {
+  font-size: 2rem;
+}
+
+.kit-title {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  margin-bottom: 0.15rem;
+}
+
+.kit-price {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--color-gold-hover);
+}
+
+.kit-price span {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.kit-desc {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+}
+
+/* Outras Formas */
+.other-card {
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.other-icon {
+  font-size: 2.25rem;
+  margin-bottom: 1rem;
+}
+
+.other-card h4 {
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.other-card p {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+}
+
+.card-link {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-gold-hover);
+}
+
+@media (max-width: 992px) {
+  .donate-grid { grid-template-columns: 1fr; }
+  .pix-card { position: static; }
+  .kits-grid { grid-template-columns: 1fr; }
+}

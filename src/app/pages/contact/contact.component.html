@@ -1,0 +1,164 @@
+<!-- BANNER DE CONTATO -->
+<section class="page-header-section">
+  <div class="container">
+    <div class="page-header-content">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <span>Fale Conosco</span>
+      </div>
+      <h1 class="page-header-title">Contato & Perguntas Frequentes</h1>
+      <p class="page-header-desc">
+        Tire suas dúvidas, conheça nossa sede ou mande uma mensagem para nossa coordenação.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SEÇÃO PRINCIPAL DE CONTATO -->
+<section class="contact-main-section section-padding">
+  <div class="container">
+    <div class="contact-grid">
+      <!-- Coluna 1: Formulário de Contato -->
+      <div class="contact-form-side card-modern">
+        @if (submitted()) {
+          <div class="contact-success-box animate-fade-in">
+            <div class="success-icon">✓</div>
+            <h3>Mensagem Enviada com Sucesso!</h3>
+            <p>Obrigado pelo seu contato. Nossa equipe responderá no seu WhatsApp ou e-mail em até 24 horas úteis.</p>
+            <button class="btn btn-primary" (click)="submitted.set(false)">Enviar Outra Mensagem</button>
+          </div>
+        } @else {
+          <div class="form-title-group">
+            <h3>Envie uma Mensagem Direta</h3>
+            <p>Preencha os campos abaixo que retornaremos com todo carinho.</p>
+          </div>
+
+          <form (ngSubmit)="submitContact()" class="contact-form-body">
+            <div class="form-group">
+              <label class="form-label" for="contactName">Seu Nome Completo <span class="required">*</span></label>
+              <input type="text" id="contactName" [(ngModel)]="name" name="name" required placeholder="Como podemos te chamar?" class="form-control">
+            </div>
+
+            <div class="grid-2" style="gap: 1rem;">
+              <div class="form-group">
+                <label class="form-label" for="contactEmail">Seu E-mail <span class="required">*</span></label>
+                <input type="email" id="contactEmail" [(ngModel)]="email" name="email" required placeholder="email@exemplo.com" class="form-control">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="contactPhone">WhatsApp / Telefone</label>
+                <input type="tel" id="contactPhone" [(ngModel)]="phone" name="phone" placeholder="(11) 90000-0000" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="contactSubject">Assunto</label>
+              <select id="contactSubject" [(ngModel)]="subject" name="subject" class="form-select">
+                <option value="Dúvida sobre os cursos de banho e tosa">Dúvida sobre os cursos de banho e tosa</option>
+                <option value="Agendamento de banho social para pet">Agendamento de banho social para pet</option>
+                <option value="Quero ser voluntário ou instrutor">Quero ser voluntário ou instrutor</option>
+                <option value="Parceria de pet shop ou doação empresarial">Parceria de pet shop ou doação empresarial</option>
+                <option value="Outro assunto">Outro assunto</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="contactMessage">Sua Mensagem <span class="required">*</span></label>
+              <textarea id="contactMessage" [(ngModel)]="message" name="message" required rows="4" placeholder="Escreva aqui como podemos te ajudar..." class="form-textarea"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+              Enviar Mensagem &raquo;
+            </button>
+          </form>
+        }
+      </div>
+
+      <!-- Coluna 2: Informações de Atendimento & Sede -->
+      <div class="contact-info-side">
+        <div class="info-card-box card-modern">
+          <div class="info-header">
+            <img src="assets/logo.jpg" alt="Logo ONG" class="info-logo">
+            <div>
+              <h4>ONG Mãos que Cuidam</h4>
+              <span class="text-gold" style="font-size: 0.8rem; font-weight: 700;">AMOR • RESPEITO • PROTEÇÃO</span>
+            </div>
+          </div>
+
+          <div class="info-rows">
+            <div class="info-row">
+              <div class="info-icon">📍</div>
+              <div>
+                <strong>Sede & Laboratório Prático:</strong>
+                <p>Av. dos Animais com Amor, 1250 - Vila Esperança, São Paulo/SP</p>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-icon">📱</div>
+              <div>
+                <strong>Atendimento WhatsApp & Telefone:</strong>
+                <p>(11) 98765-4321 • (11) 3210-9876</p>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-icon">✉️</div>
+              <div>
+                <strong>E-mail Institucional:</strong>
+                <p>contato&#64;maosquecuidam.org.br</p>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="info-icon">🕒</div>
+              <div>
+                <strong>Horário de Funcionamento:</strong>
+                <p>Segunda a Sexta: 08h às 18h | Sábados de aulas práticas: 08h às 17h</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="quick-links-box">
+            <a routerLink="/cadastro" class="btn btn-outline-gold" style="width: 100%; justify-content: center;">
+              Ir para Inscrição de Cursos
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEÇÃO DE PERGUNTAS FREQUENTES (FAQ) -->
+<section class="faq-section section-padding bg-warm">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+        <span>Tire Suas Dúvidas</span>
+      </div>
+      <h2 class="section-title">Perguntas Frequentes (FAQ)</h2>
+      <p class="section-subtitle">
+        Tudo o que você precisa saber sobre o funcionamento das turmas, banhos sociais e certificação.
+      </p>
+      <div class="gold-divider"></div>
+    </div>
+
+    <div class="faq-accordion-container">
+      @for (faq of faqs; track faq.id) {
+        <div class="faq-item card-modern" [class.open]="openFaqId() === faq.id">
+          <button class="faq-question-btn" (click)="toggleFaq(faq.id)">
+            <span class="faq-q-text">{{ faq.question }}</span>
+            <span class="faq-toggle-icon">{{ openFaqId() === faq.id ? '−' : '+' }}</span>
+          </button>
+
+          @if (openFaqId() === faq.id) {
+            <div class="faq-answer animate-fade-in">
+              <p>{{ faq.answer }}</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

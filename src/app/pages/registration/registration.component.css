@@ -1,0 +1,344 @@
+/* Header */
+.page-header-section {
+  background: linear-gradient(135deg, #10243e 0%, #173860 100%);
+  color: #ffffff;
+  padding: 4.5rem 0 3.5rem 0;
+  border-bottom: 3px solid var(--color-gold);
+  text-align: center;
+}
+
+.page-header-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-header-title {
+  color: #ffffff;
+  font-size: 2.75rem;
+  margin-bottom: 1rem;
+}
+
+.page-header-desc {
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* Tabs */
+.tabs-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  max-width: 960px;
+  margin: 0 auto 3rem auto;
+}
+
+.tab-button {
+  background-color: #ffffff;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: left;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab-button:hover {
+  border-color: var(--color-gold);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.tab-button.active {
+  background-color: #ffffff;
+  border-color: var(--color-gold);
+  box-shadow: 0 8px 20px rgba(212, 154, 55, 0.25);
+  border-bottom: 5px solid var(--color-gold);
+}
+
+.tab-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.tab-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-title {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.tab-desc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 0.2rem;
+}
+
+/* Card do Formulário */
+.form-wrapper {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.form-card {
+  padding: 3rem;
+  background-color: #ffffff;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+}
+
+.form-header-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--color-bg-warm);
+  padding-bottom: 1.75rem;
+  margin-bottom: 2.25rem;
+  gap: 1.5rem;
+}
+
+.form-title-group h3 {
+  font-size: 1.6rem;
+  color: var(--color-primary);
+  margin-bottom: 0.4rem;
+}
+
+.form-title-group p {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0;
+}
+
+.badge-logo-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--color-gold);
+}
+
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  margin-bottom: 1.25rem;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  background-color: var(--color-gold);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.form-section-title h4 {
+  font-size: 1.15rem;
+  color: var(--color-primary);
+  margin-bottom: 0;
+}
+
+/* Checkbox estilizado */
+.checkbox-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.form-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-gold);
+  cursor: pointer;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.checkbox-text {
+  font-size: 0.88rem;
+  color: var(--color-text-main);
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.terms-card {
+  background-color: var(--color-bg-warm);
+  border: 1px solid var(--color-gold-border);
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  margin: 2rem 0;
+}
+
+.form-submit-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit-btn {
+  width: 100%;
+  max-width: 380px;
+}
+
+/* ================= PROTOCOLO DIGITAL ================= */
+.protocol-card {
+  padding: 3.5rem 3rem;
+  background-color: #ffffff;
+  border: 2px solid var(--color-gold);
+  box-shadow: var(--shadow-xl);
+  border-radius: var(--radius-xl);
+}
+
+.protocol-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.protocol-badge-success {
+  display: inline-flex;
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.4rem 1.2rem;
+  border-radius: var(--radius-full);
+  margin-bottom: 1rem;
+}
+
+.protocol-title {
+  font-size: 2.2rem;
+  color: var(--color-primary);
+  margin-bottom: 0.35rem;
+}
+
+.protocol-subtitle {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.protocol-code-box {
+  background: linear-gradient(135deg, #10243e 0%, #16365c 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  border: 2px solid var(--color-gold);
+  margin-bottom: 2rem;
+}
+
+.code-label {
+  display: block;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: #cbd5e1;
+  margin-bottom: 0.25rem;
+}
+
+.code-value {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--color-gold);
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+.code-status {
+  font-size: 0.85rem;
+  color: #a7f3d0;
+  margin-top: 0.25rem;
+  display: inline-block;
+}
+
+.protocol-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  background-color: var(--color-bg-main);
+  border: 1px solid var(--color-border);
+  padding: 1.75rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 2rem;
+}
+
+.p-detail {
+  font-size: 0.92rem;
+}
+
+.p-detail .label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+
+.text-gold {
+  color: var(--color-gold-hover);
+}
+
+.protocol-instructions {
+  background-color: #eff6ff;
+  border-left: 4px solid var(--color-info);
+  padding: 1.5rem;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-bottom: 2.5rem;
+}
+
+.protocol-instructions h4 {
+  font-size: 1.05rem;
+  color: #1e3a8a;
+  margin-bottom: 0.75rem;
+}
+
+.protocol-instructions ol {
+  margin-left: 1.25rem;
+  font-size: 0.9rem;
+  color: #1e293b;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.protocol-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Impressão Oficial */
+@media print {
+  .page-header-section, .tabs-container, .top-banner, .main-header, .site-footer, .protocol-actions {
+    display: none !important;
+  }
+  .protocol-card {
+    border: 2px solid #000;
+    box-shadow: none;
+    margin: 0;
+    padding: 1.5cm;
+  }
+}
+
+@media (max-width: 900px) {
+  .tabs-container { grid-template-columns: 1fr; }
+  .form-card { padding: 2rem 1.5rem; }
+  .protocol-card { padding: 2rem 1.5rem; }
+  .protocol-details-grid { grid-template-columns: 1fr; }
+}
