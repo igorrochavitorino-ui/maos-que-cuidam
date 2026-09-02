@@ -1,0 +1,470 @@
+<!-- HEADER DA PÁGINA -->
+<section class="page-header-section">
+  <div class="container">
+    <div class="page-header-content">
+      <div class="section-tag">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        <span>Amor, Higiene & Transformação Animal</span>
+      </div>
+      <h1 class="page-header-title">Galeria de Pets & Banho/Tosa Gratuito</h1>
+      <p class="page-header-desc">
+        Acompanhe o antes e depois dos animais atendidos com amor em nossas aulas e cadastre o seu cachorro para ser nosso Pet Modelo com atendimento 100% gratuito!
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SELEÇÃO DE ABAS PRINCIPAIS -->
+<section class="gallery-tabs-section">
+  <div class="container">
+    <div class="main-switch-pills">
+      <button 
+        class="switch-pill-btn" 
+        [class.active]="activeSection() === 'galeria'"
+        (click)="setSection('galeria')">
+        📸 Galeria de Fotos Antes & Depois
+      </button>
+      <button 
+        class="switch-pill-btn highlight-pill" 
+        [class.active]="activeSection() === 'cadastro-gratis'"
+        (click)="setSection('cadastro-gratis')">
+        🐶 Cadastrar Cachorro para Banho/Tosa Grátis
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SEÇÃO 1: GALERIA DE FOTOS ANTES & DEPOIS ================= -->
+@if (activeSection() === 'galeria') {
+  <section class="gallery-content-section section-padding">
+    <div class="container">
+      <div class="gallery-controls-bar">
+        <!-- Filtros de categoria -->
+        <div class="category-filters">
+          <button class="filter-btn" [class.active]="selectedCategory() === 'all'" (click)="setCategory('all')">
+            Todos ({{ registrationService.totalGalleryPets() }})
+          </button>
+          <button class="filter-btn" [class.active]="selectedCategory() === 'Antes & Depois'" (click)="setCategory('Antes & Depois')">
+            ✂️ Antes & Depois
+          </button>
+          <button class="filter-btn" [class.active]="selectedCategory() === 'Tosa Bebê'" (click)="setCategory('Tosa Bebê')">
+            🧸 Tosa Bebê
+          </button>
+          <button class="filter-btn" [class.active]="selectedCategory() === 'Banho & Desembolo'" (click)="setCategory('Banho & Desembolo')">
+            🧼 Banho & Desembolo
+          </button>
+          <button class="filter-btn" [class.active]="selectedCategory() === 'Pet Resgatado'" (click)="setCategory('Pet Resgatado')">
+            ❤️ Pets Resgatados
+          </button>
+        </div>
+
+        <button class="btn btn-primary" (click)="showAddPhotoModal.set(true)">
+          + Adicionar Foto de Pet
+        </button>
+      </div>
+
+      <!-- Grid da Galeria -->
+      <div class="gallery-cards-grid">
+        @for (item of galleryItems; track item.id) {
+          <div class="pet-gallery-card card-modern" (click)="openModal(item)">
+            <!-- Imagem com Toggle Antes/Depois -->
+            <div class="image-wrapper-box">
+              @if (getViewMode(item.id) === 'after') {
+                <img [src]="item.afterImageUrl" [alt]="item.petName + ' Depois'" class="pet-img animate-fade-in">
+                <span class="img-badge badge-after">✨ DEPOIS</span>
+              } @else {
+                <img [src]="item.beforeImageUrl" [alt]="item.petName + ' Antes'" class="pet-img animate-fade-in">
+                <span class="img-badge badge-before">⏳ ANTES</span>
+              }
+
+              <!-- Botões de Alternância Rápida -->
+              <div class="toggle-mode-pills" (click)="$event.stopPropagation()">
+                <button 
+                  class="toggle-btn" 
+                  [class.active-mode]="getViewMode(item.id) === 'before'"
+                  (click)="toggleViewMode(item.id, 'before')">
+                  Antes
+                </button>
+                <button 
+                  class="toggle-btn" 
+                  [class.active-mode]="getViewMode(item.id) === 'after'"
+                  (click)="toggleViewMode(item.id, 'after')">
+                  Depois
+                </button>
+              </div>
+
+              <!-- Botão de Curtir Flutuante -->
+              <button class="like-btn" (click)="likePet(item, $event)" title="Amei essa transformação!">
+                ❤️ <span>{{ item.likesCount }}</span>
+              </button>
+            </div>
+
+            <!-- Informações do Pet -->
+            <div class="card-info-content">
+              <div class="card-category-row">
+                <span class="badge badge-gold">{{ item.category }}</span>
+                <span class="card-pet-species">🐶 {{ item.breed }}</span>
+              </div>
+
+              <h3 class="card-pet-name">{{ item.petName }}</h3>
+              <p class="card-service-txt">✂️ <strong>{{ item.serviceDone }}</strong></p>
+              <p class="card-story-preview">{{ item.story }}</p>
+
+              <div class="card-credits-footer">
+                <div>
+                  <span class="credit-label">Aluno Responsável:</span>
+                  <strong class="credit-name">{{ item.studentName }}</strong>
+                </div>
+                <div>
+                  <span class="credit-label">Supervisão:</span>
+                  <span class="credit-sub">{{ item.instructorName }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Banner Chamando para Cadastrar Pet Modelo -->
+      <div class="model-callout-banner card-modern">
+        <div class="callout-left">
+          <h3>Seu cachorrinho também merece um dia de rei ou rainha!</h3>
+          <p>Cadastre seu pet gratuitamente para as próximas aulas práticas e ajude na formação de novos profissionais.</p>
+        </div>
+        <button class="btn btn-primary btn-lg" (click)="setSection('cadastro-gratis')">
+          Cadastrar Cão para Banho Grátis &raquo;
+        </button>
+      </div>
+    </div>
+  </section>
+}
+
+<!-- ================= SEÇÃO 2: CADASTRO DO CACHORRO MODELO (BANHO/TOSA GRÁTIS) ================= -->
+@if (activeSection() === 'cadastro-gratis') {
+  <section class="free-bath-section section-padding">
+    <div class="container">
+      <div class="free-bath-grid">
+        <!-- Coluna Informativa dos Benefícios para o Tutor e o Pet -->
+        <div class="free-bath-info-side">
+          <div class="section-tag">
+            <span>Programa Pet Modelo Solidário</span>
+          </div>
+          <h2 class="section-title text-left">Como Funciona o Banho e Tosa Gratuito?</h2>
+          <p class="info-lead">
+            Para que nossos alunos aprendam as técnicas na prática com carinho e sensibilidade, a ONG oferece <strong>atendimento 100% gratuito de banho, hidratação e tosa</strong> para cães de famílias de baixa renda e protetores independentes.
+          </p>
+
+          <div class="care-steps-list">
+            <div class="care-step card-modern">
+              <div class="step-icon">🧼</div>
+              <div>
+                <strong>Produtos Premium de Spa Pet:</strong>
+                <p>Usamos cosméticos veganos e hipoalergênicos doados por nossos patrocinadores oficiais (GroomerPro).</p>
+              </div>
+            </div>
+
+            <div class="care-step card-modern">
+              <div class="step-icon">👩‍⚕️</div>
+              <div>
+                <strong>Supervisão Veterinária Contínua:</strong>
+                <p>Nenhum procedimento é feito sem a orientação de Tosadores Premiados e Médicos Veterinários.</p>
+              </div>
+            </div>
+
+            <div class="care-step card-modern">
+              <div class="step-icon">💖</div>
+              <div>
+                <strong>Manejo 100% Sem Estresse:</strong>
+                <p>Respeitamos o tempo do animal, com pausas para carinho, água fresca e petiscos de reforço positivo.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna do Formulário de Agendamento Gratuito -->
+        <div class="free-bath-form-side">
+          @if (submittedModelDog()) {
+            <div class="model-ticket-card card-modern animate-fade-in">
+              <div class="ticket-header">
+                <div class="protocol-badge-success">✓ CÃO MODELO CADASTRADO COM SUCESSO!</div>
+                <h2>Cartão de Atendimento Gratuito</h2>
+                <p>ONG Mãos que Cuidam • Programa Banho & Tosa Social</p>
+              </div>
+
+              <div class="ticket-protocol-box">
+                <span>CÓDIGO PROTOCOLO DO PET:</span>
+                <strong>{{ submittedModelDog()?.protocol }}</strong>
+              </div>
+
+              <div class="ticket-details-grid">
+                <div>
+                  <span class="t-label">Nome do Pet:</span>
+                  <strong>🐾 {{ submittedModelDog()?.petName }}</strong>
+                </div>
+                <div>
+                  <span class="t-label">Porte & Raça:</span>
+                  <strong>{{ submittedModelDog()?.petBreed }} ({{ submittedModelDog()?.petSize }})</strong>
+                </div>
+                <div>
+                  <span class="t-label">Tutor Responsável:</span>
+                  <strong>{{ submittedModelDog()?.tutorName }}</strong>
+                </div>
+                <div>
+                  <span class="t-label">WhatsApp:</span>
+                  <strong>{{ submittedModelDog()?.tutorPhone }}</strong>
+                </div>
+                <div>
+                  <span class="t-label">Dia Preferido:</span>
+                  <strong class="text-gold">{{ submittedModelDog()?.preferredDay }}</strong>
+                </div>
+                <div>
+                  <span class="t-label">Custo:</span>
+                  <strong style="color: #059669;">100% Gratuito / Vaga Social</strong>
+                </div>
+              </div>
+
+              <div class="ticket-instructions">
+                <p>📅 <strong>Próximo Passo:</strong> Nossa coordenadora de aulas práticas entrará em contato via WhatsApp confirmando a data e horário exatos em que a turma receberá o seu pet.</p>
+              </div>
+
+              <div class="ticket-actions">
+                <button class="btn btn-outline-gold" (click)="submittedModelDog.set(null)">Cadastrar Outro Pet</button>
+                <button class="btn btn-primary" (click)="setSection('galeria')">Ver Galeria de Fotos</button>
+              </div>
+            </div>
+          } @else {
+            <div class="model-form-card card-modern">
+              <div class="form-title-group">
+                <h3>Agende o Banho e Tosa Grátis do seu Pet</h3>
+                <p>Preencha os dados abaixo. Nossas vagas são preenchidas por ordem de inscrição e perfil social.</p>
+              </div>
+
+              <form [formGroup]="dogModelForm" (ngSubmit)="submitDogModel()" novalidate>
+                <!-- Dados do Tutor -->
+                <div class="form-group">
+                  <label class="form-label" for="tutorName">Seu Nome Completo (Tutor) <span class="required">*</span></label>
+                  <input type="text" id="tutorName" formControlName="tutorName" placeholder="Ex: Ana Maria dos Santos" class="form-control" [class.is-invalid]="dogModelForm.get('tutorName')?.invalid && dogModelForm.get('tutorName')?.touched">
+                </div>
+
+                <div class="grid-2" style="gap: 1rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="tutorPhone">Seu WhatsApp de Contato <span class="required">*</span></label>
+                    <input type="tel" id="tutorPhone" formControlName="tutorPhone" placeholder="(11) 90000-0000" class="form-control" [class.is-invalid]="dogModelForm.get('tutorPhone')?.invalid && dogModelForm.get('tutorPhone')?.touched">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="tutorCpf">Seu CPF <span class="required">*</span></label>
+                    <input type="text" id="tutorCpf" formControlName="tutorCpf" placeholder="000.000.000-00" class="form-control" [class.is-invalid]="dogModelForm.get('tutorCpf')?.invalid && dogModelForm.get('tutorCpf')?.touched">
+                  </div>
+                </div>
+
+                <!-- Dados do Cachorrinho -->
+                <div class="grid-2" style="gap: 1rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="petName">Nome do Cachorro(a) <span class="required">*</span></label>
+                    <input type="text" id="petName" formControlName="petName" placeholder="Ex: Bob, Belinha, Luke" class="form-control" [class.is-invalid]="dogModelForm.get('petName')?.invalid && dogModelForm.get('petName')?.touched">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="petBreed">Raça / Tipo <span class="required">*</span></label>
+                    <input type="text" id="petBreed" formControlName="petBreed" placeholder="Ex: SRD, Poodle, Maltês, Labrador" class="form-control">
+                  </div>
+                </div>
+
+                <div class="grid-2" style="gap: 1rem;">
+                  <div class="form-group">
+                    <label class="form-label" for="petSize">Porte do Cachorro <span class="required">*</span></label>
+                    <select id="petSize" formControlName="petSize" class="form-select">
+                      <option value="Porte Pequeno (até 10kg)">Porte Pequeno (até 10kg)</option>
+                      <option value="Porte Médio (10kg a 25kg)">Porte Médio (10kg a 25kg)</option>
+                      <option value="Porte Grande (acima de 25kg)">Porte Grande (acima de 25kg)</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label" for="petAge">Idade Aproximada <span class="required">*</span></label>
+                    <input type="text" id="petAge" formControlName="petAge" placeholder="Ex: 3 anos / 7 meses" class="form-control" [class.is-invalid]="dogModelForm.get('petAge')?.invalid && dogModelForm.get('petAge')?.touched">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="serviceDesired">Serviço Necessário <span class="required">*</span></label>
+                  <select id="serviceDesired" formControlName="serviceDesired" class="form-select">
+                    <option value="Banho Completo com Hidratação">🧼 Banho Completo com Hidratação & Limpeza de Ouvido</option>
+                    <option value="Tosa Higiênica + Banho">✂️ Tosa Higiênica + Banho & Corte de Unhas</option>
+                    <option value="Tosa Bebê Completa na Tesoura">🧸 Tosa Bebê Completa na Tesoura + Banho</option>
+                    <option value="Desembolo Especial e Recuperação da Pelagem">💆 Desembolo Suave sem Dor & Banho Restaurador</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="preferredDay">Melhor Dia / Turno para Você</label>
+                  <select id="preferredDay" formControlName="preferredDay" class="form-select">
+                    <option value="Sábados pela manhã (08h30 às 11h30)">Sábados pela manhã (08h30 às 11h30)</option>
+                    <option value="Sábados à tarde (13h30 às 16h30)">Sábados à tarde (13h30 às 16h30)</option>
+                    <option value="Terças ou Quintas pela manhã">Terças ou Quintas pela manhã</option>
+                    <option value="Terças ou Quintas à tarde">Terças ou Quintas à tarde</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="specialCareNotes">Comportamento e Cuidados Especiais do Pet</label>
+                  <textarea id="specialCareNotes" formControlName="specialCareNotes" rows="2" placeholder="Ex: É brincalhão, não gosta que pegue na pata traseira, tem alergia a perfume forte..." class="form-textarea"></textarea>
+                </div>
+
+                <div class="terms-card">
+                  <div class="checkbox-box">
+                    <input type="checkbox" id="agreeTermsDog" formControlName="agreeTerms" class="form-checkbox">
+                    <label for="agreeTermsDog" class="checkbox-text">
+                      Autorizo a participação do meu cachorro como <strong>Pet Modelo nas aulas práticas</strong> da ONG Mãos que Cuidam e confirmo que estou de acordo com o manejo afetivo e ético. <span class="required">*</span>
+                    </label>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                  🐾 Confirmar Cadastro do Pet Modelo &raquo;
+                </button>
+              </form>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
+<!-- ================= MODAL DE DETALHES DO PET ================= -->
+@if (selectedPetForModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal-box modal-lg" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="closeModal()">✕</button>
+
+      <div class="modal-header">
+        <span class="badge badge-gold">{{ selectedPetForModal()?.category }}</span>
+        <h3 class="modal-course-title">Transformação do(a) {{ selectedPetForModal()?.petName }}</h3>
+        <p class="modal-course-tagline">{{ selectedPetForModal()?.serviceDone }}</p>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-compare-images">
+          <div class="compare-col">
+            <span class="compare-tag before">ANTES DA AULA</span>
+            <img [src]="selectedPetForModal()?.beforeImageUrl" [alt]="selectedPetForModal()?.petName + ' Antes'" class="compare-img">
+          </div>
+          <div class="compare-col">
+            <span class="compare-tag after">DEPOIS DO CUIDADO</span>
+            <img [src]="selectedPetForModal()?.afterImageUrl" [alt]="selectedPetForModal()?.petName + ' Depois'" class="compare-img">
+          </div>
+        </div>
+
+        <div class="modal-story-card bg-warm p-3 rounded">
+          <strong>História do Pet:</strong>
+          <p class="mt-2">{{ selectedPetForModal()?.story }}</p>
+        </div>
+
+        <div class="modal-credits-grid">
+          <div>
+            <span class="credit-label">Aluno Responsável:</span>
+            <strong>{{ selectedPetForModal()?.studentName }}</strong>
+          </div>
+          <div>
+            <span class="credit-label">Instrutor / Supervisor:</span>
+            <strong>{{ selectedPetForModal()?.instructorName }}</strong>
+          </div>
+          <div>
+            <span class="credit-label">Data da Transformação:</span>
+            <span>{{ selectedPetForModal()?.date | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div>
+            <span class="credit-label">Curtidas da Comunidade:</span>
+            <span>❤️ {{ selectedPetForModal()?.likesCount }} pessoas amaram</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-navy" (click)="closeModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- ================= MODAL: ADICIONAR NOVA FOTO DE PET ================= -->
+@if (showAddPhotoModal()) {
+  <div class="modal-backdrop" (click)="showAddPhotoModal.set(false)">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" (click)="showAddPhotoModal.set(false)">✕</button>
+
+      <div class="modal-header">
+        <span class="badge badge-gold">Galeria de Aulas</span>
+        <h3 class="modal-course-title">Registrar Nova Transformação Pet</h3>
+        <p class="modal-course-tagline">Cadastre a foto de antes e depois de um animal atendido.</p>
+      </div>
+
+      <form [formGroup]="newPhotoForm" (ngSubmit)="submitNewPhoto()">
+        <div class="modal-body">
+          <div class="grid-2" style="gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Nome do Pet <span class="required">*</span></label>
+              <input type="text" formControlName="petName" placeholder="Ex: Fred" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Raça / Tipo <span class="required">*</span></label>
+              <input type="text" formControlName="breed" placeholder="Ex: Maltês" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Procedimento Realizado <span class="required">*</span></label>
+            <input type="text" formControlName="serviceDone" placeholder="Ex: Tosa Bebê & Banho Suave" class="form-control">
+          </div>
+
+          <div class="grid-2" style="gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">URL da Foto ANTES <span class="required">*</span></label>
+              <input type="url" formControlName="beforeImageUrl" placeholder="https://..." class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">URL da Foto DEPOIS <span class="required">*</span></label>
+              <input type="url" formControlName="afterImageUrl" placeholder="https://..." class="form-control">
+            </div>
+          </div>
+
+          <div class="grid-2" style="gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Aluno Responsável <span class="required">*</span></label>
+              <input type="text" formControlName="studentName" placeholder="Nome do aluno" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Instrutor / Supervisor <span class="required">*</span></label>
+              <input type="text" formControlName="instructorName" placeholder="Nome do instrutor" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Categoria</label>
+            <select formControlName="category" class="form-select">
+              <option value="Antes & Depois">Antes & Depois</option>
+              <option value="Tosa Bebê">Tosa Bebê</option>
+              <option value="Banho & Desembolo">Banho & Desembolo</option>
+              <option value="Pet Resgatado">Pet Resgatado</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">História da Transformação <span class="required">*</span></label>
+            <textarea formControlName="story" rows="2" placeholder="Conte como foi o atendimento..." class="form-textarea"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-navy" (click)="showAddPhotoModal.set(false)">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar na Galeria</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

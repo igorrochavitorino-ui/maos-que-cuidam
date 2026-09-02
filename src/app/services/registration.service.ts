@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { Course, StudentRegistration, VolunteerRegistration, PetRegistration, Testimonial, Sponsor, SponsorProposal, RegistrationStatus } from '../models/registration.model';
+import { Course, StudentRegistration, VolunteerRegistration, PetRegistration, Testimonial, Sponsor, SponsorProposal, PetGalleryItem, RegistrationStatus } from '../models/registration.model';
 
 @Injectable({
   providedIn: 'root'
@@ -9,23 +9,27 @@ export class RegistrationService {
   private readonly VOLUNTEERS_KEY = 'mqc_volunteers_data';
   private readonly PETS_KEY = 'mqc_pets_data';
   private readonly SPONSOR_PROPOSALS_KEY = 'mqc_sponsor_proposals_data';
+  private readonly GALLERY_KEY = 'mqc_gallery_data';
 
   // Signals para reatividade pura
   private studentsSignal = signal<StudentRegistration[]>([]);
   private volunteersSignal = signal<VolunteerRegistration[]>([]);
   private petsSignal = signal<PetRegistration[]>([]);
   private sponsorProposalsSignal = signal<SponsorProposal[]>([]);
+  private gallerySignal = signal<PetGalleryItem[]>([]);
 
   // Computed signals
   readonly students = computed(() => this.studentsSignal());
   readonly volunteers = computed(() => this.volunteersSignal());
   readonly pets = computed(() => this.petsSignal());
   readonly sponsorProposals = computed(() => this.sponsorProposalsSignal());
+  readonly galleryItems = computed(() => this.gallerySignal());
 
   readonly totalStudents = computed(() => this.studentsSignal().length);
   readonly totalVolunteers = computed(() => this.volunteersSignal().length);
   readonly totalPets = computed(() => this.petsSignal().length);
   readonly totalProposals = computed(() => this.sponsorProposalsSignal().length);
+  readonly totalGalleryPets = computed(() => this.gallerySignal().length);
 
   // Lista oficial de cursos da ONG Mãos que Cuidam
   private readonly coursesList: Course[] = [
@@ -304,6 +308,35 @@ export class RegistrationService {
     return [...this.testimonialsList];
   }
 
+  getGalleryItems(): PetGalleryItem[] {
+    return [...this.gallerySignal()];
+  }
+
+  addGalleryItem(item: Omit<PetGalleryItem, 'id' | 'likesCount' | 'date'>): PetGalleryItem {
+    const newItem: PetGalleryItem = {
+      ...item,
+      id: 'gal_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      date: new Date().toISOString(),
+      likesCount: 1
+    };
+
+    const updated = [newItem, ...this.gallerySignal()];
+    this.gallerySignal.set(updated);
+    this.saveGallery(updated);
+    return newItem;
+  }
+
+  likeGalleryItem(id: string): void {
+    const updated = this.gallerySignal().map(item => {
+      if (item.id === id) {
+        return { ...item, likesCount: item.likesCount + 1 };
+      }
+      return item;
+    });
+    this.gallerySignal.set(updated);
+    this.saveGallery(updated);
+  }
+
   // --- MÉTODOS DE PROPOSTAS DE PATROCÍNIO ---
   registerSponsorProposal(data: Omit<SponsorProposal, 'id' | 'protocol' | 'createdAt' | 'status'>): SponsorProposal {
     const newProposal: SponsorProposal = {
@@ -438,58 +471,124 @@ export class RegistrationService {
       if (storedProposals) {
         this.sponsorProposalsSignal.set(JSON.parse(storedProposals));
       }
+
+      const storedGallery = localStorage.getItem(this.GALLERY_KEY);
+      if (storedGallery) {
+        this.gallerySignal.set(JSON.parse(storedGallery));
+      } else {
+        const seedGallery = this.getSeedGallery();
+        this.gallerySignal.set(seedGallery);
+        this.saveGallery(seedGallery);
+      }
     } catch (e) {
       console.warn('Erro ao carregar do localStorage:', e);
       this.studentsSignal.set(this.getSeedStudents());
       this.volunteersSignal.set(this.getSeedVolunteers());
       this.petsSignal.set(this.getSeedPets());
+      this.gallerySignal.set(this.getSeedGallery());
     }
   }
 
   private saveStudents(data: StudentRegistration[]): void {
-    try {
-      localStorage.setItem(this.STUDENTS_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.error(e);
-    }
+    try { localStorage.setItem(this.STUDENTS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
   }
 
   private saveVolunteers(data: VolunteerRegistration[]): void {
-    try {
-      localStorage.setItem(this.VOLUNTEERS_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.error(e);
-    }
+    try { localStorage.setItem(this.VOLUNTEERS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
   }
 
   private savePets(data: PetRegistration[]): void {
-    try {
-      localStorage.setItem(this.PETS_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.error(e);
-    }
+    try { localStorage.setItem(this.PETS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
   }
 
   private saveProposals(data: SponsorProposal[]): void {
-    try {
-      localStorage.setItem(this.SPONSOR_PROPOSALS_KEY, JSON.stringify(data));
-    } catch (e) {
-      console.error(e);
-    }
+    try { localStorage.setItem(this.SPONSOR_PROPOSALS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
+  }
+
+  private saveGallery(data: PetGalleryItem[]): void {
+    try { localStorage.setItem(this.GALLERY_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
   }
 
   resetAllData(): void {
     const seedStudents = this.getSeedStudents();
     const seedVolunteers = this.getSeedVolunteers();
     const seedPets = this.getSeedPets();
+    const seedGallery = this.getSeedGallery();
 
     this.studentsSignal.set(seedStudents);
     this.volunteersSignal.set(seedVolunteers);
     this.petsSignal.set(seedPets);
+    this.gallerySignal.set(seedGallery);
 
     this.saveStudents(seedStudents);
     this.saveVolunteers(seedVolunteers);
     this.savePets(seedPets);
+    this.saveGallery(seedGallery);
+  }
+
+  private getSeedGallery(): PetGalleryItem[] {
+    return [
+      {
+        id: 'gal-1',
+        petName: 'Pipoca',
+        species: 'Cão',
+        breed: 'Poodle Toy Resgatado',
+        serviceDone: 'Tosa Bebê na Tesoura & Banho Hipoalergênico',
+        beforeImageUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500&auto=format&fit=crop&q=80',
+        afterImageUrl: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=500&auto=format&fit=crop&q=80',
+        story: 'Pipoca foi resgatado com pelos extremamente embolados e medo de barulho. Com manejo positivo e muito carinho, nossos alunos fizeram um desembolo indolor e uma tosa bebê impecável!',
+        studentName: 'Juliana Mendes (Turma Manhã)',
+        instructorName: 'Prof. Carlos Eduardo (Master Groomer)',
+        date: '2026-08-25T10:00:00.000Z',
+        category: 'Tosa Bebê',
+        likesCount: 38
+      },
+      {
+        id: 'gal-2',
+        petName: 'Thor',
+        species: 'Cão',
+        breed: 'Golden Retriever',
+        serviceDone: 'Desembolo Suave, Hidratação Profunda & Secagem Silenciosa',
+        beforeImageUrl: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=500&auto=format&fit=crop&q=80',
+        afterImageUrl: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=500&auto=format&fit=crop&q=80',
+        story: 'Thor pertence a uma família carente da comunidade. Ele recebeu uma hidratação profunda com produtos doados pela GroomerPro e saiu super cheiroso e aliviado do calor.',
+        studentName: 'Lucas Oliveira (Turma Sábado)',
+        instructorName: 'Dra. Gabriela Castro (Veterinária)',
+        date: '2026-08-28T14:30:00.000Z',
+        category: 'Banho & Desembolo',
+        likesCount: 52
+      },
+      {
+        id: 'gal-3',
+        petName: 'Mel',
+        species: 'Cão',
+        breed: 'Shih Tzu',
+        serviceDone: 'Tosa Higiênica, Corte de Unhas & Rostinho Redondo na Tesoura',
+        beforeImageUrl: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=500&auto=format&fit=crop&q=80',
+        afterImageUrl: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=500&auto=format&fit=crop&q=80',
+        story: 'Melzinha estava com a franja cobrindo a visão. Os alunos aprenderam o corte arredondado perfeito que valorizou toda a fofura dela com acabamento na tesoura reta.',
+        studentName: 'Aline Ferreira (Turma Noite)',
+        instructorName: 'Instrutora Renata Silveira',
+        date: '2026-08-30T16:00:00.000Z',
+        category: 'Antes & Depois',
+        likesCount: 44
+      },
+      {
+        id: 'gal-4',
+        petName: 'Bidu',
+        species: 'Cão',
+        breed: 'Schnauzer / SRD',
+        serviceDone: 'Tosa Padrão Comercial & Limpeza Auricular',
+        beforeImageUrl: 'https://images.unsplash.com/photo-1534361960057-19889db9621e?w=500&auto=format&fit=crop&q=80',
+        afterImageUrl: 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=500&auto=format&fit=crop&q=80',
+        story: 'Cãozinho resgatado por abrigo parceiro. Foi preparado pelos alunos com direito a gravatinha para o evento de adoção e foi adotado no mesmo final de semana!',
+        studentName: 'Camila Rodrigues (Formanda)',
+        instructorName: 'Prof. Carlos Eduardo',
+        date: '2026-09-01T11:00:00.000Z',
+        category: 'Pet Resgatado',
+        likesCount: 61
+      }
+    ];
   }
 
   private getSeedStudents(): StudentRegistration[] {

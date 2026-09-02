@@ -113,3 +113,19 @@ export interface SponsorProposal {
   status: RegistrationStatus;
   createdAt: string;
 }
+
+export interface PetGalleryItem {
+  id: string;
+  petName: string;
+  species: 'Cão' | 'Gato';
+  breed: string;
+  serviceDone: string;
+  beforeImageUrl: string;
+  afterImageUrl: string;
+  story: string;
+  studentName: string;
+  instructorName: string;
+  date: string;
+  category: 'Antes & Depois' | 'Tosa Bebê' | 'Banho & Desembolo' | 'Pet Resgatado';
+  likesCount: number;
+}

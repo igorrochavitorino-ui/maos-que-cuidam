@@ -1,0 +1,470 @@
+.page-header-section {
+  background: linear-gradient(135deg, #10243e 0%, #173860 100%);
+  color: #ffffff;
+  padding: 4.5rem 0 3.5rem 0;
+  border-bottom: 3px solid var(--color-gold);
+  text-align: center;
+}
+
+.page-header-content {
+  max-width: 840px;
+  margin: 0 auto;
+}
+
+.page-header-title {
+  color: #ffffff;
+  font-size: 2.75rem;
+  margin-bottom: 1rem;
+}
+
+.page-header-desc {
+  color: #cbd5e1;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* Abas de alternância da página */
+.gallery-tabs-section {
+  background: #ffffff;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.main-switch-pills {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.switch-pill-btn {
+  background: #f1f5f9;
+  border: 2px solid var(--color-border);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-primary);
+  padding: 0.85rem 1.75rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.switch-pill-btn:hover {
+  border-color: var(--color-gold);
+}
+
+.switch-pill-btn.active {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 14px rgba(19, 42, 71, 0.25);
+}
+
+.switch-pill-btn.highlight-pill.active {
+  background: linear-gradient(135deg, var(--color-gold), #be8424);
+  border-color: var(--color-gold);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(212, 154, 55, 0.35);
+}
+
+/* Barra de controles da galeria */
+.gallery-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Grid de Cards */
+.gallery-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.pet-gallery-card {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.image-wrapper-box {
+  position: relative;
+  width: 100%;
+  height: 290px;
+  background-color: #0d1e33;
+  overflow: hidden;
+}
+
+.pet-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.pet-gallery-card:hover .pet-img {
+  transform: scale(1.03);
+}
+
+.img-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.05em;
+  z-index: 5;
+}
+
+.badge-after {
+  background: #059669;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
+}
+
+.badge-before {
+  background: #475569;
+  color: #ffffff;
+}
+
+.toggle-mode-pills {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  padding: 4px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 5;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.toggle-btn.active-mode {
+  background: var(--color-gold);
+  color: #ffffff;
+}
+
+.like-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-full);
+  color: #e11d48;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast);
+  z-index: 5;
+}
+
+.like-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Card Info */
+.card-info-content {
+  padding: 1.75rem 2rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-category-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.card-pet-species {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.card-pet-name {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+.card-service-txt {
+  font-size: 0.92rem;
+  color: var(--color-gold-hover);
+  margin-bottom: 0.75rem;
+}
+
+.card-story-preview {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  flex-grow: 1;
+}
+
+.card-credits-footer {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.credit-label {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.credit-name {
+  color: var(--color-primary);
+}
+
+.credit-sub {
+  color: var(--color-text-main);
+}
+
+/* Callout Banner */
+.model-callout-banner {
+  background: linear-gradient(135deg, #132a47 0%, #1e3f68 100%);
+  color: #ffffff;
+  padding: 3rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+  border-left: 6px solid var(--color-gold);
+}
+
+.callout-left h3 {
+  color: #ffffff;
+  font-size: 1.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.callout-left p {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  margin-bottom: 0;
+  max-width: 620px;
+}
+
+/* ================= SEÇÃO CÃO MODELO / BANHO GRÁTIS ================= */
+.free-bath-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 3.5rem;
+  align-items: flex-start;
+}
+
+.info-lead {
+  font-size: 1.05rem;
+  color: var(--color-primary);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.care-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.care-step {
+  padding: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border-left: 4px solid var(--color-gold);
+}
+
+.step-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.care-step strong {
+  display: block;
+  font-size: 1.05rem;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+
+.care-step p {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+.model-form-card {
+  padding: 3rem 2.5rem;
+}
+
+/* Ticket de Confirmação */
+.model-ticket-card {
+  padding: 3rem 2.5rem;
+  text-align: center;
+  border: 2px solid var(--color-gold);
+}
+
+.ticket-protocol-box {
+  background: var(--color-primary);
+  color: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin: 1.75rem 0;
+}
+
+.ticket-protocol-box span {
+  display: block;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: #cbd5e1;
+}
+
+.ticket-protocol-box strong {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--color-gold);
+}
+
+.ticket-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  background: var(--color-bg-warm);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  text-align: left;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
+}
+
+.t-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.ticket-instructions {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  color: #065f46;
+  font-size: 0.88rem;
+  margin-bottom: 2rem;
+}
+
+.ticket-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Modais */
+.modal-lg {
+  max-width: 780px !important;
+}
+
+.modal-compare-images {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.compare-col {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.compare-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  z-index: 2;
+}
+
+.compare-tag.before { background: #475569; }
+.compare-tag.after { background: #059669; }
+
+.compare-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.modal-credits-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.25rem;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 992px) {
+  .gallery-cards-grid { grid-template-columns: 1fr; }
+  .free-bath-grid { grid-template-columns: 1fr; }
+  .modal-compare-images { grid-template-columns: 1fr; }
+  .callout-left { text-align: center; }
+  .model-callout-banner { justify-content: center; text-align: center; }
+}
+
+@media (max-width: 640px) {
+  .ticket-details-grid { grid-template-columns: 1fr; }
+  .modal-credits-grid { grid-template-columns: 1fr; }
+}

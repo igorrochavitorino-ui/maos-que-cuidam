@@ -9,8 +9,12 @@
       <span>Cursos Gratuitos de Banho & Tosa • Vagas Sociais para Capacitação Profissional</span>
     </div>
     <div class="banner-actions">
+      <a routerLink="/transformacoes" class="banner-link">
+        <span>🐾 Banho & Tosa Grátis para seu Pet</span>
+      </a>
+      <span class="banner-divider">|</span>
       <a routerLink="/patrocinadores" class="banner-link">
-        <span>⭐ Nossos Patrocinadores</span>
+        <span>⭐ Patrocinadores</span>
       </a>
       <span class="banner-divider">|</span>
       <a routerLink="/doar" class="banner-link">
@@ -20,7 +24,7 @@
       <span class="banner-divider">|</span>
       <a routerLink="/admin" class="banner-link admin-pill">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/><path d="m14 9 3 3-3 3"/></svg>
-        <span>Painel de Gestão</span>
+        <span>Painel</span>
       </a>
     </div>
   </div>
@@ -50,7 +54,12 @@
         </li>
         <li>
           <a routerLink="/cursos" routerLinkActive="active" class="nav-item">
-            Cursos & Oficinas
+            Cursos
+          </a>
+        </li>
+        <li>
+          <a routerLink="/transformacoes" routerLinkActive="active" class="nav-item">
+            Galeria & Banho Grátis
           </a>
         </li>
         <li>
@@ -98,6 +107,7 @@
       <ul class="mobile-nav-links">
         <li><a routerLink="/" (click)="closeMobileMenu()" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Início</a></li>
         <li><a routerLink="/cursos" (click)="closeMobileMenu()" routerLinkActive="active">Cursos & Oficinas</a></li>
+        <li><a routerLink="/transformacoes" (click)="closeMobileMenu()" routerLinkActive="active">🐾 Galeria & Banho Grátis</a></li>
         <li><a routerLink="/cadastro" (click)="closeMobileMenu()" routerLinkActive="active">Portal de Inscrições</a></li>
         <li><a routerLink="/patrocinadores" (click)="closeMobileMenu()" routerLinkActive="active">⭐ Patrocinadores & Empresas</a></li>
         <li><a routerLink="/doar" (click)="closeMobileMenu()" routerLinkActive="active">Como Ajudar / Doações</a></li>
