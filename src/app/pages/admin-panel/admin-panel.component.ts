@@ -48,18 +48,22 @@ export class AdminPanelComponent {
   courseFilter = signal<string>('all');
   shiftFilter = signal<string>('all');
 
-  // Modais de Edição de Propagandas de Vídeo das Abas Laterais
-  showEditVideoAdModal = signal<boolean>(false);
+  // Modais de Criação & Edição de Propagandas de Vídeo das Abas Laterais
+  showVideoAdModal = signal<boolean>(false);
+  videoAdModalMode = signal<'create' | 'edit'>('create');
   editingVideoAdId = signal<string>('');
   editAdTitle = signal<string>('');
   editAdSponsor = signal<string>('');
   editAdVideoUrl = signal<string>('');
   editAdPosterUrl = signal<string>('');
   editAdClickUrl = signal<string>('');
-  editAdBadge = signal<string>('');
+  editAdBadge = signal<string>('✨ PATROCINADOR MASTER');
   editAdDesc = signal<string>('');
   editAdActive = signal<boolean>(true);
   editAdPosition = signal<'left' | 'right'>('left');
+  videoFileName = signal<string>('');
+  posterFileName = signal<string>('');
+  videoUploadLoading = signal<boolean>(false);
 
   // Modais de detalhes dos cadastros
   selectedStudent = signal<StudentRegistration | null>(null);
@@ -378,7 +382,26 @@ export class AdminPanelComponent {
   }
 
   // ================= 🎬 GESTÃO DE PROPAGANDAS DE VÍDEO DAS ABAS LATERAIS =================
+  openNewVideoAdModal(position: 'left' | 'right' = 'left'): void {
+    this.videoAdModalMode.set('create');
+    this.editingVideoAdId.set('');
+    this.editAdPosition.set(position);
+    this.editAdTitle.set('');
+    this.editAdSponsor.set('');
+    this.editAdVideoUrl.set('');
+    this.editAdPosterUrl.set('');
+    this.editAdClickUrl.set('https://wa.me/5522998481112?text=Ol%C3%A1,%20gostaria%20de%20saber%20mais%20sobre%20a%20empresa%20anunciante!');
+    this.editAdBadge.set('✨ PATROCINADOR MASTER');
+    this.editAdDesc.set('');
+    this.editAdActive.set(true);
+    this.videoFileName.set('');
+    this.posterFileName.set('');
+    this.videoUploadLoading.set(false);
+    this.showVideoAdModal.set(true);
+  }
+
   openEditVideoAdModal(ad: VideoAd): void {
+    this.videoAdModalMode.set('edit');
     this.editingVideoAdId.set(ad.id);
     this.editAdPosition.set(ad.position);
     this.editAdTitle.set(ad.title);
@@ -389,28 +412,97 @@ export class AdminPanelComponent {
     this.editAdBadge.set(ad.badgeText);
     this.editAdDesc.set(ad.description || '');
     this.editAdActive.set(ad.active);
-    this.showEditVideoAdModal.set(true);
+    this.videoFileName.set('');
+    this.posterFileName.set('');
+    this.videoUploadLoading.set(false);
+    this.showVideoAdModal.set(true);
   }
 
-  saveEditedVideoAd(): void {
+  onVideoFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const fileSizeMb = (file.size / (1024 * 1024)).toFixed(2);
+      this.videoFileName.set(`${file.name} (${fileSizeMb} MB)`);
+      this.videoUploadLoading.set(true);
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.editAdVideoUrl.set(e.target.result);
+        this.videoUploadLoading.set(false);
+        this.showToast(`📹 Vídeo "${file.name}" carregado com sucesso!`);
+      };
+      reader.onerror = () => {
+        this.videoUploadLoading.set(false);
+        alert('Erro ao carregar o arquivo de vídeo. Tente selecionar um arquivo .mp4 ou .webm.');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onPosterFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.posterFileName.set(file.name);
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.editAdPosterUrl.set(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  setSampleVideo(videoUrl: string, sampleTitle?: string, sampleSponsor?: string, sampleBadge?: string): void {
+    this.editAdVideoUrl.set(videoUrl);
+    if (sampleTitle) this.editAdTitle.set(sampleTitle);
+    if (sampleSponsor) this.editAdSponsor.set(sampleSponsor);
+    if (sampleBadge) this.editAdBadge.set(sampleBadge);
+    this.showToast('🎬 Vídeo modelo selecionado com sucesso!');
+  }
+
+  saveVideoAd(): void {
     if (!this.editAdTitle() || !this.editAdSponsor() || !this.editAdVideoUrl()) {
-      alert('Por favor, preencha o Título, Nome do Patrocinador e a URL do Vídeo.');
+      alert('Por favor, preencha o Nome do Patrocinador, o Título e inclua o Vídeo (por upload de arquivo ou link).');
       return;
     }
 
-    this.registrationService.updateVideoAd(this.editingVideoAdId(), {
-      title: this.editAdTitle(),
-      sponsorName: this.editAdSponsor(),
-      videoUrl: this.editAdVideoUrl(),
-      posterUrl: this.editAdPosterUrl(),
-      clickUrl: this.editAdClickUrl(),
-      badgeText: this.editAdBadge(),
-      description: this.editAdDesc(),
-      active: this.editAdActive()
-    });
+    if (this.videoAdModalMode() === 'create') {
+      this.registrationService.addVideoAd({
+        position: this.editAdPosition(),
+        title: this.editAdTitle(),
+        sponsorName: this.editAdSponsor(),
+        videoUrl: this.editAdVideoUrl(),
+        posterUrl: this.editAdPosterUrl(),
+        clickUrl: this.editAdClickUrl() || 'https://wa.me/5522998481112',
+        badgeText: this.editAdBadge() || '✨ PATROCINADOR MASTER',
+        description: this.editAdDesc(),
+        active: this.editAdActive()
+      });
+      this.showVideoAdModal.set(false);
+      this.showToast(`🎉 Novo anúncio de vídeo de "${this.editAdSponsor()}" cadastrado com sucesso!`);
+    } else {
+      this.registrationService.updateVideoAd(this.editingVideoAdId(), {
+        position: this.editAdPosition(),
+        title: this.editAdTitle(),
+        sponsorName: this.editAdSponsor(),
+        videoUrl: this.editAdVideoUrl(),
+        posterUrl: this.editAdPosterUrl(),
+        clickUrl: this.editAdClickUrl(),
+        badgeText: this.editAdBadge(),
+        description: this.editAdDesc(),
+        active: this.editAdActive()
+      });
+      this.showVideoAdModal.set(false);
+      this.showToast(`🎬 Propaganda de vídeo "${this.editAdSponsor()}" atualizada com sucesso!`);
+    }
+  }
 
-    this.showEditVideoAdModal.set(false);
-    this.showToast(`🎬 Propaganda de vídeo "${this.editAdSponsor()}" atualizada com sucesso!`);
+  deleteVideoAd(ad: VideoAd): void {
+    if (confirm(`Deseja realmente excluir permanentemente a propaganda de "${ad.sponsorName}" (${ad.title})? Esta ação não pode ser desfeita.`)) {
+      this.registrationService.deleteVideoAd(ad.id);
+      this.showToast(`🗑️ Propaganda de "${ad.sponsorName}" excluída com sucesso.`);
+    }
   }
 
   toggleVideoAdActive(ad: VideoAd): void {

@@ -19,9 +19,17 @@ export class SideVideoAdComponent implements AfterViewInit {
   isMuted = signal<boolean>(true);
   isPlaying = signal<boolean>(true);
   isMinimized = signal<boolean>(false);
+  currentIndex = signal<number>(0);
+
+  activeAds = computed<VideoAd[]>(() => {
+    return this.registrationService.videoAds().filter(a => a.position === this.position && a.active);
+  });
 
   ad = computed<VideoAd | undefined>(() => {
-    return this.registrationService.videoAds().find(a => a.position === this.position && a.active);
+    const list = this.activeAds();
+    if (list.length === 0) return undefined;
+    const idx = Math.abs(this.currentIndex()) % list.length;
+    return list[idx];
   });
 
   ngAfterViewInit(): void {
@@ -36,6 +44,24 @@ export class SideVideoAdComponent implements AfterViewInit {
         // Autoplay may be restricted by browser until interaction
         this.isPlaying.set(false);
       });
+    }
+  }
+
+  nextAd(event?: Event): void {
+    if (event) event.stopPropagation();
+    const list = this.activeAds();
+    if (list.length > 1) {
+      this.currentIndex.update(idx => (idx + 1) % list.length);
+      setTimeout(() => this.initVideo(), 50);
+    }
+  }
+
+  prevAd(event?: Event): void {
+    if (event) event.stopPropagation();
+    const list = this.activeAds();
+    if (list.length > 1) {
+      this.currentIndex.update(idx => (idx - 1 + list.length) % list.length);
+      setTimeout(() => this.initVideo(), 50);
     }
   }
 

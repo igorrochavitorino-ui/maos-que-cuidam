@@ -389,11 +389,29 @@ export class RegistrationService {
     return [...this.videoAdsSignal()];
   }
 
+  addVideoAd(data: Omit<VideoAd, 'id'>): VideoAd {
+    const newAd: VideoAd = {
+      ...data,
+      id: 'ad_' + data.position + '_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)
+    };
+    const updated = [newAd, ...this.videoAdsSignal()];
+    this.videoAdsSignal.set(updated);
+    this.saveVideoAds(updated);
+    this.firebaseService.saveDocument('configuracoes', 'video_ad_' + newAd.id, newAd);
+    return newAd;
+  }
+
   updateVideoAd(id: string, data: Partial<VideoAd>): void {
     const updated = this.videoAdsSignal().map(ad => ad.id === id ? { ...ad, ...data } : ad);
     this.videoAdsSignal.set(updated);
     this.saveVideoAds(updated);
     this.firebaseService.saveDocument('configuracoes', 'video_ad_' + id, data);
+  }
+
+  deleteVideoAd(id: string): void {
+    const updated = this.videoAdsSignal().filter(ad => ad.id !== id);
+    this.videoAdsSignal.set(updated);
+    this.saveVideoAds(updated);
   }
 
   getImpactStats(): ImpactStat[] {

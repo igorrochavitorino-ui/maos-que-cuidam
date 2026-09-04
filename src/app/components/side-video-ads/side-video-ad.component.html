@@ -11,14 +11,25 @@
         <!-- CABEÇALHO DO ANÚNCIO -->
         <div class="ad-header-bar">
           <span class="ad-badge">{{ ad()?.badgeText }}</span>
-          <button 
-            type="button" 
-            class="btn-minimize" 
-            (click)="toggleMinimize($event)" 
-            title="Minimizar propaganda lateral"
-            aria-label="Minimizar propaganda">
-            ✕
-          </button>
+          
+          <div style="display: flex; align-items: center; gap: 4px;">
+            @if (activeAds().length > 1) {
+              <div class="ad-pagination-nav" style="display: flex; align-items: center; gap: 2px; font-size: 0.7rem; color: #fff; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 2px 6px;">
+                <button type="button" (click)="prevAd($event)" style="background: none; border: none; color: #fff; cursor: pointer; padding: 0 2px; font-size: 0.75rem;" title="Anúncio anterior">‹</button>
+                <span>{{ (currentIndex() % activeAds().length) + 1 }}/{{ activeAds().length }}</span>
+                <button type="button" (click)="nextAd($event)" style="background: none; border: none; color: #fff; cursor: pointer; padding: 0 2px; font-size: 0.75rem;" title="Próximo anúncio">›</button>
+              </div>
+            }
+
+            <button 
+              type="button" 
+              class="btn-minimize" 
+              (click)="toggleMinimize($event)" 
+              title="Minimizar propaganda lateral"
+              aria-label="Minimizar propaganda">
+              ✕
+            </button>
+          </div>
         </div>
 
         <!-- PLAYER DE VÍDEO VERTICAL (9:16) -->
@@ -29,8 +40,8 @@
             [poster]="ad()?.posterUrl" 
             autoplay 
             muted 
-            loop 
             playsinline 
+            (ended)="nextAd()"
             class="ad-video-player">
           </video>
 
