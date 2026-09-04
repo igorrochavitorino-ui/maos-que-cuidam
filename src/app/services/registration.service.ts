@@ -87,26 +87,50 @@ export class RegistrationService {
       scheduleOptions: ['Tarde (13:00 às 17:00)', 'Noite (18:00 às 22:00)', 'Sábados (08h às 15h)'],
       prerequisites: 'Idade mínima de 16 anos e amor pelos animais. Não requer experiência anterior.',
       certificateIncluded: true,
-      maxStudentsPerClass: 12,
+      maxStudentsPerClass: 10,
       icon: 'bath',
       badge: 'Mais Procurado',
       highlighted: true,
       modules: [
         {
-          title: 'Módulo 1: Psicologia Canina & Manejo Sem Estresse',
-          topics: ['Linguagem corporal e sinais de calma', 'Abordagem segura e contenção sem traumas', 'Prevenção de acidentes']
+          title: 'Módulo 1: Introdução, História & Mercado Profissional',
+          topics: [
+            '1. Introdução ao banho e tosa',
+            '2. Postura Profissional',
+            '3. Origem do banho e tosa',
+            '4. Surgimento da Profissão',
+            '5. Lei que trata os maus tratos no Brasil',
+            '6. Mercado Pet 2025'
+          ]
         },
         {
-          title: 'Módulo 2: Cosmetologia Pet & Tipos de Pelagem',
-          topics: ['Diferenciação de pelagens (lisa, encaracolada, dupla)', 'Shampoos neutros, hipoalergênicos e condicionadores', 'Desembolo suave e hidratações']
+          title: 'Módulo 2: Ética, Legislação & Anatomia Animal',
+          topics: [
+            '7. Ética, deveres e obrigações',
+            '8. Responsabilidade civil',
+            '9. Anatomia Simples',
+            '10. Unhas',
+            '11. Orelhas',
+            '12. Raças e tipos de pelagens'
+          ]
         },
         {
-          title: 'Módulo 3: Prática Completa de Higienização',
-          topics: ['Temperatura ideal da água e técnicas de ensaboamento', 'Corte e lixamento seguro de unhas', 'Higienização e secagem do conduto auditivo']
+          title: 'Módulo 3: Equipamentos, Segurança & Saúde Pet',
+          topics: [
+            '13. Ferramentas e equipamentos',
+            '14. Diferença entre as tesouras',
+            '15. Acidentes e segurança',
+            '16. Parasitas',
+            '17. Anamnese'
+          ]
         },
         {
-          title: 'Módulo 4: Secagem, Soprador e Escovação',
-          topics: ['Uso correto do soprador para evitar estresse térmico', 'Escovação correta para desembaraço', 'Finalização com laços e bandanas artesanais']
+          title: 'Módulo 4: Prática Completa de Banho & Tosa',
+          topics: [
+            '18. Banho',
+            '19. Tosa higiênica',
+            '20. Tosa'
+          ]
         }
       ]
     },
