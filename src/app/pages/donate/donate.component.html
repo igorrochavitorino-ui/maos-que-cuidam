@@ -29,7 +29,10 @@
         <div class="pix-box">
           <div class="qr-mockup">
             <!-- QR Code Oficial -->
-            <img src="assets/pix-qrcode.png" alt="QR Code PIX Oficial da ONG Mãos que Cuidam" class="pix-qrcode-img">
+            <div class="qr-image-wrapper" (click)="toggleZoomModal(true)" title="Clique para ampliar o QR Code">
+              <img [src]="pixQrCodeUrl()" alt="QR Code PIX Oficial da ONG Mãos que Cuidam" class="pix-qrcode-img">
+              <span class="qr-zoom-hint">🔍 Clique para Ampliar</span>
+            </div>
           </div>
 
           <div class="pix-instruction-box">
@@ -153,3 +156,34 @@
     </div>
   </div>
 </section>
+
+<!-- MODAL DE QR CODE EM TELA CHEIA -->
+@if (showZoomModal()) {
+  <div class="modal-backdrop" (click)="toggleZoomModal(false)">
+    <div class="modal-box text-center animate-fade-in" (click)="$event.stopPropagation()" style="max-width: 480px; padding: 2.5rem 2rem;">
+      <button class="modal-close-btn" (click)="toggleZoomModal(false)" title="Fechar">✕</button>
+      
+      <div class="modal-header-zoom">
+        <span class="badge badge-success mb-2">⚡ PIX OFICIAL</span>
+        <h3 style="font-size: 1.5rem; color: var(--color-primary); margin-bottom: 0.5rem;">QR Code PIX em Destaque</h3>
+        <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 1.5rem;">
+          Aponte a câmera do aplicativo do seu banco para ler o QR Code abaixo:
+        </p>
+      </div>
+
+      <div class="zoom-qr-display" style="background: #ffffff; padding: 1rem; border-radius: var(--radius-lg); border: 2px solid var(--color-gold-border); box-shadow: var(--shadow-lg); display: inline-block; margin-bottom: 1.5rem;">
+        <img [src]="pixQrCodeUrl()" alt="QR Code PIX Ampliado" style="max-width: 100%; width: 320px; height: auto; display: block; border-radius: var(--radius-md);">
+      </div>
+
+      <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: var(--radius-md); padding: 0.75rem 1rem; margin-bottom: 1.5rem;">
+        <span style="font-size: 0.88rem; font-weight: 700; color: var(--color-primary);">
+          Favorecido: ONG Mãos que Cuidam
+        </span>
+      </div>
+
+      <button class="btn btn-primary w-100" (click)="toggleZoomModal(false)">
+        <span>Fechar Janela</span>
+      </button>
+    </div>
+  </div>
+}
