@@ -33,8 +33,8 @@ export class GalleryComponent {
   // Modal para adicionar nova foto à galeria
   showAddPhotoModal = signal<boolean>(false);
   showQuickLoginModal = signal<boolean>(false);
-  loginEmail = signal<string>('admin@maosquecuidam.org.br');
-  loginPassword = signal<string>('admin');
+  loginEmail = signal<string>('');
+  loginPassword = signal<string>('');
   loginError = signal<string | null>(null);
 
   beforePhotoPreview = signal<string>('https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80');

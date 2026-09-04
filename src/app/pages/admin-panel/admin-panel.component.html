@@ -45,23 +45,13 @@
           <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
             🔒 Entrar na Área do Colaborador
           </button>
-        </form>
 
-        <div class="login-credentials-hint">
-          <span class="hint-title">💡 Acessos de Demonstração Pré-Configurados:</span>
-          <div class="hint-grid">
-            <div class="hint-box" (click)="loginEmail.set('admin@maosquecuidam.org.br'); loginPassword.set('admin')">
-              <strong>👑 Dono / Master:</strong>
-              <code>admin&#64;maosquecuidam.org.br</code>
-              <small>Senha: <strong>admin</strong> (Acesso Total + Gestão de Equipe)</small>
-            </div>
-            <div class="hint-box" (click)="loginEmail.set('coordenacao@maosquecuidam.org.br'); loginPassword.set('aluno')">
-              <strong>🎓 Coordenação:</strong>
-              <code>coordenacao&#64;maosquecuidam.org.br</code>
-              <small>Senha: <strong>aluno</strong> (Gestão de Inscrições)</small>
-            </div>
+          <div style="margin-top: 1.25rem; text-align: center;">
+            <a routerLink="/" class="btn btn-outline-navy btn-sm" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
+              ← Voltar para a Página Inicial
+            </a>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </section>

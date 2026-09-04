@@ -38,8 +38,8 @@ export class AdminPanelComponent {
   readonly VAGAS_TITULARES_LIMITE = 15; // 15 vagas titulares por turma
 
   // Estados de Login
-  loginEmail = signal<string>('admin@maosquecuidam.org.br');
-  loginPassword = signal<string>('admin');
+  loginEmail = signal<string>('');
+  loginPassword = signal<string>('');
   loginError = signal<string | null>(null);
 
   // Visualização ativa
