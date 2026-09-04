@@ -40,9 +40,9 @@ export class SponsorsComponent {
     badgeLabel: ['⭐ Apoiador Oficial', Validators.required],
     tagline: ['', [Validators.required, Validators.minLength(5)]],
     description: ['', [Validators.required, Validators.minLength(15)]],
-    contributionType: ['', [Validators.required, Validators.minLength(5)]],
+    contributionType: [''],
     logoUrl: [''],
-    websiteUrl: ['https://', [Validators.required]],
+    websiteUrl: [''],
     studentsSupported: [150]
   });
 
@@ -62,7 +62,8 @@ export class SponsorsComponent {
       this.sponsorForm.reset({
         category: 'Diamante',
         badgeLabel: '⭐ Apoiador Oficial',
-        websiteUrl: 'https://',
+        contributionType: '',
+        websiteUrl: '',
         studentsSupported: 150
       });
       this.showAddSponsorModal.set(true);
@@ -104,9 +105,9 @@ export class SponsorsComponent {
       badgeLabel: sp.badgeLabel || '⭐ Apoiador Oficial',
       tagline: sp.tagline,
       description: sp.description,
-      contributionType: sp.contributionType,
+      contributionType: sp.contributionType || '',
       logoUrl: sp.logoUrl.startsWith('data:') ? '' : sp.logoUrl,
-      websiteUrl: sp.websiteUrl,
+      websiteUrl: sp.websiteUrl || '',
       studentsSupported: sp.studentsSupported || 150
     });
     this.showAddSponsorModal.set(true);
@@ -120,6 +121,8 @@ export class SponsorsComponent {
 
     const val = this.sponsorForm.value;
     const finalLogo = val.logoUrl?.trim() || this.logoPreview();
+    const finalWebsite = val.websiteUrl?.trim() || '';
+    const finalContribution = val.contributionType?.trim() || '';
 
     if (this.editingSponsorId()) {
       this.registrationService.updateSponsor(this.editingSponsorId()!, {
@@ -128,9 +131,9 @@ export class SponsorsComponent {
         badgeLabel: val.badgeLabel,
         tagline: val.tagline,
         description: val.description,
-        contributionType: val.contributionType,
+        contributionType: finalContribution,
         logoUrl: finalLogo,
-        websiteUrl: val.websiteUrl,
+        websiteUrl: finalWebsite,
         studentsSupported: val.studentsSupported
       });
       this.showToast(`✨ Empresa "${val.name}" atualizada com sucesso!`);
@@ -141,9 +144,9 @@ export class SponsorsComponent {
         badgeLabel: val.badgeLabel,
         tagline: val.tagline,
         description: val.description,
-        contributionType: val.contributionType,
+        contributionType: finalContribution,
         logoUrl: finalLogo,
-        websiteUrl: val.websiteUrl,
+        websiteUrl: finalWebsite,
         studentsSupported: val.studentsSupported
       });
       this.showToast(`🎉 Nova Empresa "${val.name}" cadastrada com sucesso!`);

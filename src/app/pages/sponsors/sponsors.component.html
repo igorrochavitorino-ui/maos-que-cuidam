@@ -52,18 +52,26 @@
           <p class="sponsor-desc">{{ sp.description }}</p>
 
           <!-- Box de Apoio Principal (SEM "Parceiro Desde") -->
-          <div class="sponsor-impact-box">
-            <div class="impact-row">
-              <span class="impact-label">Apoio Principal:</span>
-              <strong class="impact-val">{{ sp.contributionType }}</strong>
+          @if (sp.contributionType) {
+            <div class="sponsor-impact-box">
+              <div class="impact-row">
+                <span class="impact-label">Apoio Principal:</span>
+                <strong class="impact-val">{{ sp.contributionType }}</strong>
+              </div>
             </div>
-          </div>
+          }
 
           <!-- Rodapé do Card -->
           <div class="sponsor-card-footer">
-            <a [href]="sp.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy btn-sm">
-              Visitar Site Oficial &raquo;
-            </a>
+            @if (sp.websiteUrl && sp.websiteUrl !== '#' && sp.websiteUrl !== 'https://') {
+              <a [href]="sp.websiteUrl" target="_blank" rel="noopener noreferrer" class="btn btn-outline-navy btn-sm">
+                Visitar Site Oficial &raquo;
+              </a>
+            } @else {
+              <span class="text-muted" style="font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+                🤝 Apoiador Oficial
+              </span>
+            }
 
             @if (authService.isAuthenticated()) {
               <div class="sponsor-admin-actions">
@@ -317,18 +325,18 @@
 
             <div class="grid-2 mt-3" style="gap: 1.25rem;">
               <div class="form-group">
-                <label class="form-label">Apoio Principal <span class="required">*</span></label>
+                <label class="form-label">Apoio Principal <span style="font-size: 0.78rem; font-weight: 500; color: #94a3b8;">(Opcional)</span></label>
                 <div class="input-with-icon">
                   <span class="input-prefix-icon">🎁</span>
-                  <input type="text" formControlName="contributionType" placeholder="Ex: Insumos Cosméticos & Manutenção de Laboratório" class="form-control lux-input" [class.is-invalid]="sponsorForm.get('contributionType')?.invalid && sponsorForm.get('contributionType')?.touched">
+                  <input type="text" formControlName="contributionType" placeholder="Ex: Insumos Cosméticos & Manutenção" class="form-control lux-input">
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="form-label">Site Oficial da Empresa <span class="required">*</span></label>
+                <label class="form-label">Site Oficial da Empresa <span style="font-size: 0.78rem; font-weight: 500; color: #94a3b8;">(Opcional)</span></label>
                 <div class="input-with-icon">
                   <span class="input-prefix-icon">🌐</span>
-                  <input type="url" formControlName="websiteUrl" placeholder="https://groomerpro.com.br" class="form-control lux-input" [class.is-invalid]="sponsorForm.get('websiteUrl')?.invalid && sponsorForm.get('websiteUrl')?.touched">
+                  <input type="url" formControlName="websiteUrl" placeholder="https://groomerpro.com.br" class="form-control lux-input">
                 </div>
               </div>
             </div>
