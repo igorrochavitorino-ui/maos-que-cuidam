@@ -266,7 +266,7 @@
               <label class="form-label">Curso Concluído <span class="required">*</span></label>
               <div class="input-with-icon">
                 <span class="input-prefix-icon">🎓</span>
-                <input type="text" formControlName="courseCompleted" placeholder="Ex: Especialização em Tosa Comercial & Tesoura" class="form-control lux-input" [class.is-invalid]="reviewForm.get('courseCompleted')?.invalid && reviewForm.get('courseCompleted')?.touched">
+                <input type="text" formControlName="courseCompleted" placeholder="Ex: Especialização em Tosa Comercial" class="form-control lux-input" [class.is-invalid]="reviewForm.get('courseCompleted')?.invalid && reviewForm.get('courseCompleted')?.touched">
               </div>
             </div>
           </div>
@@ -330,8 +330,9 @@
 
 <!-- TOAST FLUTUANTE -->
 @if (toastMessage()) {
-  <div class="admin-toast animate-fade-in" style="position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: #132a47; color: #ffffff; padding: 0.75rem 1.5rem; border-radius: var(--radius-full); box-shadow: var(--shadow-lg); z-index: 10000; font-size: 0.9rem; border-left: 4px solid var(--color-gold);">
-    <span>{{ toastMessage() }}</span>
+  <div class="toast-floating-alert animate-fade-in" role="alert">
+    <span class="toast-icon">🌟</span>
+    <span class="toast-text">{{ toastMessage() }}</span>
   </div>
 }
 

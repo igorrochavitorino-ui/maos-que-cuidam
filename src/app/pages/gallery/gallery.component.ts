@@ -62,7 +62,7 @@ export class GalleryComponent {
     petName: ['', [Validators.required, Validators.minLength(2)]],
     category: ['TOSA BEBÊ', Validators.required], // Tag pill (ex: Tosa Bebê, Banho & Desembolo)
     breed: ['Poodle Toy Resgatado', Validators.required], // Raça / Espécie (ex: Poodle Toy Resgatado)
-    serviceDone: ['Tosa Bebê na Tesoura & Banho Hipoalergênico', Validators.required], // Procedimento
+    serviceDone: ['Tosa Bebê & Banho Hipoalergênico', Validators.required], // Procedimento
     story: ['', [Validators.required, Validators.minLength(15)]], // História da transformação
     studentName: ['', [Validators.required, Validators.minLength(3)]], // Aluno Responsável (Turma)
     instructorName: ['Prof. Carlos Eduardo', Validators.required], // Supervisão
@@ -106,7 +106,7 @@ export class GalleryComponent {
     this.toastMessage.set(msg);
     setTimeout(() => {
       this.toastMessage.set(null);
-    }, 3500);
+    }, 4000);
   }
 
   openModal(item: PetGalleryItem): void {
@@ -219,16 +219,20 @@ export class GalleryComponent {
       instagramPostUrl: val.instagramPostUrl || 'https://www.instagram.com/maosquecuidam_4/'
     });
 
+    // Fecha a aba / modal
     this.showAddPhotoModal.set(false);
+
+    // Reseta o formulário
     this.newPhotoForm.reset({
       category: 'TOSA BEBÊ',
       breed: 'Poodle Toy Resgatado',
-      serviceDone: 'Tosa Bebê na Tesoura & Banho Hipoalergênico',
+      serviceDone: 'Tosa Bebê & Banho Hipoalergênico',
       instructorName: 'Prof. Carlos Eduardo',
       instagramPostUrl: 'https://www.instagram.com/maosquecuidam_4/',
       likesCount: 41
     });
 
-    this.showToast(`✨ Foto do(a) ${val.petName} publicada com sucesso na Galeria!`);
+    // Exibe notificação de salvo com sucesso
+    this.showToast(`✅ Salvo com sucesso! A foto do pet "${val.petName}" foi publicada na galeria.`);
   }
 }

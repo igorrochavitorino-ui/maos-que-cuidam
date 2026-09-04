@@ -538,6 +538,50 @@ img {
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+/* ================= 🔔 NOTIFICAÇÕES TOAST FLUTUANTES ================= */
+.toast-floating-alert {
+  position: fixed !important;
+  top: 2rem !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: #0f243a !important;
+  color: #ffffff !important;
+  padding: 0.95rem 1.75rem !important;
+  border-radius: var(--radius-full) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45), 0 0 0 2px rgba(212, 154, 55, 0.6) !important;
+  z-index: 999999 !important;
+  font-family: var(--font-heading) !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  border-left: 5px solid #10b981 !important;
+  animation: toastPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  pointer-events: none !important;
+}
+
+.toast-floating-alert .toast-icon {
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+}
+
+.toast-floating-alert .toast-text {
+  color: #ffffff !important;
+  letter-spacing: 0.01em !important;
+}
+
+@keyframes toastPopIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -25px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
 /* ================= ♿ RECURSOS DE ACESSIBILIDADE GLOBAL ================= */
 body.font-scale-small {
   font-size: 14px !important;
