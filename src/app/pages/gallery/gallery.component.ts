@@ -50,7 +50,7 @@ export class GalleryComponent {
     petBreed: ['Sem Raça Definida (SRD)', Validators.required],
     petSize: ['Porte Médio (10kg a 25kg)', Validators.required],
     petAge: ['', Validators.required],
-    serviceDesired: ['Banho Completo com Hidratação', Validators.required],
+    serviceDesired: ['Banho + corte de unha + escovação dos dentes + limpeza do ouvido.', Validators.required],
     preferredDay: ['Sábados pela manhã', Validators.required],
     specialCareNotes: [''],
     isVaccinated: [true],
