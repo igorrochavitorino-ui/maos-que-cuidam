@@ -162,6 +162,7 @@ export interface AdoptablePet {
   size: 'Porte Pequeno' | 'Porte Médio' | 'Porte Grande';
   breed: string;
   photoUrl: string;
+  additionalPhotos?: string[]; // Mais 2 fotos adicionais (Total de até 3 fotos por pet)
   isCastrated: boolean;
   isVaccinated: boolean;
   isDewormed: boolean;

@@ -34,8 +34,14 @@ export class AdoptionComponent {
   contractPet = signal<AdoptablePet | null>(null);
   contractAdopter = signal<AdoptionApplication | null>(null);
 
-  // Preview da foto em upload
-  photoPreview = signal<string>('https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80');
+  // Previews das 3 fotos em upload (Foto 1 Principal + Foto 2 + Foto 3)
+  photoPreview1 = signal<string>('https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80');
+  photoPreview2 = signal<string | null>(null);
+  photoPreview3 = signal<string | null>(null);
+
+  // Controle de fotos exibidas nos cards e no modal
+  cardActivePhoto: { [petId: string]: number } = {};
+  activeDetailsPhotoIndex = signal<number>(0);
 
   // Formulário para Cadastrar Pet para Doação com Questionário de Adoção Responsável
   donationForm: FormGroup = this.fb.group({
@@ -104,6 +110,59 @@ export class AdoptionComponent {
     return pets;
   }
 
+  getPetPhotos(pet: AdoptablePet | null | undefined): string[] {
+    if (!pet) return [];
+    const list = [pet.photoUrl, ...(pet.additionalPhotos || [])].filter(p => !!p && p.trim().length > 0);
+    return list.length > 0 ? list : ['https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80'];
+  }
+
+  getCardPhoto(pet: AdoptablePet): string {
+    const photos = this.getPetPhotos(pet);
+    const idx = (this.cardActivePhoto[pet.id] || 0) % photos.length;
+    return photos[idx];
+  }
+
+  getCardPhotoIndex(petId: string): number {
+    return this.cardActivePhoto[petId] || 0;
+  }
+
+  setCardPhotoIndex(petId: string, index: number, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.cardActivePhoto[petId] = index;
+  }
+
+  nextCardPhoto(pet: AdoptablePet, event?: Event): void {
+    if (event) event.stopPropagation();
+    const photos = this.getPetPhotos(pet);
+    const current = this.cardActivePhoto[pet.id] || 0;
+    this.cardActivePhoto[pet.id] = (current + 1) % photos.length;
+  }
+
+  prevCardPhoto(pet: AdoptablePet, event?: Event): void {
+    if (event) event.stopPropagation();
+    const photos = this.getPetPhotos(pet);
+    const current = this.cardActivePhoto[pet.id] || 0;
+    this.cardActivePhoto[pet.id] = (current - 1 + photos.length) % photos.length;
+  }
+
+  setDetailsPhotoIndex(index: number): void {
+    this.activeDetailsPhotoIndex.set(index);
+  }
+
+  nextDetailsPhoto(): void {
+    const photos = this.getPetPhotos(this.selectedPetForDetails());
+    if (photos.length > 1) {
+      this.activeDetailsPhotoIndex.update(idx => (idx + 1) % photos.length);
+    }
+  }
+
+  prevDetailsPhoto(): void {
+    const photos = this.getPetPhotos(this.selectedPetForDetails());
+    if (photos.length > 1) {
+      this.activeDetailsPhotoIndex.update(idx => (idx - 1 + photos.length) % photos.length);
+    }
+  }
+
   sharePetOnWhatsapp(pet: AdoptablePet): void {
     const text = `Olhem esse amorzinho para adoção responsável na ONG Mãos que Cuidam em Macaé/RJ! 🐾❤️\n\n` +
       `🐾 *Nome:* ${pet.name} (${pet.species} - ${pet.breed})\n` +
@@ -132,15 +191,30 @@ export class AdoptionComponent {
     window.scrollTo({ top: 400, behavior: 'smooth' });
   }
 
-  onFileSelected(event: Event): void {
+  onFileSelected(event: Event, slot: 1 | 2 | 3 = 1): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.photoPreview.set(e.target.result);
+        if (slot === 1) {
+          this.photoPreview1.set(e.target.result);
+        } else if (slot === 2) {
+          this.photoPreview2.set(e.target.result);
+        } else if (slot === 3) {
+          this.photoPreview3.set(e.target.result);
+        }
       };
       reader.readAsDataURL(file);
+    }
+  }
+
+  removePhoto(slot: 2 | 3, event?: Event): void {
+    if (event) event.stopPropagation();
+    if (slot === 2) {
+      this.photoPreview2.set(null);
+    } else if (slot === 3) {
+      this.photoPreview3.set(null);
     }
   }
 
@@ -158,6 +232,7 @@ export class AdoptionComponent {
   }
 
   openDetailsModal(pet: AdoptablePet): void {
+    this.activeDetailsPhotoIndex.set(0);
     this.selectedPetForDetails.set(pet);
   }
 
@@ -172,6 +247,8 @@ export class AdoptionComponent {
     }
 
     const val = this.donationForm.value;
+    const additional = [this.photoPreview2(), this.photoPreview3()].filter(Boolean) as string[];
+
     const created = this.registrationService.registerPetForDonation({
       name: val.petName,
       species: val.species,
@@ -180,7 +257,8 @@ export class AdoptionComponent {
       ageText: val.ageText,
       size: val.size,
       breed: val.breed,
-      photoUrl: this.photoPreview(),
+      photoUrl: this.photoPreview1(),
+      additionalPhotos: additional.length > 0 ? additional : undefined,
       isCastrated: val.isCastrated,
       isVaccinated: val.isVaccinated,
       isDewormed: val.isDewormed,
@@ -199,6 +277,8 @@ export class AdoptionComponent {
     });
 
     this.submittedDonation.set(created);
+    this.photoPreview2.set(null);
+    this.photoPreview3.set(null);
     this.donationForm.reset({
       species: 'Cão',
       gender: 'Macho',

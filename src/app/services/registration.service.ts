@@ -887,6 +887,10 @@ export class RegistrationService {
         size: 'Porte Pequeno',
         breed: 'Poodle Toy / SRD',
         photoUrl: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600&auto=format&fit=crop&q=80',
+        additionalPhotos: [
+          'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop&q=80',
+          'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=600&auto=format&fit=crop&q=80'
+        ],
         isCastrated: true,
         isVaccinated: true,
         isDewormed: true,
@@ -914,6 +918,10 @@ export class RegistrationService {
         size: 'Porte Pequeno',
         breed: 'Frajolinha Muito Carinhosa',
         photoUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&auto=format&fit=crop&q=80',
+        additionalPhotos: [
+          'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=600&auto=format&fit=crop&q=80',
+          'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&auto=format&fit=crop&q=80'
+        ],
         isCastrated: true,
         isVaccinated: true,
         isDewormed: true,
@@ -941,6 +949,10 @@ export class RegistrationService {
         size: 'Porte Médio',
         breed: 'Vira-lata Caramelo Dourado',
         photoUrl: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&auto=format&fit=crop&q=80',
+        additionalPhotos: [
+          'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&auto=format&fit=crop&q=80',
+          'https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=600&auto=format&fit=crop&q=80'
+        ],
         isCastrated: true,
         isVaccinated: true,
         isDewormed: true,
@@ -968,6 +980,10 @@ export class RegistrationService {
         size: 'Porte Pequeno',
         breed: 'Maltês / Poodle Macia',
         photoUrl: 'https://images.unsplash.com/photo-1596492784531-6e6eb5ea9993?w=600&auto=format&fit=crop&q=80',
+        additionalPhotos: [
+          'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=600&auto=format&fit=crop&q=80',
+          'https://images.unsplash.com/photo-1534361960057-19889db9621e?w=600&auto=format&fit=crop&q=80'
+        ],
         isCastrated: true,
         isVaccinated: true,
         isDewormed: true,
