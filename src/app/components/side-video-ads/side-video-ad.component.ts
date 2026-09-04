@@ -1,6 +1,8 @@
 import { Component, Input, inject, signal, computed, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
+import { AuthService } from '../../services/auth.service';
 import { VideoAd } from '../../models/registration.model';
 
 @Component({
@@ -15,6 +17,8 @@ export class SideVideoAdComponent implements AfterViewInit {
   @ViewChild('videoPlayer') videoPlayerRef?: ElementRef<HTMLVideoElement>;
 
   registrationService = inject(RegistrationService);
+  authService = inject(AuthService);
+  router = inject(Router);
 
   isMuted = signal<boolean>(true);
   isPlaying = signal<boolean>(true);
@@ -97,6 +101,20 @@ export class SideVideoAdComponent implements AfterViewInit {
     event.stopPropagation();
     if (url) {
       window.open(url, '_blank');
+    }
+  }
+
+  goToAdminAds(event: Event): void {
+    event.stopPropagation();
+    this.router.navigate(['/admin'], { queryParams: { tab: 'videoAds' } });
+  }
+
+  deleteCurrentAd(event: Event): void {
+    event.stopPropagation();
+    const currentAd = this.ad();
+    if (!currentAd) return;
+    if (confirm(`Deseja realmente excluir a propaganda de "${currentAd.sponsorName}" (${currentAd.title})?`)) {
+      this.registrationService.deleteVideoAd(currentAd.id);
     }
   }
 }

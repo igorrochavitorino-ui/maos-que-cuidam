@@ -1,18 +1,18 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
 import { AuthService } from '../../services/auth.service';
 import { 
   StudentRegistration, 
   VolunteerRegistration, 
   PetRegistration, 
-  RegistrationStatus,
-  AdminUser,
-  AdminRole,
-  Course,
-  VideoAd
+  RegistrationStatus, 
+  AdminUser, 
+  AdminRole, 
+  Course, 
+  VideoAd 
 } from '../../models/registration.model';
 
 export interface RankedStudent extends StudentRegistration {
@@ -32,6 +32,7 @@ export interface RankedStudent extends StudentRegistration {
 export class AdminPanelComponent {
   registrationService = inject(RegistrationService);
   authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
 
   courses: Course[] = this.registrationService.getCourses();
   readonly VAGAS_TITULARES_LIMITE = 15; // 15 vagas titulares por turma
@@ -43,6 +44,14 @@ export class AdminPanelComponent {
 
   // Visualização ativa
   activeView = signal<'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs'>('students');
+
+  constructor() {
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] && ['students', 'volunteers', 'pets', 'videoAds', 'staff', 'logs'].includes(params['tab'])) {
+        this.setView(params['tab'] as any);
+      }
+    });
+  }
   searchQuery = signal<string>('');
   statusFilter = signal<string>('all');
   courseFilter = signal<string>('all');
