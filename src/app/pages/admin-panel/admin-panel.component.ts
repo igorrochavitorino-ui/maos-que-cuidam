@@ -698,8 +698,11 @@ export class AdminPanelComponent {
 
   getPetsForDay(day: string): PetRegistration[] {
     return this.registrationService.pets().filter(p => {
-      if (p.preferredDay === 'Qualquer dia da semana') return true;
-      return p.preferredDay.toLowerCase().includes(day.toLowerCase());
+      const pref = p.preferredDay.toLowerCase();
+      if (pref === 'qualquer dia da semana') return true;
+      if (pref.includes('segunda a sexta') && !day.toLowerCase().includes('sábado')) return true;
+      if (pref.includes('sábado') && day.toLowerCase().includes('sábado')) return true;
+      return pref.includes(day.toLowerCase());
     });
   }
 
