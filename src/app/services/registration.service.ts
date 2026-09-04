@@ -236,88 +236,28 @@ export class RegistrationService {
   private getSeedSponsors(): Sponsor[] {
     return [
       {
-        id: 'sp-groomerpro',
-        name: 'GroomerPro Cosméticos & Spa Pet',
+        id: 'sp-impet',
+        name: 'Impet',
         category: 'Diamante',
-        badgeLabel: '⭐ Apoiador Oficial',
-        tagline: 'Líder em Cosméticos Hipoalergênicos e Tratamento da Pelagem',
-        description: 'Fornecedora oficial de 100% dos shampoos veganos, máscaras de hidratação e finalizadores dermatológicos utilizados nas aulas práticas da ONG.',
-        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="gp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f472b6"/><stop offset="100%" stop-color="%23ec4899"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23fdf2f8"/><circle cx="50" cy="50" r="30" fill="url(%23gp)"/><path d="M42 38c-3 0-5 2-5 5 0 6 13 18 13 18s13-12 13-18c0-3-2-5-5-5-3 0-6 3-8 6-2-3-5-6-8-6z" fill="%23ffffff"/></svg>',
-        websiteUrl: 'https://groomerpro.com.br',
-        contributionType: 'Insumos Cosméticos & Manutenção de Laboratório',
-        studentsSupported: 240
+        badgeLabel: '⭐ Patrocinador Master',
+        tagline: 'Cosméticos, Insumos e Produtos de Alta Performance para o Mercado Pet',
+        description: 'Empresa parceira e patrocinadora oficial da ONG Mãos que Cuidam, fornecendo insumos de higiene e produtos de qualidade para as aulas práticas e os atendimentos de banho social gratuito.',
+        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs><linearGradient id="impetGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23132a47"/><stop offset="100%" stop-color="%231e3f68"/></linearGradient><linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f59e0b"/><stop offset="100%" stop-color="%23d49a37"/></linearGradient></defs><rect width="120" height="120" rx="30" fill="url(%23impetGrad)"/><circle cx="60" cy="46" r="22" fill="url(%23goldGrad)"/><path d="M52 42c-2.5 0-4.5 2-4.5 4.5 0 5 12.5 15 12.5 15s12.5-10 12.5-15c0-2.5-2-4.5-4.5-4.5-2.5 0-5 2.5-8 5-3-2.5-5.5-5-8-5z" fill="%23ffffff"/><text x="60" y="94" font-family="Poppins, Arial, sans-serif" font-size="18" font-weight="900" fill="%23ffffff" text-anchor="middle" letter-spacing="2">IMPET</text></svg>',
+        websiteUrl: 'https://www.instagram.com/maosquecuidam_4/',
+        contributionType: 'Insumos Cosméticos & Apoio ao Banho Social',
+        studentsSupported: 250
       },
       {
-        id: 'sp-titanium',
-        name: 'Titanium Blades & Pro Scissors',
+        id: 'sp-mineiro',
+        name: 'Mineiro',
         category: 'Diamante',
-        badgeLabel: '⭐ Cota Diamante',
-        tagline: 'Alta Precisão e Tecnologia em Tesouras e Lâminas Alemãs',
-        description: 'Equipa todas as bancadas dos nossos cursos com tesouras curvas, retas, tubarão e kits completos de lâminas profissionais de alta durabilidade.',
-        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="tb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23d49a37"/><stop offset="100%" stop-color="%23132a47"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23fef7ec"/><circle cx="50" cy="50" r="30" fill="url(%23tb)"/><path d="M40 35l20 30m0-30L40 65" stroke="%23ffffff" stroke-width="6" stroke-linecap="round"/></svg>',
-        websiteUrl: 'https://titaniumblades.com',
-        contributionType: 'Kits de Tesouras Profissionais & Máquinas de Tosa',
-        studentsSupported: 180
-      },
-      {
-        id: 'sp-petcare',
-        name: 'Rede PetCare Centros Veterinários & Diagnóstico',
-        category: 'Ouro',
-        badgeLabel: '⭐ Cota Ouro',
-        tagline: 'Excelência em Medicina Veterinária e Cuidado Integral',
-        description: 'Disponibiliza médicos veterinários residentes para suporte em aula, triagem preventiva dos pets e contratação direta dos alunos formados.',
-        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="pc" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%230ea5e9"/><stop offset="100%" stop-color="%230284c7"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23f0f9ff"/><circle cx="50" cy="50" r="30" fill="url(%23pc)"/><path d="M50 35v30M35 50h30" stroke="%23ffffff" stroke-width="7" stroke-linecap="round"/></svg>',
-        websiteUrl: 'https://petcare.vet.br',
-        contributionType: 'Acompanhamento & Encaminhamento de Empregos',
-        studentsSupported: 160
-      },
-      {
-        id: 'sp-aquadry',
-        name: 'AquaDry Sopradores & Banheiras Inox',
-        category: 'Ouro',
-        badgeLabel: '⭐ Cota Ouro',
-        tagline: 'Engenharia Silenciosa e Ergonômica para Banho & Tosa',
-        description: 'Estruturou nossas salas com banheiras reguláveis em aço inox 304 e sopradores de baixo decibéis com tecnologia antiestresse para os cães.',
-        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="ad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2306b6d4"/><stop offset="100%" stop-color="%230891b2"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23ecfeff"/><circle cx="50" cy="50" r="30" fill="url(%23ad)"/><path d="M50 32c-7 10-15 17-15 24a15 15 0 0 0 30 0c0-7-8-14-15-24z" fill="%23ffffff"/></svg>',
-        websiteUrl: 'https://aquadrypet.com.br',
-        contributionType: 'Infraestrutura de Laboratório & Secadores Silenciosos',
-        studentsSupported: 130
-      },
-      {
-        id: 'sp-nutripet',
-        name: 'NutriPet Nutrição Super Premium',
-        category: 'Prata',
-        badgeLabel: '⭐ Cota Prata',
-        tagline: 'Nutrição Balanceada e Bem-Estar Canino e Felino',
-        description: 'Oferece petiscos funcionais de reforço positivo para treino de manejo amigável durante o banho e doa ração para protetores atendidos.',
-        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="np" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f59e0b"/><stop offset="100%" stop-color="%23d97706"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23fffbeb"/><circle cx="50" cy="50" r="30" fill="url(%23np)"/><ellipse cx="50" cy="58" rx="14" ry="10" fill="%23ffffff"/><circle cx="38" cy="44" r="5" fill="%23ffffff"/><circle cx="62" cy="44" r="5" fill="%23ffffff"/><circle cx="45" cy="36" r="4.5" fill="%23ffffff"/><circle cx="55" cy="36" r="4.5" fill="%23ffffff"/></svg>',
-        websiteUrl: 'https://nutripet.com.br',
-        contributionType: 'Alimentação & Reforço Positivo em Aula',
-        studentsSupported: 95
-      },
-      {
-        id: 'sp-mundoanimal',
-        name: 'Mundo Animal Grooming & Pet Shops',
-        category: 'Prata',
-        badgeLabel: '⭐ Cota Prata',
-        tagline: 'Rede com mais de 40 lojas em todo o estado',
-        description: 'Principal empresa contratante dos nossos formandos, concedendo prioridade de contratação para os alunos certificados pela ONG.',
-        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="ma" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2310b981"/><stop offset="100%" stop-color="%23059669"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23ecfdf5"/><circle cx="50" cy="50" r="30" fill="url(%23ma)"/><path d="M36 44h28v22H36z" fill="%23ffffff"/><path d="M32 44l18-12 18 12" stroke="%23ffffff" stroke-width="4" fill="none" stroke-linejoin="round"/></svg>',
-        websiteUrl: 'https://mundoanimalpet.com.br',
-        contributionType: 'Programa Jovem Groomer & Contratação Efetiva',
-        studentsSupported: 150
-      },
-      {
-        id: 'sp-groomertech',
-        name: 'GroomerTech Software & Gestão Pet',
-        category: 'Parceiro Técnico',
-        badgeLabel: '⭐ Parceiro Técnico',
-        tagline: 'Sistemas de Agendamento e Gestão para Negócios Pet',
-        description: 'Concede 1 ano de acesso 100% gratuito ao seu software de gestão para todos os formandos que abrem seu próprio Pet Móvel ou Pet Shop.',
-        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="gt" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%238b5cf6"/><stop offset="100%" stop-color="%236d28d9"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23f5f3ff"/><circle cx="50" cy="50" r="30" fill="url(%23gt)"/><path d="M40 42h20v16H40z" fill="%23ffffff"/><path d="M45 58v4h10v-4" stroke="%23ffffff" stroke-width="3"/></svg>',
-        websiteUrl: 'https://groomertech.io',
-        contributionType: 'Licenças Gratuitas de Tecnologia para Empreendedores',
-        studentsSupported: 75
+        badgeLabel: '⭐ Patrocinador Oficial',
+        tagline: 'Apoiador Oficial da Causa Animal & Capacitação Profissional',
+        description: 'Empresa parceira e apoiadora master da ONG Mãos que Cuidam, fortalecendo a qualificação de jovens e famílias no cuidado com os animais e geração de emprego no setor pet.',
+        logoUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs><linearGradient id="minGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23065f46"/><stop offset="100%" stop-color="%23047857"/></linearGradient><linearGradient id="minGold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23fbbf24"/><stop offset="100%" stop-color="%23d97706"/></linearGradient></defs><rect width="120" height="120" rx="30" fill="url(%23minGrad)"/><circle cx="60" cy="46" r="22" fill="url(%23minGold)"/><path d="M46 54l14-14 14 14" stroke="%23ffffff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="60" cy="46" r="5" fill="%23ffffff"/><text x="60" y="94" font-family="Poppins, Arial, sans-serif" font-size="16" font-weight="900" fill="%23ffffff" text-anchor="middle" letter-spacing="1.5">MINEIRO</text></svg>',
+        websiteUrl: 'https://www.instagram.com/maosquecuidam_4/',
+        contributionType: 'Apoio Institucional & Parceria Solidária',
+        studentsSupported: 200
       }
     ];
   }
@@ -788,7 +728,14 @@ export class RegistrationService {
 
       const storedSponsors = localStorage.getItem(this.SPONSORS_KEY);
       if (storedSponsors) {
-        this.sponsorsSignal.set(JSON.parse(storedSponsors));
+        const parsed = JSON.parse(storedSponsors);
+        if (parsed.some((s: any) => s.id === 'sp-groomerpro' || s.id === 'sp-titanium' || s.id === 'sp-petcare' || s.id === 'sp-aquadry')) {
+          const seed = this.getSeedSponsors();
+          this.sponsorsSignal.set(seed);
+          this.saveSponsors(seed);
+        } else {
+          this.sponsorsSignal.set(parsed);
+        }
       } else {
         const seed = this.getSeedSponsors();
         this.sponsorsSignal.set(seed);
