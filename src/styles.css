@@ -425,6 +425,119 @@ img {
   .section-title { font-size: 1.75rem; }
 }
 
+/* ================= 🪟 MODAIS GLOBAIS CENTRALIZADOS ================= */
+.modal-backdrop {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1.5rem !important;
+  z-index: 99999 !important;
+  overflow-y: auto !important;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+.modal-box {
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  width: 100% !important;
+  max-width: 600px;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  position: relative !important;
+  margin: auto !important;
+  padding: 2rem 2.25rem;
+  animation: modalScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-box.modal-lg {
+  max-width: 820px !important;
+}
+
+.modal-box.modal-xl {
+  max-width: 1050px !important;
+}
+
+.modal-box.modal-sm {
+  max-width: 440px !important;
+}
+
+.modal-close-btn {
+  position: absolute !important;
+  top: 1.25rem !important;
+  right: 1.25rem !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  z-index: 20 !important;
+  line-height: 1 !important;
+}
+
+.modal-close-btn:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border-color: #ef4444 !important;
+  transform: rotate(90deg) scale(1.08) !important;
+}
+
+.modal-header {
+  margin-bottom: 1.5rem;
+  padding-right: 2rem;
+}
+
+.modal-course-title {
+  font-size: 1.6rem;
+  color: var(--color-primary);
+  margin-top: 0.5rem;
+  margin-bottom: 0.35rem;
+  font-weight: 800;
+}
+
+.modal-course-tagline {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.modal-footer {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalScaleIn {
+  from { opacity: 0; transform: scale(0.95) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 /* ================= ♿ RECURSOS DE ACESSIBILIDADE GLOBAL ================= */
 body.font-scale-small {
   font-size: 14px !important;
