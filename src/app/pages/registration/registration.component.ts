@@ -37,7 +37,7 @@ export class RegistrationComponent implements OnInit {
     city: ['Macaé', Validators.required],
     neighborhood: ['', Validators.required],
     courseId: ['curso-banho-higienizacao', Validators.required],
-    preferredShift: ['Manhã (08h às 12h)', Validators.required],
+    preferredShift: ['Tarde (13:00 às 17:00)', Validators.required],
     employmentStatus: ['Buscando primeira oportunidade na área', Validators.required],
     hasPetExperience: [false],
     motivation: ['', [Validators.required, Validators.minLength(15)]],
