@@ -4,8 +4,54 @@
   min-height: 100vh;
 }
 
+/* ================= 🖥️ LAYOUT FLUIDO COM ABAS LATERAIS DE VÍDEO ================= */
+.site-fluid-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  position: relative;
+  gap: 1.25rem;
+  padding: 0 1rem;
+}
+
 .main-content {
-  flex: 1 0 auto;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+}
+
+.side-ad-left-host,
+.side-ad-right-host {
+  flex: 0 0 230px;
+  position: sticky;
+  top: 95px;
+  z-index: 40;
+}
+
+@media (max-width: 1280px) {
+  .site-fluid-layout {
+    gap: 0.75rem;
+    padding: 0 0.5rem;
+  }
+  .side-ad-left-host,
+  .side-ad-right-host {
+    flex: 0 0 195px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .site-fluid-layout {
+    display: block;
+    padding: 0;
+    gap: 0;
+  }
+  .side-ad-left-host,
+  .side-ad-right-host {
+    display: none !important;
+  }
 }
 
 /* ================= 🟢 BOTÃO FLUTUANTE DO WHATSAPP (COMPACTO) ================= */

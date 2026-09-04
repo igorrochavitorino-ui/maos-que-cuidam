@@ -13,7 +13,8 @@ import {
   AdoptablePet, 
   AdoptionApplication, 
   RegistrationStatus,
-  ImpactStat
+  ImpactStat,
+  VideoAd
 } from '../models/registration.model';
 
 @Injectable({
@@ -33,6 +34,7 @@ export class RegistrationService {
   private readonly SPONSORS_KEY = 'mqc_sponsors_data';
   private readonly TESTIMONIALS_KEY = 'mqc_testimonials_data';
   private readonly IMPACT_STATS_KEY = 'mqc_impact_stats_data';
+  private readonly VIDEO_ADS_KEY = 'mqc_video_ads_data';
 
   // Signals para reatividade pura
   private studentsSignal = signal<StudentRegistration[]>([]);
@@ -45,6 +47,7 @@ export class RegistrationService {
   private sponsorsSignal = signal<Sponsor[]>([]);
   private testimonialsSignal = signal<Testimonial[]>([]);
   private impactStatsSignal = signal<ImpactStat[]>([]);
+  private videoAdsSignal = signal<VideoAd[]>([]);
 
   // Computed signals
   readonly students = computed(() => this.studentsSignal());
@@ -57,6 +60,7 @@ export class RegistrationService {
   readonly sponsors = computed(() => this.sponsorsSignal());
   readonly testimonials = computed(() => this.testimonialsSignal());
   readonly impactStats = computed(() => this.impactStatsSignal());
+  readonly videoAds = computed(() => this.videoAdsSignal());
 
   readonly totalStudents = computed(() => this.studentsSignal().length);
   readonly totalVolunteers = computed(() => this.volunteersSignal().length);
@@ -348,8 +352,48 @@ export class RegistrationService {
     ];
   }
 
+  private getSeedVideoAds(): VideoAd[] {
+    return [
+      {
+        id: 'ad_left_1',
+        position: 'left',
+        title: 'Shampoos Hipoalergênicos & Cosmética Pet',
+        sponsorName: 'Pet Clean Macaé',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-dog-taking-a-shower-in-a-bathtub-41481-large.mp4',
+        posterUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500&auto=format&fit=crop&q=80',
+        clickUrl: 'https://wa.me/5522998481112?text=Ol%C3%A1,%20gostaria%20de%20saber%20mais%20sobre%20os%20produtos%20do%20an%C3%BAncio%20no%20site%20da%20ONG%20M%C3%A3os%20que%20Cuidam',
+        badgeText: '✨ PATROCINADOR MASTER',
+        description: 'Apoiando o banho social gratuito para centenas de cães acolhidos em Macaé/RJ.',
+        active: true
+      },
+      {
+        id: 'ad_right_1',
+        position: 'right',
+        title: 'Máquinas de Tosa & Lâminas de Alta Precisão',
+        sponsorName: 'Groomer Pro Ferramentas',
+        videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-a-dog-getting-a-haircut-41480-large.mp4',
+        posterUrl: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=500&auto=format&fit=crop&q=80',
+        clickUrl: 'https://wa.me/5522998481112?text=Ol%C3%A1,%20gostaria%20de%20anunciar%20minha%20empresa%20nas%20abas%20laterais%20do%20site%20da%20ONG',
+        badgeText: '⭐ PARCEIRO DIAMANTE',
+        description: 'Tecnologia profissional a serviço da qualificação de jovens e famílias.',
+        active: true
+      }
+    ];
+  }
+
   constructor() {
     this.loadFromStorage();
+  }
+
+  getVideoAds(): VideoAd[] {
+    return [...this.videoAdsSignal()];
+  }
+
+  updateVideoAd(id: string, data: Partial<VideoAd>): void {
+    const updated = this.videoAdsSignal().map(ad => ad.id === id ? { ...ad, ...data } : ad);
+    this.videoAdsSignal.set(updated);
+    this.saveVideoAds(updated);
+    this.firebaseService.saveDocument('configuracoes', 'video_ad_' + id, data);
   }
 
   getImpactStats(): ImpactStat[] {
@@ -726,6 +770,15 @@ export class RegistrationService {
         this.impactStatsSignal.set(seed);
         this.saveImpactStats(seed);
       }
+
+      const storedVideoAds = localStorage.getItem(this.VIDEO_ADS_KEY);
+      if (storedVideoAds) {
+        this.videoAdsSignal.set(JSON.parse(storedVideoAds));
+      } else {
+        const seed = this.getSeedVideoAds();
+        this.videoAdsSignal.set(seed);
+        this.saveVideoAds(seed);
+      }
     } catch (e) {
       console.warn('Erro ao carregar do localStorage:', e);
       this.studentsSignal.set(this.getSeedStudents());
@@ -736,7 +789,12 @@ export class RegistrationService {
       this.sponsorsSignal.set(this.getSeedSponsors());
       this.testimonialsSignal.set(this.getSeedTestimonials());
       this.impactStatsSignal.set(this.getSeedImpactStats());
+      this.videoAdsSignal.set(this.getSeedVideoAds());
     }
+  }
+
+  private saveVideoAds(data: VideoAd[]): void {
+    try { localStorage.setItem(this.VIDEO_ADS_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
   }
 
   private saveImpactStats(data: ImpactStat[]): void {

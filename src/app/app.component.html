@@ -1,9 +1,18 @@
 <div class="app-layout">
   <app-navbar></app-navbar>
   
-  <main class="main-content">
-    <router-outlet></router-outlet>
-  </main>
+  <div class="site-fluid-layout">
+    <!-- 🎬 ABA LATERAL ESQUERDA (PROPAGANDA DE VÍDEO) -->
+    <app-side-video-ad [position]="'left'" class="side-ad-left-host"></app-side-video-ad>
+
+    <!-- CONTEÚDO PRINCIPAL (EXPANSÃO FLUIDA NA TELA) -->
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- 🎬 ABA LATERAL DIREITA (PROPAGANDA DE VÍDEO) -->
+    <app-side-video-ad [position]="'right'" class="side-ad-right-host"></app-side-video-ad>
+  </div>
 
   <app-footer></app-footer>
 

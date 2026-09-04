@@ -185,6 +185,13 @@
           </button>
 
           <button 
+            class="admin-tab-btn" 
+            [class.active]="activeView() === 'videoAds'"
+            (click)="setView('videoAds')">
+            <span>🎬 Vídeos das Abas Laterais ({{ registrationService.videoAds().length }})</span>
+          </button>
+
+          <button 
             class="admin-tab-btn staff-tab-highlight" 
             [class.active]="activeView() === 'staff'"
             (click)="setView('staff')">
@@ -572,6 +579,64 @@
             }
           </div>
         }
+      }
+
+      <!-- ================= 🎬 GESTÃO DE PROPAGANDAS DE VÍDEO DAS ABAS LATERAIS ================= -->
+      @if (activeView() === 'videoAds') {
+        <div class="video-ads-admin-section animate-fade-in">
+          <div class="table-header-flex card-modern mb-3" style="background: linear-gradient(135deg, #132a47 0%, #0d1e34 100%); color: #ffffff; padding: 1.5rem; border-radius: 16px;">
+            <div>
+              <span class="badge badge-gold" style="font-size: 0.75rem; margin-bottom: 0.4rem; display: inline-block;">🎬 RECURSO EXCLUSIVO • MONETIZAÇÃO & PARCERIAS</span>
+              <h3 style="color: #ffffff; font-size: 1.35rem; margin: 0 0 0.4rem 0;">Propagandas de Vídeo das Abas Laterais</h3>
+              <p style="color: #cbd5e1; font-size: 0.88rem; margin: 0; max-width: 780px;">
+                Personalize os vídeos em formato vertical que passam nas abas laterais esquerda e direita do site. Você pode cadastrar vídeos de patrocinadores, novos produtos e links para o WhatsApp da empresa anunciante.
+              </p>
+            </div>
+          </div>
+
+          <div class="video-ads-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            @for (ad of registrationService.videoAds(); track ad.id) {
+              <div class="video-ad-admin-card card-modern" style="border: 2px solid var(--color-border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; background: #ffffff;">
+                <div class="ad-admin-card-top" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+                  <span class="badge" [style.background]="ad.position === 'left' ? '#132a47' : '#d49a37'" style="color: #ffffff; font-weight: 700;">
+                    {{ ad.position === 'left' ? '📍 Aba Lateral Esquerda' : '📍 Aba Lateral Direita' }}
+                  </span>
+                  <span class="badge" [class.badge-success]="ad.active" [style.background]="!ad.active ? '#ef4444' : ''" style="color: #ffffff;">
+                    {{ ad.active ? '🟢 Ativo no Site' : '⏸️ Pausado' }}
+                  </span>
+                </div>
+
+                <div class="ad-admin-media-box" style="position: relative; height: 260px; background: #000000;">
+                  <video [src]="ad.videoUrl" [poster]="ad.posterUrl" controls muted style="width: 100%; height: 100%; object-fit: cover;"></video>
+                </div>
+
+                <div class="ad-admin-body" style="padding: 1.25rem; flex: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                  <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span style="font-size: 0.75rem; font-weight: 800; color: #d49a37; text-transform: uppercase;">{{ ad.badgeText }}</span>
+                    <strong style="font-size: 0.88rem; color: var(--color-primary);">{{ ad.sponsorName }}</strong>
+                  </div>
+
+                  <h4 style="font-size: 1rem; color: #1e293b; margin: 0.2rem 0;">{{ ad.title }}</h4>
+                  <p style="font-size: 0.82rem; color: #64748b; line-height: 1.4; margin: 0;">{{ ad.description }}</p>
+
+                  <div style="background: #f1f5f9; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.78rem; word-break: break-all; margin-top: 0.5rem;">
+                    <strong>Link de Destino:</strong>
+                    <a [href]="ad.clickUrl" target="_blank" style="color: #0284c7; margin-left: 4px;">{{ ad.clickUrl }}</a>
+                  </div>
+                </div>
+
+                <div class="ad-admin-footer-actions" style="padding: 1rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; gap: 0.75rem;">
+                  <button class="btn btn-primary btn-sm" style="flex: 1;" (click)="openEditVideoAdModal(ad)">
+                    ✏️ Editar Vídeo & Patrocinador
+                  </button>
+                  <button class="btn btn-outline-navy btn-sm" (click)="toggleVideoAdActive(ad)">
+                    {{ ad.active ? '⏸️ Pausar' : '▶️ Ativar' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
       }
 
       <!-- ================= TABELA 4: EQUIPE & FUNCIONÁRIOS ================= -->
@@ -1194,6 +1259,131 @@
             Fechar
           </button>
         </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: EDITAR PROPAGANDA DE VÍDEO LATERAL ================= -->
+  @if (showEditVideoAdModal()) {
+    <div class="modal-backdrop" (click)="showEditVideoAdModal.set(false)">
+      <div class="modal-box modal-lg animate-fade-in" style="max-width: 650px;" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div>
+            <span class="badge" [style.background]="editAdPosition() === 'left' ? '#132a47' : '#d49a37'" style="color: #ffffff; margin-bottom: 0.35rem; display: inline-block;">
+              {{ editAdPosition() === 'left' ? '📍 Aba Lateral Esquerda' : '📍 Aba Lateral Direita' }}
+            </span>
+            <h3>🎬 Editar Anúncio de Vídeo Lateral</h3>
+            <p class="modal-sub">Configure o vídeo, patrocinador e link de conversão exibido na lateral do site.</p>
+          </div>
+          <button class="modal-close-btn" (click)="showEditVideoAdModal.set(false)">✕</button>
+        </div>
+
+        <form (ngSubmit)="saveEditedVideoAd()" class="modal-form-body">
+          <div class="grid-2" style="gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Nome da Empresa / Patrocinador <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [ngModel]="editAdSponsor()" 
+                (ngModelChange)="editAdSponsor.set($event)" 
+                name="sponsorName" 
+                required 
+                placeholder="Ex: Pet Clean Macaé" 
+                class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Selo / Badge de Destaque <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [ngModel]="editAdBadge()" 
+                (ngModelChange)="editAdBadge.set($event)" 
+                name="badgeText" 
+                required 
+                placeholder="Ex: ✨ PATROCINADOR MASTER" 
+                class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Título do Anúncio <span class="required">*</span></label>
+            <input 
+              type="text" 
+              [ngModel]="editAdTitle()" 
+              (ngModelChange)="editAdTitle.set($event)" 
+              name="adTitle" 
+              required 
+              placeholder="Ex: Shampoos Hipoalergênicos & Cosmética Pet" 
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">URL do Vídeo (Link direto .mp4 ou vídeo em nuvem) <span class="required">*</span></label>
+            <input 
+              type="url" 
+              [ngModel]="editAdVideoUrl()" 
+              (ngModelChange)="editAdVideoUrl.set($event)" 
+              name="videoUrl" 
+              required 
+              placeholder="https://exemplo.com/video.mp4" 
+              class="form-control">
+            <span class="form-hint">Dica: Vídeos verticais curtos (formato 9:16 ou 4:5) proporcionam a melhor visualização.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Imagem de Capa / Poster (Opcional)</label>
+            <input 
+              type="url" 
+              [ngModel]="editAdPosterUrl()" 
+              (ngModelChange)="editAdPosterUrl.set($event)" 
+              name="posterUrl" 
+              placeholder="https://exemplo.com/capa.jpg" 
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Link de Destino ao Clicar (WhatsApp ou Site do Anunciante) <span class="required">*</span></label>
+            <input 
+              type="url" 
+              [ngModel]="editAdClickUrl()" 
+              (ngModelChange)="editAdClickUrl.set($event)" 
+              name="clickUrl" 
+              required 
+              placeholder="https://wa.me/5522998481112 ou https://empresa.com.br" 
+              class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Descrição Curta / Impacto Social</label>
+            <textarea 
+              [ngModel]="editAdDesc()" 
+              (ngModelChange)="editAdDesc.set($event)" 
+              name="adDesc" 
+              rows="2" 
+              placeholder="Ex: Apoiando o banho social gratuito para centenas de animais acolhidos." 
+              class="form-textarea"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-pill" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input 
+                type="checkbox" 
+                [ngModel]="editAdActive()" 
+                (ngModelChange)="editAdActive.set($event)" 
+                name="adActive">
+              <strong>Exibir este anúncio ativamente no site</strong>
+            </label>
+          </div>
+
+          <div class="modal-footer" style="padding-top: 1rem; border-top: 1px solid var(--color-border); display: flex; justify-content: flex-end; gap: 0.75rem;">
+            <button type="button" class="btn btn-outline-navy" (click)="showEditVideoAdModal.set(false)">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+              💾 Salvar Alterações
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   }

@@ -11,7 +11,8 @@ import {
   RegistrationStatus,
   AdminUser,
   AdminRole,
-  Course
+  Course,
+  VideoAd
 } from '../../models/registration.model';
 
 export interface RankedStudent extends StudentRegistration {
@@ -41,11 +42,24 @@ export class AdminPanelComponent {
   loginError = signal<string | null>(null);
 
   // Visualização ativa
-  activeView = signal<'students' | 'volunteers' | 'pets' | 'staff' | 'logs'>('students');
+  activeView = signal<'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs'>('students');
   searchQuery = signal<string>('');
   statusFilter = signal<string>('all');
   courseFilter = signal<string>('all');
   shiftFilter = signal<string>('all');
+
+  // Modais de Edição de Propagandas de Vídeo das Abas Laterais
+  showEditVideoAdModal = signal<boolean>(false);
+  editingVideoAdId = signal<string>('');
+  editAdTitle = signal<string>('');
+  editAdSponsor = signal<string>('');
+  editAdVideoUrl = signal<string>('');
+  editAdPosterUrl = signal<string>('');
+  editAdClickUrl = signal<string>('');
+  editAdBadge = signal<string>('');
+  editAdDesc = signal<string>('');
+  editAdActive = signal<boolean>(true);
+  editAdPosition = signal<'left' | 'right'>('left');
 
   // Modais de detalhes dos cadastros
   selectedStudent = signal<StudentRegistration | null>(null);
@@ -183,7 +197,7 @@ export class AdminPanelComponent {
     this.showToast('Sessão encerrada com sucesso.');
   }
 
-  setView(view: 'students' | 'volunteers' | 'pets' | 'staff' | 'logs'): void {
+  setView(view: 'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs'): void {
     this.activeView.set(view);
     this.searchQuery.set('');
     this.statusFilter.set('all');
@@ -361,6 +375,47 @@ export class AdminPanelComponent {
 
   printAttendanceSheet(): void {
     window.print();
+  }
+
+  // ================= 🎬 GESTÃO DE PROPAGANDAS DE VÍDEO DAS ABAS LATERAIS =================
+  openEditVideoAdModal(ad: VideoAd): void {
+    this.editingVideoAdId.set(ad.id);
+    this.editAdPosition.set(ad.position);
+    this.editAdTitle.set(ad.title);
+    this.editAdSponsor.set(ad.sponsorName);
+    this.editAdVideoUrl.set(ad.videoUrl);
+    this.editAdPosterUrl.set(ad.posterUrl || '');
+    this.editAdClickUrl.set(ad.clickUrl);
+    this.editAdBadge.set(ad.badgeText);
+    this.editAdDesc.set(ad.description || '');
+    this.editAdActive.set(ad.active);
+    this.showEditVideoAdModal.set(true);
+  }
+
+  saveEditedVideoAd(): void {
+    if (!this.editAdTitle() || !this.editAdSponsor() || !this.editAdVideoUrl()) {
+      alert('Por favor, preencha o Título, Nome do Patrocinador e a URL do Vídeo.');
+      return;
+    }
+
+    this.registrationService.updateVideoAd(this.editingVideoAdId(), {
+      title: this.editAdTitle(),
+      sponsorName: this.editAdSponsor(),
+      videoUrl: this.editAdVideoUrl(),
+      posterUrl: this.editAdPosterUrl(),
+      clickUrl: this.editAdClickUrl(),
+      badgeText: this.editAdBadge(),
+      description: this.editAdDesc(),
+      active: this.editAdActive()
+    });
+
+    this.showEditVideoAdModal.set(false);
+    this.showToast(`🎬 Propaganda de vídeo "${this.editAdSponsor()}" atualizada com sucesso!`);
+  }
+
+  toggleVideoAdActive(ad: VideoAd): void {
+    this.registrationService.updateVideoAd(ad.id, { active: !ad.active });
+    this.showToast(`Status da propaganda de ${ad.sponsorName} alterado para ${!ad.active ? 'Ativo' : 'Pausado'}.`);
   }
 
   // --- GESTÃO DE FUNCIONÁRIOS (RESTRITO AO DONO) ---

@@ -109,6 +109,19 @@ export interface Sponsor {
   studentsSupported?: number;
 }
 
+export interface VideoAd {
+  id: string;
+  position: 'left' | 'right';
+  title: string;
+  sponsorName: string;
+  videoUrl: string;
+  posterUrl?: string;
+  clickUrl: string;
+  badgeText: string;
+  description?: string;
+  active: boolean;
+}
+
 export interface SponsorProposal {
   id: string;
   protocol: string;

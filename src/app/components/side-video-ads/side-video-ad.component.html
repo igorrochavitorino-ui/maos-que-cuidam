@@ -1,0 +1,111 @@
+@if (ad()) {
+  <aside 
+    class="side-video-ad-wrapper" 
+    [class.side-left]="position === 'left'" 
+    [class.side-right]="position === 'right'"
+    [class.is-minimized]="isMinimized()"
+    [attr.aria-label]="'Propaganda de vídeo lateral ' + position">
+
+    @if (!isMinimized()) {
+      <div class="side-video-ad-card animate-fade-in">
+        <!-- CABEÇALHO DO ANÚNCIO -->
+        <div class="ad-header-bar">
+          <span class="ad-badge">{{ ad()?.badgeText }}</span>
+          <button 
+            type="button" 
+            class="btn-minimize" 
+            (click)="toggleMinimize($event)" 
+            title="Minimizar propaganda lateral"
+            aria-label="Minimizar propaganda">
+            ✕
+          </button>
+        </div>
+
+        <!-- PLAYER DE VÍDEO VERTICAL (9:16) -->
+        <div class="video-container" (click)="togglePlay($event)">
+          <video 
+            #videoPlayer 
+            [src]="ad()?.videoUrl" 
+            [poster]="ad()?.posterUrl" 
+            autoplay 
+            muted 
+            loop 
+            playsinline 
+            class="ad-video-player">
+          </video>
+
+          <!-- OVERLAY DE CONTROLES RÁPIDOS -->
+          <div class="video-overlay-controls" (click)="$event.stopPropagation()">
+            <button 
+              type="button" 
+              class="control-btn sound-btn" 
+              (click)="toggleMute($event)" 
+              [title]="isMuted() ? 'Ativar som' : 'Desativar som'">
+              @if (isMuted()) {
+                <span>🔇</span>
+              } @else {
+                <span>🔊</span>
+              }
+            </button>
+
+            <button 
+              type="button" 
+              class="control-btn play-btn" 
+              (click)="togglePlay($event)" 
+              [title]="isPlaying() ? 'Pausar vídeo' : 'Reproduzir vídeo'">
+              @if (isPlaying()) {
+                <span>⏸️</span>
+              } @else {
+                <span>▶️</span>
+              }
+            </button>
+          </div>
+
+          <!-- SELO DISCRETO AO VIVO / VÍDEO -->
+          <div class="ad-live-pill">
+            <span class="live-dot"></span>
+            <span>VÍDEO EM DESTAQUE</span>
+          </div>
+        </div>
+
+        <!-- CONTEÚDO DO PATROCINADOR / EMPRESA -->
+        <div class="ad-info-body">
+          <span class="ad-sponsor-label">{{ ad()?.sponsorName }}</span>
+          <h4 class="ad-title-txt">{{ ad()?.title }}</h4>
+          
+          @if (ad()?.description) {
+            <p class="ad-desc-txt">{{ ad()?.description }}</p>
+          }
+
+          <a 
+            [href]="ad()?.clickUrl" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="btn-ad-action" 
+            (click)="openAdLink(ad()?.clickUrl || '', $event)">
+            <span>👉 Conhecer Parceiro</span>
+          </a>
+
+          <a 
+            href="https://wa.me/5522998481112?text=Ol%C3%A1!%20Gostaria%20de%20anunciar%20minha%20empresa%20no%20site%20da%20ONG%20M%C3%A3os%20que%20Cuidam." 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="ad-sponsor-link">
+            📢 Anuncie sua marca aqui
+          </a>
+        </div>
+      </div>
+    } @else {
+      <!-- ABA RECOLHIDA / MINIMIZADA DISCRETA -->
+      <button 
+        type="button" 
+        class="side-minimized-tab animate-fade-in" 
+        (click)="toggleMinimize($event)" 
+        [title]="'Clique para ver o vídeo de ' + ad()?.sponsorName">
+        <span class="min-icon">🎬</span>
+        <span class="min-text">{{ ad()?.sponsorName }}</span>
+        <span class="min-expand-icon">➕</span>
+      </button>
+    }
+  </aside>
+}
