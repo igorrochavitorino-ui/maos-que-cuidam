@@ -112,7 +112,7 @@ export class RegistrationService {
     },
     {
       id: 'curso-tosa-comercial-tesoura',
-      title: 'Especialização em Tosa Comercial & Técnicas na Tesoura',
+      title: 'Especialização em Tosa Comercial',
       tagline: 'Eleve o padrão do seu trabalho com tosas modernas, tosa bebê e acabamento perfeito.',
       shortDescription: 'Aprenda tosa higiênica, tosa padrão da máquina, tosa bebê em Spitz e Poodle, além do domínio de tesouras retas, curvas e tubarão.',
       fullDescription: 'Capacitação prática avançada para quem deseja atuar no mercado de trabalho ou abrir seu próprio negócio de banho e tosa, priorizando estética e conforto ao animal.',
