@@ -117,6 +117,41 @@ export class GalleryComponent {
     this.selectedPetForModal.set(null);
   }
 
+  // Lightbox de Imagem em Tela Cheia / Visualização Completa
+  fullscreenImage = signal<{ url: string; title: string; subtitle?: string; tag?: string; petItem?: PetGalleryItem } | null>(null);
+
+  openFullscreenImage(url: string, title: string, subtitle?: string, tag?: string, petItem?: PetGalleryItem, event?: Event): void {
+    if (event) event.stopPropagation();
+    this.fullscreenImage.set({ url, title, subtitle, tag, petItem });
+  }
+
+  closeFullscreenImage(): void {
+    this.fullscreenImage.set(null);
+  }
+
+  switchFullscreenMode(mode: 'before' | 'after'): void {
+    const current = this.fullscreenImage();
+    if (current && current.petItem) {
+      if (mode === 'before') {
+        this.fullscreenImage.set({
+          url: current.petItem.beforeImageUrl,
+          title: current.petItem.petName,
+          subtitle: current.petItem.serviceDone,
+          tag: 'ANTES DA AULA',
+          petItem: current.petItem
+        });
+      } else {
+        this.fullscreenImage.set({
+          url: current.petItem.afterImageUrl,
+          title: current.petItem.petName,
+          subtitle: current.petItem.serviceDone,
+          tag: 'DEPOIS DO CUIDADO',
+          petItem: current.petItem
+        });
+      }
+    }
+  }
+
   handleOpenAddPhoto(): void {
     if (this.authService.isAuthenticated()) {
       this.showAddPhotoModal.set(true);

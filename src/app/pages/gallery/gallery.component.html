@@ -83,6 +83,11 @@
                 ❤️ <span>{{ item.likesCount }}</span>
               </button>
 
+              <!-- Botão de Expandir Foto em Tela Cheia -->
+              <button class="zoom-card-btn" (click)="openFullscreenImage(getViewMode(item.id) === 'after' ? item.afterImageUrl : item.beforeImageUrl, item.petName, item.serviceDone, getViewMode(item.id) === 'after' ? 'DEPOIS DO CUIDADO' : 'ANTES DA AULA', item, $event)" title="Ver foto toda ampliada">
+                🔍
+              </button>
+
               @if (authService.isAuthenticated()) {
                 <button class="btn-delete-gallery-admin" (click)="deleteGalleryPhoto(item, $event)" title="Excluir Foto da Galeria">
                   🗑️
@@ -336,12 +341,14 @@
 
       <div class="modal-body">
         <div class="modal-compare-images">
-          <div class="compare-col">
+          <div class="compare-col" (click)="openFullscreenImage(selectedPetForModal()!.beforeImageUrl, selectedPetForModal()!.petName, selectedPetForModal()!.serviceDone, 'ANTES DA AULA', selectedPetForModal()!)" title="Clique para ver a foto toda em tamanho real">
             <span class="compare-tag before">ANTES DA AULA</span>
+            <span class="zoom-hover-hint">🔍 Clique para ver a foto toda</span>
             <img [src]="selectedPetForModal()?.beforeImageUrl" [alt]="selectedPetForModal()?.petName + ' Antes'" class="compare-img">
           </div>
-          <div class="compare-col">
+          <div class="compare-col" (click)="openFullscreenImage(selectedPetForModal()!.afterImageUrl, selectedPetForModal()!.petName, selectedPetForModal()!.serviceDone, 'DEPOIS DO CUIDADO', selectedPetForModal()!)" title="Clique para ver a foto toda em tamanho real">
             <span class="compare-tag after">DEPOIS DO CUIDADO</span>
+            <span class="zoom-hover-hint">🔍 Clique para ver a foto toda</span>
             <img [src]="selectedPetForModal()?.afterImageUrl" [alt]="selectedPetForModal()?.petName + ' Depois'" class="compare-img">
           </div>
         </div>
@@ -557,5 +564,57 @@
   <div class="toast-floating-alert animate-fade-in" role="alert">
     <span class="toast-icon">✨</span>
     <span class="toast-text">{{ toastMessage() }}</span>
+  </div>
+}
+
+<!-- ================= LIGHTBOX / VISUALIZADOR DE FOTO INTEIRA EM TELA CHEIA ================= -->
+@if (fullscreenImage()) {
+  <div class="lightbox-backdrop" (click)="closeFullscreenImage()">
+    <div class="lightbox-content-box" (click)="$event.stopPropagation()">
+      <div class="lightbox-top-bar">
+        <div class="lightbox-pet-info">
+          @if (fullscreenImage()?.tag) {
+            <span class="badge" [class.badge-gold]="fullscreenImage()?.tag === 'DEPOIS DO CUIDADO'" [class.badge-navy]="fullscreenImage()?.tag === 'ANTES DA AULA'">
+              {{ fullscreenImage()?.tag }}
+            </span>
+          }
+          <div>
+            <h4 class="lightbox-pet-name">{{ fullscreenImage()?.title }}</h4>
+            @if (fullscreenImage()?.subtitle) {
+              <span class="lightbox-pet-sub">{{ fullscreenImage()?.subtitle }}</span>
+            }
+          </div>
+        </div>
+
+        @if (fullscreenImage()?.petItem) {
+          <div class="lightbox-mode-toggle">
+            <button 
+              type="button"
+              class="lightbox-mode-btn" 
+              [class.active]="fullscreenImage()?.tag === 'ANTES DA AULA'"
+              (click)="switchFullscreenMode('before')">
+              ⏳ Foto Antes
+            </button>
+            <button 
+              type="button"
+              class="lightbox-mode-btn" 
+              [class.active]="fullscreenImage()?.tag === 'DEPOIS DO CUIDADO'"
+              (click)="switchFullscreenMode('after')">
+              ✨ Foto Depois
+            </button>
+          </div>
+        }
+
+        <button class="lightbox-close-round-btn" (click)="closeFullscreenImage()" title="Fechar (ou clique fora)">✕</button>
+      </div>
+
+      <div class="lightbox-image-holder">
+        <img [src]="fullscreenImage()?.url" [alt]="fullscreenImage()?.title" class="lightbox-full-img">
+      </div>
+
+      <div class="lightbox-caption-bar">
+        <span>💡 Visualização em tamanho original completo sem cortes. Clique fora da imagem ou no botão ✕ para fechar.</span>
+      </div>
+    </div>
   </div>
 }
