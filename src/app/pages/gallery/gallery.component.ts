@@ -51,7 +51,7 @@ export class GalleryComponent {
     petSize: ['Porte Médio (10kg a 25kg)', Validators.required],
     petAge: ['', Validators.required],
     serviceDesired: ['Banho + corte de unha + escovação dos dentes + limpeza do ouvido.', Validators.required],
-    preferredDay: ['Segunda a Sexta à tarde', Validators.required],
+    preferredDay: ['Segunda-feira à tarde', Validators.required],
     specialCareNotes: [''],
     isVaccinated: [true],
     agreeTerms: [false, Validators.requiredTrue]
