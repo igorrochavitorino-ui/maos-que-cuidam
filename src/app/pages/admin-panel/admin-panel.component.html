@@ -590,6 +590,9 @@
               <button class="btn btn-gold" (click)="openNewVideoAdModal('right')" style="font-weight: 700; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(212, 154, 55, 0.35);">
                 ➕ Novo Anúncio (Direita)
               </button>
+              <button class="btn btn-outline-gold" (click)="restoreVideoAds()" style="color: #ffffff; border-color: #d49a37; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;" title="Restaurar propagandas demonstrativas padrão">
+                🔄 Restaurar Anúncios Padrão
+              </button>
             </div>
           </div>
 
@@ -598,11 +601,16 @@
               <div style="font-size: 3rem; margin-bottom: 0.75rem;">🎬</div>
               <h4 style="color: var(--color-primary); margin-bottom: 0.5rem;">Nenhum anúncio de vídeo cadastrado</h4>
               <p style="color: #64748b; font-size: 0.9rem; max-width: 500px; margin: 0 auto 1.5rem auto;">
-                As abas laterais estão vazias no momento. Clique no botão abaixo para adicionar seu primeiro vídeo de parceiro ou patrocinador.
+                As abas laterais estão ocultas porque não há nenhum vídeo ativo cadastrado. Você pode adicionar um novo vídeo de patrocinador ou restaurar os anúncios demonstrativos padrão para que as abas reapareçam no site.
               </p>
-              <button class="btn btn-primary" (click)="openNewVideoAdModal('left')">
-                ➕ Cadastrar Primeiro Anúncio
-              </button>
+              <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn btn-primary" (click)="openNewVideoAdModal('left')">
+                  ➕ Cadastrar Novo Anúncio
+                </button>
+                <button class="btn btn-outline-navy" (click)="restoreVideoAds()">
+                  🔄 Restaurar Anúncios Demonstrativos
+                </button>
+              </div>
             </div>
           } @else {
             <div class="video-ads-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">

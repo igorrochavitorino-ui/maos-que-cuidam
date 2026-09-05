@@ -519,6 +519,13 @@ export class AdminPanelComponent {
     this.showToast(`Status da propaganda de ${ad.sponsorName} alterado para ${!ad.active ? 'Ativo' : 'Pausado'}.`);
   }
 
+  restoreVideoAds(): void {
+    if (confirm('Deseja restaurar os anúncios de vídeo demonstrativos das abas laterais? Eles voltarão a aparecer imediatamente no site.')) {
+      this.registrationService.restoreDefaultVideoAds();
+      this.showToast('✅ Anúncios demonstrativos restaurados com sucesso!');
+    }
+  }
+
   // --- GESTÃO DE FUNCIONÁRIOS (RESTRITO AO DONO) ---
   openNewStaffModal(): void {
     if (!this.authService.isOwner()) {

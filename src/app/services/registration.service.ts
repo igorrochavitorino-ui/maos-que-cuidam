@@ -383,6 +383,16 @@ export class RegistrationService {
     this.firebaseService.deleteDocument('anuncios_video', id);
   }
 
+  restoreDefaultVideoAds(): void {
+    const seed = this.getSeedVideoAds();
+    this.videoAdsSignal.set(seed);
+    this.saveVideoAds(seed);
+    seed.forEach(ad => {
+      this.firebaseService.saveDocument('configuracoes', 'video_ad_' + ad.id, ad);
+      this.firebaseService.saveDocument('anuncios_video', ad.id, ad);
+    });
+  }
+
   getImpactStats(): ImpactStat[] {
     return [...this.impactStatsSignal()];
   }
@@ -716,6 +726,13 @@ export class RegistrationService {
 
         this.videoAdsSignal.set(finalAds);
         this.saveVideoAds(finalAds);
+
+        // Sincroniza Métricas de Impacto Social (Alunos, Banhos, etc.)
+        const statsDoc = (cloudConfig || []).find((c: any) => c.id === 'impact_stats');
+        if (statsDoc && Array.isArray(statsDoc.stats) && statsDoc.stats.length > 0) {
+          this.impactStatsSignal.set(statsDoc.stats);
+          this.saveImpactStats(statsDoc.stats);
+        }
       }
 
       // 3. GALERIA ANTES & DEPOIS

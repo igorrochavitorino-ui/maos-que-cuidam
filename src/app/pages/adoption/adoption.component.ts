@@ -68,12 +68,16 @@ export class AdoptionComponent {
     isSpecialNeeds: [false],
     aggressionHistory: ['Sem histórico de agressividade (Dócil e sociável)', [Validators.required, Validators.minLength(5)]],
     temperament: ['', [Validators.required, Validators.minLength(5)]],
-    story: ['', [Validators.required, Validators.minLength(20)]],
+    story: ['', [Validators.required, Validators.minLength(5)]],
     
     // Declaração de Responsabilidade do Protetor Original
     protectionDeclaration: [false, Validators.requiredTrue],
     agreeTerms: [false, Validators.requiredTrue]
   });
+
+  // Notificação de validação do formulário
+  formValidationErrors = signal<string[]>([]);
+  isSubmitting = signal<boolean>(false);
 
   // Formulário para Quero Adotar (Interesse de Adoção)
   adoptionInterestForm: FormGroup = this.fb.group({
@@ -191,21 +195,53 @@ export class AdoptionComponent {
     window.scrollTo({ top: 400, behavior: 'smooth' });
   }
 
+  private compressAndSetPhoto(file: File, slot: 1 | 2 | 3): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_DIM = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_DIM) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          }
+        } else {
+          if (height > MAX_DIM) {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressed = canvas.toDataURL('image/jpeg', 0.78);
+          if (slot === 1) this.photoPreview1.set(compressed);
+          else if (slot === 2) this.photoPreview2.set(compressed);
+          else if (slot === 3) this.photoPreview3.set(compressed);
+        } else {
+          if (slot === 1) this.photoPreview1.set(e.target.result);
+          else if (slot === 2) this.photoPreview2.set(e.target.result);
+          else if (slot === 3) this.photoPreview3.set(e.target.result);
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   onFileSelected(event: Event, slot: 1 | 2 | 3 = 1): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        if (slot === 1) {
-          this.photoPreview1.set(e.target.result);
-        } else if (slot === 2) {
-          this.photoPreview2.set(e.target.result);
-        } else if (slot === 3) {
-          this.photoPreview3.set(e.target.result);
-        }
-      };
-      reader.readAsDataURL(file);
+      this.compressAndSetPhoto(file, slot);
     }
   }
 
@@ -240,63 +276,102 @@ export class AdoptionComponent {
     this.selectedPetForDetails.set(null);
   }
 
+  getFormErrors(): string[] {
+    const errors: string[] = [];
+    const f = this.donationForm;
+
+    if (f.get('donorName')?.invalid) errors.push('Nome Completo do Protetor (mínimo 3 letras)');
+    if (f.get('donorCpf')?.invalid) errors.push('CPF do Protetor (mínimo 11 dígitos)');
+    if (f.get('donorPhone')?.invalid) errors.push('WhatsApp de Contato Direto com DDD');
+    if (f.get('donorEmail')?.invalid) errors.push('E-mail de Contato válido');
+    if (f.get('neighborhood')?.invalid) errors.push('Bairro de acolhimento em Macaé');
+    if (f.get('petName')?.invalid) errors.push('Nome do Animalzinho (mínimo 2 letras)');
+    if (f.get('temperament')?.invalid) errors.push('Temperamento Resumido (mínimo 5 letras)');
+    if (f.get('story')?.invalid) errors.push('História e Requisitos do Lar (mínimo 5 letras)');
+    if (f.get('protectionDeclaration')?.invalid) errors.push('Declaração de Responsabilidade do Protetor (marcar caixinha obrigatória)');
+    if (f.get('agreeTerms')?.invalid) errors.push('Termo de Doação Gratuita (marcar caixinha obrigatória)');
+
+    return errors;
+  }
+
   submitDonation(): void {
+    this.formValidationErrors.set([]);
+
     if (this.donationForm.invalid) {
       this.donationForm.markAllAsTouched();
+      const errs = this.getFormErrors();
+      this.formValidationErrors.set(errs);
+
+      setTimeout(() => {
+        const firstInvalid = document.querySelector('.form-control.is-invalid, .form-textarea.is-invalid, .form-checkbox.ng-invalid, .alert-danger');
+        if (firstInvalid) {
+          firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          (firstInvalid as HTMLElement).focus?.();
+        }
+      }, 50);
+
+      alert('Por favor, preencha os campos obrigatórios em destaque para publicar o anúncio:\n\n• ' + errs.join('\n• '));
       return;
     }
 
-    const val = this.donationForm.value;
-    const additional = [this.photoPreview2(), this.photoPreview3()].filter(Boolean) as string[];
+    this.isSubmitting.set(true);
 
-    const created = this.registrationService.registerPetForDonation({
-      name: val.petName,
-      species: val.species,
-      gender: val.gender,
-      ageCategory: val.ageCategory,
-      ageText: val.ageText,
-      size: val.size,
-      breed: val.breed,
-      photoUrl: this.photoPreview1(),
-      additionalPhotos: additional.length > 0 ? additional : undefined,
-      isCastrated: val.isCastrated,
-      isVaccinated: val.isVaccinated,
-      isDewormed: val.isDewormed,
-      isSpecialNeeds: val.isSpecialNeeds,
-      aggressionHistory: val.aggressionHistory,
-      temperament: val.temperament,
-      story: val.story,
-      donorName: val.donorName,
-      donorCpf: val.donorCpf,
-      donorPhone: val.donorPhone,
-      donorEmail: val.donorEmail,
-      donorType: val.donorType,
-      city: val.city,
-      neighborhood: val.neighborhood,
-      protectionDeclaration: val.protectionDeclaration
-    });
+    try {
+      const val = this.donationForm.value;
+      const additional = [this.photoPreview2(), this.photoPreview3()].filter(Boolean) as string[];
 
-    this.submittedDonation.set(created);
-    this.photoPreview2.set(null);
-    this.photoPreview3.set(null);
-    this.donationForm.reset({
-      species: 'Cão',
-      gender: 'Macho',
-      ageCategory: 'Adulto',
-      ageText: '2 anos',
-      size: 'Porte Médio',
-      breed: 'Sem Raça Definida (SRD)',
-      donorType: 'Protetor Independente',
-      city: 'Macaé',
-      isCastrated: true,
-      isVaccinated: true,
-      vaccineDetails: 'Vacinação V8/V10 e Antirrábica em dia',
-      isDewormed: true,
-      isSpecialNeeds: false,
-      aggressionHistory: 'Sem histórico de agressividade (Dócil e sociável)',
-      protectionDeclaration: false,
-      agreeTerms: false
-    });
+      const created = this.registrationService.registerPetForDonation({
+        name: val.petName,
+        species: val.species,
+        gender: val.gender,
+        ageCategory: val.ageCategory,
+        ageText: val.ageText,
+        size: val.size,
+        breed: val.breed,
+        photoUrl: this.photoPreview1(),
+        additionalPhotos: additional.length > 0 ? additional : undefined,
+        isCastrated: val.isCastrated,
+        isVaccinated: val.isVaccinated,
+        isDewormed: val.isDewormed,
+        isSpecialNeeds: val.isSpecialNeeds,
+        aggressionHistory: val.aggressionHistory,
+        temperament: val.temperament,
+        story: val.story,
+        donorName: val.donorName,
+        donorCpf: val.donorCpf,
+        donorPhone: val.donorPhone,
+        donorEmail: val.donorEmail,
+        donorType: val.donorType,
+        city: val.city,
+        neighborhood: val.neighborhood,
+        protectionDeclaration: val.protectionDeclaration
+      });
+
+      this.submittedDonation.set(created);
+      this.photoPreview2.set(null);
+      this.photoPreview3.set(null);
+      this.donationForm.reset({
+        species: 'Cão',
+        gender: 'Macho',
+        ageCategory: 'Adulto',
+        ageText: '2 anos',
+        size: 'Porte Médio',
+        breed: 'Sem Raça Definida (SRD)',
+        donorType: 'Protetor Independente',
+        city: 'Macaé',
+        isCastrated: true,
+        isVaccinated: true,
+        vaccineDetails: 'Vacinação V8/V10 e Antirrábica em dia',
+        isDewormed: true,
+        isSpecialNeeds: false,
+        aggressionHistory: 'Sem histórico de agressividade (Dócil e sociável)',
+        protectionDeclaration: false,
+        agreeTerms: false
+      });
+      window.scrollTo({ top: 350, behavior: 'smooth' });
+    } finally {
+      this.isSubmitting.set(false);
+    }
   }
 
   submitAdoptionInterest(): void {
