@@ -472,7 +472,7 @@ export class RegistrationService {
   }
 
   // --- MÉTODOS DE ADOÇÃO E DOAÇÃO DE PETS ---
-  registerPetForDonation(data: Omit<AdoptablePet, 'id' | 'createdAt' | 'status'>): AdoptablePet {
+  async registerPetForDonation(data: Omit<AdoptablePet, 'id' | 'createdAt' | 'status'>): Promise<{ success: boolean; pet: AdoptablePet }> {
     const newPet: AdoptablePet = {
       ...data,
       id: 'ado_pet_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -485,8 +485,8 @@ export class RegistrationService {
     this.saveAdoptablePets(updated);
 
     // Sincronização em Nuvem (Firestore)
-    this.firebaseService.saveDocument('pets_adocao', newPet.id, newPet);
-    return newPet;
+    const saved = await this.firebaseService.saveDocument('pets_adocao', newPet.id, newPet);
+    return { success: saved, pet: newPet };
   }
 
   registerAdoptionApplication(data: Omit<AdoptionApplication, 'id' | 'protocol' | 'createdAt' | 'status'>): AdoptionApplication {
@@ -702,9 +702,7 @@ export class RegistrationService {
     try {
       // 1. PETS PARA ADOÇÃO
       const cloudPets = await this.firebaseService.getCollectionData('pets_adocao');
-      if (cloudPets !== null) {
-        // Se a busca no Firestore funcionou com sucesso:
-        // O Firestore é a autoridade máxima. Se o usuário excluiu pets, a lista reflete exatamente o que sobrou.
+      if (cloudPets !== null && cloudPets.length > 0) {
         this.adoptablePetsSignal.set(cloudPets as AdoptablePet[]);
         this.saveAdoptablePets(cloudPets as AdoptablePet[]);
       }

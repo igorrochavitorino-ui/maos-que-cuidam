@@ -201,7 +201,7 @@ export class AdoptionComponent {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_DIM = 800;
+        const MAX_DIM = 640;
         let width = img.width;
         let height = img.height;
 
@@ -222,7 +222,7 @@ export class AdoptionComponent {
         const ctx = canvas.getContext('2d');
         if (ctx) {
           ctx.drawImage(img, 0, 0, width, height);
-          const compressed = canvas.toDataURL('image/jpeg', 0.78);
+          const compressed = canvas.toDataURL('image/jpeg', 0.70);
           if (slot === 1) this.photoPreview1.set(compressed);
           else if (slot === 2) this.photoPreview2.set(compressed);
           else if (slot === 3) this.photoPreview3.set(compressed);
@@ -294,7 +294,7 @@ export class AdoptionComponent {
     return errors;
   }
 
-  submitDonation(): void {
+  async submitDonation(): Promise<void> {
     this.formValidationErrors.set([]);
 
     if (this.donationForm.invalid) {
@@ -320,7 +320,7 @@ export class AdoptionComponent {
       const val = this.donationForm.value;
       const additional = [this.photoPreview2(), this.photoPreview3()].filter(Boolean) as string[];
 
-      const created = this.registrationService.registerPetForDonation({
+      const res = await this.registrationService.registerPetForDonation({
         name: val.petName,
         species: val.species,
         gender: val.gender,
@@ -347,7 +347,7 @@ export class AdoptionComponent {
         protectionDeclaration: val.protectionDeclaration
       });
 
-      this.submittedDonation.set(created);
+      this.submittedDonation.set(res.pet);
       this.photoPreview2.set(null);
       this.photoPreview3.set(null);
       this.donationForm.reset({
