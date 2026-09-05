@@ -329,7 +329,7 @@ export class AdoptionComponent {
         size: val.size,
         breed: val.breed,
         photoUrl: this.photoPreview1(),
-        additionalPhotos: additional.length > 0 ? additional : undefined,
+        additionalPhotos: additional.length > 0 ? additional : [],
         isCastrated: val.isCastrated,
         isVaccinated: val.isVaccinated,
         isDewormed: val.isDewormed,

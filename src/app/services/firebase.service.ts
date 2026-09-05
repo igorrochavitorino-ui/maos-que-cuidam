@@ -42,9 +42,11 @@ export class FirebaseService {
       return false;
     }
     try {
+      // Sanitiza dados para remover qualquer chave com valor 'undefined' (que o Firestore proíbe e rejeita)
+      const cleanData = JSON.parse(JSON.stringify(data));
       const docRef = doc(this.db, collectionName, id);
       await setDoc(docRef, {
-        ...data,
+        ...cleanData,
         updatedAt: new Date().toISOString()
       }, { merge: true });
       console.log(`✅ [Firestore Cloud] Documento ${id} sincronizado na coleção '${collectionName}'`);
