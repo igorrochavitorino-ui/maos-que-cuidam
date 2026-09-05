@@ -347,6 +347,7 @@ export class RegistrationService {
 
   constructor() {
     this.loadFromStorage();
+    this.syncFromFirestore();
   }
 
   getVideoAds(): VideoAd[] {
@@ -362,6 +363,7 @@ export class RegistrationService {
     this.videoAdsSignal.set(updated);
     this.saveVideoAds(updated);
     this.firebaseService.saveDocument('configuracoes', 'video_ad_' + newAd.id, newAd);
+    this.firebaseService.saveDocument('anuncios_video', newAd.id, newAd);
     return newAd;
   }
 
@@ -370,12 +372,15 @@ export class RegistrationService {
     this.videoAdsSignal.set(updated);
     this.saveVideoAds(updated);
     this.firebaseService.saveDocument('configuracoes', 'video_ad_' + id, data);
+    this.firebaseService.saveDocument('anuncios_video', id, data);
   }
 
   deleteVideoAd(id: string): void {
     const updated = this.videoAdsSignal().filter(ad => ad.id !== id);
     this.videoAdsSignal.set(updated);
     this.saveVideoAds(updated);
+    this.firebaseService.deleteDocument('configuracoes', 'video_ad_' + id);
+    this.firebaseService.deleteDocument('anuncios_video', id);
   }
 
   getImpactStats(): ImpactStat[] {
@@ -423,6 +428,7 @@ export class RegistrationService {
     const updated = this.sponsorsSignal().filter(s => s.id !== id);
     this.sponsorsSignal.set(updated);
     this.saveSponsors(updated);
+    this.firebaseService.deleteDocument('patrocinadores', id);
   }
 
   getTestimonials(): Testimonial[] {
@@ -511,6 +517,7 @@ export class RegistrationService {
     const updated = this.adoptablePetsSignal().filter(p => p.id !== id);
     this.adoptablePetsSignal.set(updated);
     this.saveAdoptablePets(updated);
+    this.firebaseService.deleteDocument('pets_adocao', id);
   }
 
   // --- GALERIA ANTES & DEPOIS ---
@@ -544,6 +551,7 @@ export class RegistrationService {
     const updated = this.gallerySignal().filter(item => item.id !== id);
     this.gallerySignal.set(updated);
     this.saveGallery(updated);
+    this.firebaseService.deleteDocument('galeria_transformacoes', id);
   }
 
   // --- PROPOSTAS DE PATROCÍNIO ---
@@ -604,6 +612,7 @@ export class RegistrationService {
     const updated = this.studentsSignal().filter(std => std.id !== id);
     this.studentsSignal.set(updated);
     this.saveStudents(updated);
+    this.firebaseService.deleteDocument('alunos', id);
   }
 
   // --- VOLUNTÁRIOS ---
@@ -635,6 +644,7 @@ export class RegistrationService {
     const updated = this.volunteersSignal().filter(v => v.id !== id);
     this.volunteersSignal.set(updated);
     this.saveVolunteers(updated);
+    this.firebaseService.deleteDocument('voluntarios', id);
   }
 
   // --- PETS SOCIAIS ---
@@ -666,6 +676,108 @@ export class RegistrationService {
     const updated = this.petsSignal().filter(p => p.id !== id);
     this.petsSignal.set(updated);
     this.savePets(updated);
+    this.firebaseService.deleteDocument('pets_banho_social', id);
+  }
+
+  /**
+   * Sincroniza em tempo real com o Cloud Firestore.
+   * Se o administrador excluiu ou alterou itens (como pets de adoção ou anúncios),
+   * a alteração é refletida imediatamente no site.
+   */
+  async syncFromFirestore(): Promise<void> {
+    if (!this.firebaseService.isFirebaseConfigured) {
+      return;
+    }
+
+    try {
+      // 1. PETS PARA ADOÇÃO
+      const cloudPets = await this.firebaseService.getCollectionData('pets_adocao');
+      if (cloudPets !== null) {
+        // Se a busca no Firestore funcionou com sucesso:
+        // O Firestore é a autoridade máxima. Se o usuário excluiu pets, a lista reflete exatamente o que sobrou.
+        this.adoptablePetsSignal.set(cloudPets as AdoptablePet[]);
+        this.saveAdoptablePets(cloudPets as AdoptablePet[]);
+      }
+
+      // 2. PROPAGANDAS DE VÍDEO DAS ABAS LATERAIS
+      const cloudAds = await this.firebaseService.getCollectionData('anuncios_video');
+      const cloudConfig = await this.firebaseService.getCollectionData('configuracoes');
+      if (cloudAds !== null || cloudConfig !== null) {
+        const adsFromConfig = (cloudConfig || [])
+          .filter((c: any) => c.id && c.id.startsWith('video_ad_'))
+          .map((c: any) => ({ ...c, id: c.id.replace('video_ad_', '') }));
+
+        const mergedAds = [...(cloudAds || []), ...adsFromConfig];
+        const uniqueAdsMap = new Map<string, VideoAd>();
+        mergedAds.forEach((ad: any) => {
+          if (ad && ad.id) uniqueAdsMap.set(ad.id, ad);
+        });
+        const finalAds = Array.from(uniqueAdsMap.values());
+
+        this.videoAdsSignal.set(finalAds);
+        this.saveVideoAds(finalAds);
+      }
+
+      // 3. GALERIA ANTES & DEPOIS
+      const cloudGallery = await this.firebaseService.getCollectionData('galeria_transformacoes');
+      if (cloudGallery !== null) {
+        this.gallerySignal.set(cloudGallery as PetGalleryItem[]);
+        this.saveGallery(cloudGallery as PetGalleryItem[]);
+      }
+
+      // 4. ALUNOS
+      const cloudStudents = await this.firebaseService.getCollectionData('alunos');
+      if (cloudStudents !== null) {
+        this.studentsSignal.set(cloudStudents as StudentRegistration[]);
+        this.saveStudents(cloudStudents as StudentRegistration[]);
+      }
+
+      // 5. VOLUNTÁRIOS
+      const cloudVolunteers = await this.firebaseService.getCollectionData('voluntarios');
+      if (cloudVolunteers !== null) {
+        this.volunteersSignal.set(cloudVolunteers as VolunteerRegistration[]);
+        this.saveVolunteers(cloudVolunteers as VolunteerRegistration[]);
+      }
+
+      // 6. PETS BANHO SOCIAL
+      const cloudPetsBanho = await this.firebaseService.getCollectionData('pets_banho_social');
+      if (cloudPetsBanho !== null) {
+        this.petsSignal.set(cloudPetsBanho as PetRegistration[]);
+        this.savePets(cloudPetsBanho as PetRegistration[]);
+      }
+
+      // 7. PEDIDOS DE ADOÇÃO
+      const cloudAdoptions = await this.firebaseService.getCollectionData('pedidos_adocao');
+      if (cloudAdoptions !== null) {
+        this.adoptionApplicationsSignal.set(cloudAdoptions as AdoptionApplication[]);
+        this.saveAdoptionApplications(cloudAdoptions as AdoptionApplication[]);
+      }
+
+      // 8. PROPOSTAS DE PATROCÍNIO
+      const cloudProposals = await this.firebaseService.getCollectionData('propostas_patrocinio');
+      if (cloudProposals !== null) {
+        this.sponsorProposalsSignal.set(cloudProposals as SponsorProposal[]);
+        this.saveProposals(cloudProposals as SponsorProposal[]);
+      }
+
+      // 9. PATROCINADORES
+      const cloudSponsors = await this.firebaseService.getCollectionData('patrocinadores');
+      if (cloudSponsors !== null && cloudSponsors.length > 0) {
+        this.sponsorsSignal.set(cloudSponsors as Sponsor[]);
+        this.saveSponsors(cloudSponsors as Sponsor[]);
+      }
+
+      // 10. DEPOIMENTOS
+      const cloudTestimonials = await this.firebaseService.getCollectionData('depoimentos');
+      if (cloudTestimonials !== null && cloudTestimonials.length > 0) {
+        this.testimonialsSignal.set(cloudTestimonials as Testimonial[]);
+        this.saveTestimonials(cloudTestimonials as Testimonial[]);
+      }
+
+      console.log('✅ [RegistrationService] Sincronização em nuvem com o Firestore concluída!');
+    } catch (err) {
+      console.warn('⚠️ [RegistrationService] Falha na sincronização com o Firestore:', err);
+    }
   }
 
   // --- PERSISTÊNCIA LOCALSTORAGE ---

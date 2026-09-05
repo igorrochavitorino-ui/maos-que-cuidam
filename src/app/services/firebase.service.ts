@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp, FirebaseApp, getApps } from 'firebase/app';
-import { getFirestore, Firestore, doc, setDoc, getDocs, collection } from 'firebase/firestore';
+import { getFirestore, Firestore, doc, setDoc, getDocs, collection, deleteDoc } from 'firebase/firestore';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -57,10 +57,11 @@ export class FirebaseService {
 
   /**
    * Busca todos os documentos de uma coleção no Firestore
+   * Retorna null em caso de falha de conexão/permissão, ou array (mesmo que vazio []) com os documentos
    */
-  async getCollectionData(collectionName: string): Promise<any[]> {
+  async getCollectionData(collectionName: string): Promise<any[] | null> {
     if (!this.db || !this.isFirebaseConfigured) {
-      return [];
+      return null;
     }
     try {
       const colRef = collection(this.db, collectionName);
@@ -68,7 +69,25 @@ export class FirebaseService {
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     } catch (err) {
       console.error(`❌ [Firestore Cloud] Erro ao buscar documentos de ${collectionName}:`, err);
-      return [];
+      return null;
+    }
+  }
+
+  /**
+   * Remove um documento no Firestore
+   */
+  async deleteDocument(collectionName: string, id: string): Promise<boolean> {
+    if (!this.db || !this.isFirebaseConfigured) {
+      return false;
+    }
+    try {
+      const docRef = doc(this.db, collectionName, id);
+      await deleteDoc(docRef);
+      console.log(`🗑️ [Firestore Cloud] Documento ${id} removido da coleção '${collectionName}'`);
+      return true;
+    } catch (err) {
+      console.error(`❌ [Firestore Cloud] Erro ao remover documento ${id} em ${collectionName}:`, err);
+      return false;
     }
   }
 }
