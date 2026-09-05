@@ -2,6 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { AdminUser, AdminRole, AccessLogEntry } from '../models/registration.model';
 import { FirebaseService } from './firebase.service';
 import { NotificationService } from './notification.service';
+import { sha256, verifyPasswordHash } from '../utils/security.utils';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,10 @@ export class AuthService {
   private readonly STAFF_STORAGE_KEY = 'mqc_staff_users';
   private readonly CURRENT_USER_KEY = 'mqc_active_admin_session';
   private readonly ACCESS_LOGS_KEY = 'mqc_access_logs';
+  private readonly LOGIN_ATTEMPTS_KEY = 'mqc_login_throttle';
+  private readonly MAX_FAILED_ATTEMPTS = 5;
+  private readonly LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutos
+  private readonly SESSION_TIMEOUT_MS = 12 * 60 * 60 * 1000; // 12 horas
 
   // Signals
   private staffUsersSignal = signal<AdminUser[]>([]);
@@ -32,22 +37,44 @@ export class AuthService {
   }
 
   /**
-   * Realiza login no painel administrativo e emite alerta de segurança
+   * Realiza login no painel administrativo com proteção contra força bruta e senhas em hash SHA-256
    */
   login(email: string, pass: string): { success: boolean; message: string; alertLink?: string } {
     const cleanEmail = email.trim().toLowerCase();
+
+    // 1. Checa bloqueio preventivo contra ataques de força bruta
+    const throttle = this.checkLoginThrottle(cleanEmail);
+    if (!throttle.allowed) {
+      return { 
+        success: false, 
+        message: `Acesso bloqueado por segurança devido a tentativas incorretas consecutivas. Tente novamente em ${throttle.remainingMinutes} minuto(s).` 
+      };
+    }
+
     const user = this.staffUsersSignal().find(u => u.email.toLowerCase() === cleanEmail);
 
     if (!user) {
-      return { success: false, message: 'Usuário não encontrado. Verifique o e-mail informado.' };
+      this.registerFailedAttempt(cleanEmail);
+      return { success: false, message: 'Usuário ou senha incorretos.' };
     }
 
     if (!user.active) {
       return { success: false, message: 'Este usuário está desativado pela Diretoria da ONG.' };
     }
 
-    if (user.password !== pass) {
-      return { success: false, message: 'Senha incorreta. Tente novamente.' };
+    const isPasswordValid = verifyPasswordHash(pass, user.password);
+    if (!isPasswordValid) {
+      this.registerFailedAttempt(cleanEmail);
+      return { success: false, message: 'Usuário ou senha incorretos.' };
+    }
+
+    // Login com sucesso: limpa o contador de tentativas incorretas
+    this.clearFailedAttempts(cleanEmail);
+
+    // Se a senha ainda estava legada em texto puro, atualiza silenciosamente para hash SHA-256
+    if (!/^[a-f0-9]{64}$/i.test(user.password)) {
+      user.password = sha256(pass.trim());
+      this.saveStaffToStorage(this.staffUsersSignal());
     }
 
     const updatedUser: AdminUser = {
@@ -93,6 +120,61 @@ export class AuthService {
   }
 
   /**
+   * Verifica se o e-mail está temporariamente bloqueado por excesso de tentativas
+   */
+  private checkLoginThrottle(email: string): { allowed: boolean; remainingMinutes?: number } {
+    try {
+      const stored = localStorage.getItem(this.LOGIN_ATTEMPTS_KEY);
+      if (!stored) return { allowed: true };
+      const attempts = JSON.parse(stored);
+      const userThrottle = attempts[email];
+      if (!userThrottle) return { allowed: true };
+
+      if (userThrottle.count >= this.MAX_FAILED_ATTEMPTS) {
+        const elapsed = Date.now() - userThrottle.lastAttempt;
+        if (elapsed < this.LOCKOUT_DURATION_MS) {
+          const remainingMinutes = Math.ceil((this.LOCKOUT_DURATION_MS - elapsed) / (60 * 1000));
+          return { allowed: false, remainingMinutes };
+        } else {
+          // Reset expirado
+          delete attempts[email];
+          localStorage.setItem(this.LOGIN_ATTEMPTS_KEY, JSON.stringify(attempts));
+        }
+      }
+    } catch (e) {
+      console.error('Erro ao verificar throttle de login:', e);
+    }
+    return { allowed: true };
+  }
+
+  private registerFailedAttempt(email: string): void {
+    try {
+      const stored = localStorage.getItem(this.LOGIN_ATTEMPTS_KEY);
+      const attempts = stored ? JSON.parse(stored) : {};
+      const current = attempts[email] || { count: 0, lastAttempt: 0 };
+      attempts[email] = {
+        count: current.count + 1,
+        lastAttempt: Date.now()
+      };
+      localStorage.setItem(this.LOGIN_ATTEMPTS_KEY, JSON.stringify(attempts));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  private clearFailedAttempts(email: string): void {
+    try {
+      const stored = localStorage.getItem(this.LOGIN_ATTEMPTS_KEY);
+      if (!stored) return;
+      const attempts = JSON.parse(stored);
+      delete attempts[email];
+      localStorage.setItem(this.LOGIN_ATTEMPTS_KEY, JSON.stringify(attempts));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  /**
    * Encerra a sessão atual
    */
   logout(): void {
@@ -123,7 +205,7 @@ export class AuthService {
       id: 'staff_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       name: data.name.trim(),
       email: cleanEmail,
-      password: data.password.trim(),
+      password: sha256(data.password.trim()),
       role: data.role,
       isOwner: data.isOwner || false,
       phone: data.phone.trim(),
@@ -208,7 +290,7 @@ export class AuthService {
 
     // Se for o próprio funcionário alterando a sua senha, exige a senha antiga
     if (isSelf && !isOwner) {
-      if (!oldPassword || targetUser.password !== oldPassword) {
+      if (!oldPassword || !verifyPasswordHash(oldPassword, targetUser.password)) {
         return { success: false, message: 'A senha antiga informada está incorreta.' };
       }
     }
@@ -219,7 +301,7 @@ export class AuthService {
 
     const updatedList = this.staffUsersSignal().map(u => {
       if (u.id === targetUserId) {
-        return { ...u, password: newPassword };
+        return { ...u, password: sha256(newPassword.trim()) };
       }
       return u;
     });
@@ -262,7 +344,20 @@ export class AuthService {
     try {
       const stored = localStorage.getItem(this.STAFF_STORAGE_KEY);
       if (stored) {
-        this.staffUsersSignal.set(JSON.parse(stored));
+        const parsed: AdminUser[] = JSON.parse(stored);
+        let modified = false;
+        // Migração transparente: se alguma senha salva estiver em texto puro (como a alterada pelo usuário), converte para hash SHA-256
+        const upgraded = parsed.map(user => {
+          if (user.password && !/^[a-f0-9]{64}$/i.test(user.password)) {
+            modified = true;
+            return { ...user, password: sha256(user.password.trim()) };
+          }
+          return user;
+        });
+        this.staffUsersSignal.set(upgraded);
+        if (modified) {
+          this.saveStaffToStorage(upgraded);
+        }
       } else {
         const seed = this.getSeedStaff();
         this.staffUsersSignal.set(seed);
@@ -288,20 +383,43 @@ export class AuthService {
       const active = localStorage.getItem(this.CURRENT_USER_KEY);
       if (active) {
         const parsed = JSON.parse(active);
+        // Checa expiração da sessão (12h)
+        if (parsed.sessionExpiresAt && Date.now() > parsed.sessionExpiresAt) {
+          console.warn('Sessão administrativa expirada por inatividade (12h).');
+          this.logout();
+          return;
+        }
+
         // Confirma se o usuário ainda existe e está ativo
         const exists = this.staffUsersSignal().find(u => u.id === parsed.id && u.active);
         if (exists) {
           this.currentUserSignal.set(exists);
+        } else {
+          this.logout();
         }
       }
     } catch (e) {
       console.error(e);
+      this.logout();
     }
   }
 
   private saveSession(user: AdminUser): void {
     try {
-      localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(user));
+      // NUNCA grava a senha no objeto da sessão ativa salva no navegador
+      const safeSession = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isOwner: user.isOwner,
+        phone: user.phone,
+        active: user.active,
+        createdAt: user.createdAt,
+        lastLogin: user.lastLogin,
+        sessionExpiresAt: Date.now() + this.SESSION_TIMEOUT_MS
+      };
+      localStorage.setItem(this.CURRENT_USER_KEY, JSON.stringify(safeSession));
     } catch (e) {
       console.error(e);
     }
@@ -357,7 +475,7 @@ export class AuthService {
   }
 
   /**
-   * Usuários iniciais do sistema
+   * Usuários iniciais do sistema (com senhas devidamente criptografadas em SHA-256)
    */
   private getSeedStaff(): AdminUser[] {
     return [
@@ -365,7 +483,7 @@ export class AuthService {
         id: 'staff_master_1',
         name: 'Diretoria Geral (Dono)',
         email: 'admin@maosquecuidam.org.br',
-        password: 'admin',
+        password: sha256('admin'), // Padrão inicial em hash; caso já tenha sido alterada pelo usuário no site, é preservada
         role: 'Dono / Administrador Master',
         isOwner: true,
         phone: '(22) 99848-1112',
@@ -376,7 +494,7 @@ export class AuthService {
         id: 'staff_coord_2',
         name: 'Coordenadora Pedagógica',
         email: 'coordenacao@maosquecuidam.org.br',
-        password: 'aluno',
+        password: sha256('aluno'),
         role: 'Coordenador Pedagógico',
         isOwner: false,
         phone: '(22) 99848-1112',
@@ -387,7 +505,7 @@ export class AuthService {
         id: 'staff_instrutor_3',
         name: 'Prof. Carlos Eduardo',
         email: 'carlos.groomer@maosquecuidam.org.br',
-        password: 'tosa',
+        password: sha256('tosa'),
         role: 'Instrutor de Banho e Tosa',
         isOwner: false,
         phone: '(22) 99848-1112',
