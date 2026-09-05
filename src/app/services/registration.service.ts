@@ -347,6 +347,47 @@ export class RegistrationService {
 
   constructor() {
     this.loadFromStorage();
+    this.initRealtimeSync();
+  }
+
+  /**
+   * Registra ouvintes em tempo real com o Google Firestore.
+   * Qualquer inclusão, alteração ou exclusão feita por qualquer usuário/admin
+   * é propagada instantaneamente para todos os navegadores abertos sem precisar de F5.
+   */
+  private initRealtimeSync(): void {
+    if (!this.firebaseService.isFirebaseConfigured) {
+      return;
+    }
+
+    // 1. Pets para Adoção em tempo real
+    this.firebaseService.listenToCollection('pets_adocao', (cloudPets) => {
+      if (cloudPets !== null) {
+        this.adoptablePetsSignal.set(cloudPets as AdoptablePet[]);
+        this.saveAdoptablePets(cloudPets as AdoptablePet[]);
+        console.log(`🔥 [Firestore Realtime] Pets sincronizados em tempo real: ${cloudPets.length}`);
+      }
+    });
+
+    // 2. Propagandas de Vídeo das abas laterais em tempo real
+    this.firebaseService.listenToCollection('anuncios_video', (cloudAds) => {
+      if (cloudAds && cloudAds.length > 0) {
+        this.videoAdsSignal.set(cloudAds as VideoAd[]);
+        this.saveVideoAds(cloudAds as VideoAd[]);
+        console.log(`🔥 [Firestore Realtime] Propagandas de vídeo sincronizadas em tempo real: ${cloudAds.length}`);
+      }
+    });
+
+    // 3. Configurações gerais (Métricas de impacto social, etc.)
+    this.firebaseService.listenToCollection('configuracoes', (cloudConfig) => {
+      const statsDoc = (cloudConfig || []).find((c: any) => c.id === 'impact_stats');
+      if (statsDoc && Array.isArray(statsDoc.stats) && statsDoc.stats.length > 0) {
+        this.impactStatsSignal.set(statsDoc.stats);
+        this.saveImpactStats(statsDoc.stats);
+      }
+    });
+
+    // Carga inicial completa de outras coleções
     this.syncFromFirestore();
   }
 
@@ -354,7 +395,7 @@ export class RegistrationService {
     return [...this.videoAdsSignal()];
   }
 
-  addVideoAd(data: Omit<VideoAd, 'id'>): VideoAd {
+  async addVideoAd(data: Omit<VideoAd, 'id'>): Promise<VideoAd> {
     const newAd: VideoAd = {
       ...data,
       id: 'ad_' + data.position + '_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)
@@ -362,35 +403,43 @@ export class RegistrationService {
     const updated = [newAd, ...this.videoAdsSignal()];
     this.videoAdsSignal.set(updated);
     this.saveVideoAds(updated);
-    this.firebaseService.saveDocument('configuracoes', 'video_ad_' + newAd.id, newAd);
-    this.firebaseService.saveDocument('anuncios_video', newAd.id, newAd);
+    await Promise.all([
+      this.firebaseService.saveDocument('configuracoes', 'video_ad_' + newAd.id, newAd),
+      this.firebaseService.saveDocument('anuncios_video', newAd.id, newAd)
+    ]);
     return newAd;
   }
 
-  updateVideoAd(id: string, data: Partial<VideoAd>): void {
+  async updateVideoAd(id: string, data: Partial<VideoAd>): Promise<void> {
     const updated = this.videoAdsSignal().map(ad => ad.id === id ? { ...ad, ...data } : ad);
     this.videoAdsSignal.set(updated);
     this.saveVideoAds(updated);
-    this.firebaseService.saveDocument('configuracoes', 'video_ad_' + id, data);
-    this.firebaseService.saveDocument('anuncios_video', id, data);
+    await Promise.all([
+      this.firebaseService.saveDocument('configuracoes', 'video_ad_' + id, data),
+      this.firebaseService.saveDocument('anuncios_video', id, data)
+    ]);
   }
 
-  deleteVideoAd(id: string): void {
+  async deleteVideoAd(id: string): Promise<void> {
     const updated = this.videoAdsSignal().filter(ad => ad.id !== id);
     this.videoAdsSignal.set(updated);
     this.saveVideoAds(updated);
-    this.firebaseService.deleteDocument('configuracoes', 'video_ad_' + id);
-    this.firebaseService.deleteDocument('anuncios_video', id);
+    await Promise.all([
+      this.firebaseService.deleteDocument('configuracoes', 'video_ad_' + id),
+      this.firebaseService.deleteDocument('anuncios_video', id)
+    ]);
   }
 
-  restoreDefaultVideoAds(): void {
+  async restoreDefaultVideoAds(): Promise<void> {
     const seed = this.getSeedVideoAds();
     this.videoAdsSignal.set(seed);
     this.saveVideoAds(seed);
-    seed.forEach(ad => {
-      this.firebaseService.saveDocument('configuracoes', 'video_ad_' + ad.id, ad);
-      this.firebaseService.saveDocument('anuncios_video', ad.id, ad);
-    });
+    for (const ad of seed) {
+      await Promise.all([
+        this.firebaseService.saveDocument('configuracoes', 'video_ad_' + ad.id, ad),
+        this.firebaseService.saveDocument('anuncios_video', ad.id, ad)
+      ]);
+    }
   }
 
   getImpactStats(): ImpactStat[] {
@@ -528,6 +577,19 @@ export class RegistrationService {
     this.adoptablePetsSignal.set(updated);
     this.saveAdoptablePets(updated);
     this.firebaseService.deleteDocument('pets_adocao', id);
+  }
+
+  /**
+   * Restaura os 4 animais demonstrativos (Pipoca, Luna, Max e Belinha) no armazenamento e no Firestore.
+   */
+  async restoreDefaultAdoptablePets(): Promise<void> {
+    const seed = this.getSeedAdoptablePets();
+    this.adoptablePetsSignal.set(seed);
+    this.saveAdoptablePets(seed);
+    for (const pet of seed) {
+      await this.firebaseService.saveDocument('pets_adocao', pet.id, pet);
+    }
+    console.log('🐾 [RegistrationService] 4 pets demonstrativos restaurados na nuvem.');
   }
 
   // --- GALERIA ANTES & DEPOIS ---
@@ -702,7 +764,7 @@ export class RegistrationService {
     try {
       // 1. PETS PARA ADOÇÃO
       const cloudPets = await this.firebaseService.getCollectionData('pets_adocao');
-      if (cloudPets !== null && cloudPets.length > 0) {
+      if (cloudPets !== null) {
         this.adoptablePetsSignal.set(cloudPets as AdoptablePet[]);
         this.saveAdoptablePets(cloudPets as AdoptablePet[]);
       }
@@ -843,9 +905,13 @@ export class RegistrationService {
       if (storedAdoptablePets) {
         this.adoptablePetsSignal.set(JSON.parse(storedAdoptablePets));
       } else {
-        const seed = this.getSeedAdoptablePets();
-        this.adoptablePetsSignal.set(seed);
-        this.saveAdoptablePets(seed);
+        if (!this.firebaseService.isFirebaseConfigured) {
+          const seed = this.getSeedAdoptablePets();
+          this.adoptablePetsSignal.set(seed);
+          this.saveAdoptablePets(seed);
+        } else {
+          this.adoptablePetsSignal.set([]);
+        }
       }
 
       const storedAdoptionApps = localStorage.getItem(this.ADOPTION_APPLICATIONS_KEY);

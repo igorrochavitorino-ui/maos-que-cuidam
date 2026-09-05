@@ -470,7 +470,7 @@ export class AdminPanelComponent {
     this.showToast('🎬 Vídeo modelo selecionado com sucesso!');
   }
 
-  saveVideoAd(): void {
+  async saveVideoAd(): Promise<void> {
     if (!this.editAdTitle() || !this.editAdSponsor() || !this.editAdVideoUrl()) {
       alert('Por favor, preencha o Nome do Patrocinador, o Título e inclua o Vídeo (por upload de arquivo ou link).');
       return;
@@ -482,7 +482,7 @@ export class AdminPanelComponent {
     }
 
     if (this.videoAdModalMode() === 'create') {
-      this.registrationService.addVideoAd({
+      await this.registrationService.addVideoAd({
         position: this.editAdPosition(),
         title: this.editAdTitle(),
         sponsorName: this.editAdSponsor(),
@@ -496,7 +496,7 @@ export class AdminPanelComponent {
       this.showVideoAdModal.set(false);
       this.showToast(`🎉 Novo anúncio de vídeo de "${this.editAdSponsor()}" cadastrado com sucesso!`);
     } else {
-      this.registrationService.updateVideoAd(this.editingVideoAdId(), {
+      await this.registrationService.updateVideoAd(this.editingVideoAdId(), {
         position: this.editAdPosition(),
         title: this.editAdTitle(),
         sponsorName: this.editAdSponsor(),
@@ -512,22 +512,29 @@ export class AdminPanelComponent {
     }
   }
 
-  deleteVideoAd(ad: VideoAd): void {
+  async deleteVideoAd(ad: VideoAd): Promise<void> {
     if (confirm(`Deseja realmente excluir permanentemente a propaganda de "${ad.sponsorName}" (${ad.title})? Esta ação não pode ser desfeita.`)) {
-      this.registrationService.deleteVideoAd(ad.id);
+      await this.registrationService.deleteVideoAd(ad.id);
       this.showToast(`🗑️ Propaganda de "${ad.sponsorName}" excluída com sucesso.`);
     }
   }
 
-  toggleVideoAdActive(ad: VideoAd): void {
-    this.registrationService.updateVideoAd(ad.id, { active: !ad.active });
+  async toggleVideoAdActive(ad: VideoAd): Promise<void> {
+    await this.registrationService.updateVideoAd(ad.id, { active: !ad.active });
     this.showToast(`Status da propaganda de ${ad.sponsorName} alterado para ${!ad.active ? 'Ativo' : 'Pausado'}.`);
   }
 
-  restoreVideoAds(): void {
+  async restoreVideoAds(): Promise<void> {
     if (confirm('Deseja restaurar os anúncios de vídeo demonstrativos das abas laterais? Eles voltarão a aparecer imediatamente no site.')) {
-      this.registrationService.restoreDefaultVideoAds();
+      await this.registrationService.restoreDefaultVideoAds();
       this.showToast('✅ Anúncios demonstrativos restaurados com sucesso!');
+    }
+  }
+
+  async restoreAdoptablePets(): Promise<void> {
+    if (confirm('Deseja restaurar os 4 animais demonstrativos (Pipoca, Luna, Max e Belinha) no site e na nuvem?')) {
+      await this.registrationService.restoreDefaultAdoptablePets();
+      this.showToast('🐾 Animais demonstrativos restaurados com sucesso na nuvem!');
     }
   }
 

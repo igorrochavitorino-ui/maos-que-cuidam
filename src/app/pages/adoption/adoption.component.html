@@ -92,7 +92,23 @@
 
       <!-- Feed de Cards dos Pets Disponíveis -->
       <div class="pets-grid mt-4">
-        @if (filteredPets.length === 0) {
+        @if (registrationService.totalAdoptablePets() === 0) {
+          <div class="empty-pets-state card-modern p-5 text-center my-4" style="grid-column: 1 / -1; background: #ffffff; border-radius: 16px; border: 2px dashed #cbd5e1; padding: 2.5rem 1.5rem; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 0.75rem;">🐾</div>
+            <h3 style="color: #0f2b48; font-weight: 800; margin-bottom: 0.5rem;">Nenhum animal cadastrado para adoção no momento</h3>
+            <p style="color: #64748b; max-width: 520px; margin: 0 auto 1.5rem auto; font-size: 0.95rem; line-height: 1.5;">
+              Todos os animaizinhos anteriores já ganharam um lar ou foram removidos. Se você resgatou um peludinho ou é protetor em Macaé, divulgue-o gratuitamente aqui!
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+              <button class="btn btn-primary" style="background: #e65100; border-color: #e65100; font-weight: 700; padding: 0.6rem 1.25rem; border-radius: 8px; color: #fff;" (click)="setTab('doar')">
+                ➕ Cadastrar Animalzinho para Doação
+              </button>
+              <button class="btn btn-outline-navy" style="font-weight: 600; padding: 0.6rem 1.25rem; border-radius: 8px;" (click)="restoreSeedPets()">
+                🔄 Restaurar Pets Demonstrativos (Pipoca, Luna, etc.)
+              </button>
+            </div>
+          </div>
+        } @else if (filteredPets.length === 0) {
           <div class="empty-pets-state card-modern">
             <span>🐾 Nenhum pet encontrado com os filtros selecionados.</span>
             <button class="btn btn-outline-navy mt-2" (click)="speciesFilter.set('all'); sizeFilter.set('all'); ageFilter.set('all'); statusFilter.set('all');">

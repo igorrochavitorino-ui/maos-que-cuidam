@@ -190,6 +190,13 @@ export class AdoptionComponent {
     }
   }
 
+  async restoreSeedPets(): Promise<void> {
+    if (confirm('Deseja restaurar os 4 animais demonstrativos (Pipoca, Luna, Max e Belinha) no site e na nuvem?')) {
+      await this.registrationService.restoreDefaultAdoptablePets();
+      alert('🐾 Os 4 animais demonstrativos foram restaurados com sucesso e sincronizados na nuvem!');
+    }
+  }
+
   setTab(tab: 'adotar' | 'doar'): void {
     this.activeTab.set(tab);
     window.scrollTo({ top: 400, behavior: 'smooth' });
@@ -350,6 +357,13 @@ export class AdoptionComponent {
       this.submittedDonation.set(res.pet);
       this.photoPreview2.set(null);
       this.photoPreview3.set(null);
+
+      if (res.success) {
+        alert(`🐾 Parabéns! O anúncio de "${res.pet.name}" foi publicado com sucesso e sincronizado em tempo real com a nuvem do Google Firestore!\n\nEle já está visível para todos os visitantes em computadores, celulares e abas anônimas.`);
+      } else {
+        alert(`⚠️ Atenção: O anúncio de "${res.pet.name}" foi salvo neste navegador, mas não foi possível sincronizar com a nuvem do Google.\n\nSe você estiver utilizando o navegador Brave ou bloqueador de anúncios (AdBlock), desative os escudos de proteção para o site ongmaosquecuidam.com.br para permitir a sincronização.`);
+      }
+
       this.donationForm.reset({
         species: 'Cão',
         gender: 'Macho',

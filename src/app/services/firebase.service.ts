@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp, FirebaseApp, getApps } from 'firebase/app';
-import { getFirestore, Firestore, doc, setDoc, getDocs, collection, deleteDoc } from 'firebase/firestore';
+import { getFirestore, Firestore, doc, setDoc, getDocs, collection, deleteDoc, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -72,6 +72,28 @@ export class FirebaseService {
     } catch (err) {
       console.error(`❌ [Firestore Cloud] Erro ao buscar documentos de ${collectionName}:`, err);
       return null;
+    }
+  }
+
+  /**
+   * Escuta alterações em tempo real de uma coleção no Firestore.
+   * Quando qualquer cliente ou admin criar, editar ou excluir dados, o callback é chamado instantaneamente.
+   */
+  listenToCollection(collectionName: string, callback: (data: any[]) => void): Unsubscribe {
+    if (!this.db || !this.isFirebaseConfigured) {
+      return () => {};
+    }
+    try {
+      const colRef = collection(this.db, collectionName);
+      return onSnapshot(colRef, (snapshot) => {
+        const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        callback(items);
+      }, (err) => {
+        console.warn(`⚠️ [Firestore Realtime] Aviso no listener de '${collectionName}':`, err);
+      });
+    } catch (err) {
+      console.warn(`⚠️ [Firestore Realtime] Falha ao registrar listener em '${collectionName}':`, err);
+      return () => {};
     }
   }
 
