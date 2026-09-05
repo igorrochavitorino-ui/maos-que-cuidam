@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
 import { AuthService } from '../../services/auth.service';
+import { AnalyticsService } from '../../services/analytics.service';
+import { SiteVisit } from '../../models/analytics.model';
 import { 
   StudentRegistration, 
   VolunteerRegistration, 
@@ -32,6 +34,7 @@ export interface RankedStudent extends StudentRegistration {
 export class AdminPanelComponent {
   registrationService = inject(RegistrationService);
   authService = inject(AuthService);
+  analyticsService = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
 
   courses: Course[] = this.registrationService.getCourses();
@@ -42,12 +45,12 @@ export class AdminPanelComponent {
   loginPassword = signal<string>('');
   loginError = signal<string | null>(null);
 
-  // Visualização ativa
-  activeView = signal<'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs'>('students');
+  // Visualização ativa (inclui 'analytics' para tráfego do site)
+  activeView = signal<'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs' | 'analytics'>('students');
 
   constructor() {
     this.route.queryParams.subscribe(params => {
-      if (params['tab'] && ['students', 'volunteers', 'pets', 'videoAds', 'staff', 'logs'].includes(params['tab'])) {
+      if (params['tab'] && ['students', 'volunteers', 'pets', 'videoAds', 'staff', 'logs', 'analytics'].includes(params['tab'])) {
         this.setView(params['tab'] as any);
       }
     });
@@ -191,6 +194,60 @@ export class AdminPanelComponent {
     });
   });
 
+  // 📊 ESTADOS E FILTROS DO PAINEL DE MÉTRICAS & VISITAS AO SITE
+  analyticsPeriod = signal<'today' | 'week' | 'month' | 'year' | 'all'>('week');
+  analyticsSearch = signal<string>('');
+  analyticsDeviceFilter = signal<string>('all');
+
+  filteredVisits = computed<SiteVisit[]>(() => {
+    const list = this.analyticsService.visits();
+    const period = this.analyticsPeriod();
+    const search = this.analyticsSearch().toLowerCase().trim();
+    const dev = this.analyticsDeviceFilter();
+
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0, 10);
+    const monthStr = now.toISOString().slice(0, 7);
+    const yearStr = now.getFullYear().toString();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    return list.filter(v => {
+      // Filtro de período
+      if (period === 'today' && v.date !== todayStr) return false;
+      if (period === 'week') {
+        const vTime = new Date(v.timestamp);
+        if (vTime < sevenDaysAgo || vTime > now) return false;
+      }
+      if (period === 'month' && !v.date.startsWith(monthStr)) return false;
+      if (period === 'year' && !v.date.startsWith(yearStr)) return false;
+
+      // Filtro de dispositivo
+      if (dev !== 'all' && v.device !== dev) return false;
+
+      // Filtro de busca
+      if (search) {
+        const matches = v.visitorId.toLowerCase().includes(search) ||
+          v.page.toLowerCase().includes(search) ||
+          v.pageTitle.toLowerCase().includes(search) ||
+          v.browser.toLowerCase().includes(search) ||
+          v.os.toLowerCase().includes(search) ||
+          (v.city && v.city.toLowerCase().includes(search));
+        if (!matches) return false;
+      }
+
+      return true;
+    });
+  });
+
+  setAnalyticsPeriod(period: 'today' | 'week' | 'month' | 'year' | 'all'): void {
+    this.analyticsPeriod.set(period);
+  }
+
+  exportAnalyticsExcel(): void {
+    this.analyticsService.exportToCsv(this.filteredVisits());
+    this.showToast('Relatório de visitas baixado com sucesso!');
+  }
+
   // --- MÉTODOS DE LOGIN / LOGOUT ---
   onLogin(): void {
     this.loginError.set(null);
@@ -210,7 +267,7 @@ export class AdminPanelComponent {
     this.showToast('Sessão encerrada com sucesso.');
   }
 
-  setView(view: 'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs'): void {
+  setView(view: 'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs' | 'analytics'): void {
     this.activeView.set(view);
     this.searchQuery.set('');
     this.statusFilter.set('all');

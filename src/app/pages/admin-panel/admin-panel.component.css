@@ -973,4 +973,16 @@
   gap: 1rem;
 }
 
+/* ================= 📊 PAINEL DE MÉTRICAS & VISITAS ================= */
+.stat-analytics:hover {
+  border-color: #10b981 !important;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2);
+}
+
+.analytics-dashboard-container {
+  margin-top: 0.5rem;
+}
+
+
 
