@@ -479,8 +479,8 @@ export class AdminPanelComponent {
       return;
     }
 
-    if (this.editAdVideoUrl().startsWith('data:video') && this.editAdVideoUrl().length > 800000) {
-      alert('Atenção: Arquivos de vídeo enviados diretamente do computador com mais de 1MB não podem ser salvos na nuvem do Google Firestore.\n\nPara que a propaganda apareça em todos os celulares e computadores de visitantes, escolha um dos "Modelos de Vídeos Prontos" ou cole um link direto de vídeo da internet (ex: https://...mp4).');
+    if (this.editAdVideoUrl().startsWith('data:video') && this.editAdVideoUrl().length > 980000) {
+      alert('Atenção: O arquivo de vídeo selecionado excede o limite permitido pelo Google Firestore (máximo de ~700 KB para envio direto do computador).\n\nPara salvar na nuvem com sucesso, reduza o arquivo para menos de 700 KB, ou cole um link direto de vídeo da internet na Opção 2.');
       return;
     }
 
