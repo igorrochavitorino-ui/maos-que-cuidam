@@ -462,12 +462,15 @@ export class AdminPanelComponent {
     }
   }
 
-  setSampleVideo(videoUrl: string, sampleTitle?: string, sampleSponsor?: string, sampleBadge?: string): void {
+  setSampleVideo(videoUrl: string, sampleTitle?: string, sampleSponsor?: string, sampleBadge?: string, samplePoster?: string, sampleClickUrl?: string, sampleDesc?: string): void {
     this.editAdVideoUrl.set(videoUrl);
     if (sampleTitle) this.editAdTitle.set(sampleTitle);
     if (sampleSponsor) this.editAdSponsor.set(sampleSponsor);
     if (sampleBadge) this.editAdBadge.set(sampleBadge);
-    this.showToast('🎬 Vídeo modelo selecionado com sucesso!');
+    if (samplePoster) this.editAdPosterUrl.set(samplePoster);
+    if (sampleClickUrl) this.editAdClickUrl.set(sampleClickUrl);
+    if (sampleDesc) this.editAdDesc.set(sampleDesc);
+    this.showToast('🎬 Anúncio e vídeo selecionados com sucesso!');
   }
 
   async saveVideoAd(): Promise<void> {
