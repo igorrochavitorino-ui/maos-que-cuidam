@@ -87,6 +87,10 @@ export class AdminPanelComponent {
   certificateStudent = signal<StudentRegistration | null>(null);
   certificateCode = signal<string>('');
 
+  // Modal de Divulgação & Cartaz QR Code da ONG
+  showQrModal = signal<boolean>(false);
+  qrType = signal<'site' | 'cadastro'>('site');
+
   // Modo de visualização de Pets (Tabela vs Agenda Semanal)
   petViewMode = signal<'table' | 'schedule'>('table');
   weekDays = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
@@ -783,6 +787,15 @@ export class AdminPanelComponent {
       if (pref.includes('sábado') && day.toLowerCase().includes('sábado')) return true;
       return pref.includes(day.toLowerCase());
     });
+  }
+
+  openQrModal(type: 'site' | 'cadastro' = 'site'): void {
+    this.qrType.set(type);
+    this.showQrModal.set(true);
+  }
+
+  printQrPoster(): void {
+    window.print();
   }
 
   showToast(msg: string): void {

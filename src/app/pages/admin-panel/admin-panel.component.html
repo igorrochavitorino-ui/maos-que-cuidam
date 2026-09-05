@@ -90,6 +90,9 @@
         </div>
 
         <div class="admin-user-actions">
+          <button class="btn btn-outline-gold btn-sm" (click)="openQrModal('site')" style="border-color: #d49a37; font-weight: 700;">
+            📱 QR Code & Cartaz A4
+          </button>
           <button class="btn btn-outline-gold btn-sm" (click)="setView('logs')">
             📋 Ver Histórico de Acessos
           </button>
@@ -1957,6 +1960,112 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: 📱 QR CODE OFICIAL & CARTAZ DE DIVULGAÇÃO ================= -->
+  @if (showQrModal()) {
+    <div class="modal-backdrop modal-qr-backdrop" (click)="showQrModal.set(false)">
+      <div class="modal-box modal-lg" style="max-width: 680px; text-align: center; border-radius: 20px;" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn no-print" (click)="showQrModal.set(false)" title="Fechar">✕</button>
+        
+        <!-- DOCUMENTO DO CARTAZ IMPRIMÍVEL (A4) -->
+        <div class="qr-poster-card" id="printableQrPoster" style="background: #ffffff; padding: 2rem 1.5rem; border-radius: 16px;">
+          <!-- CABEÇALHO DO CARTAZ -->
+          <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 1rem;">
+            <img src="assets/logo.jpg" alt="Logo ONG Mãos que Cuidam" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid #d49a37; object-fit: cover;">
+            <div style="text-align: left;">
+              <h2 style="color: #132a47; margin: 0; font-size: 1.6rem; font-weight: 900; letter-spacing: -0.02em;">
+                ONG Mãos que Cuidam
+              </h2>
+              <span style="color: #d49a37; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase;">
+                Amor • Respeito • Proteção Animal
+              </span>
+            </div>
+          </div>
+
+          <div style="background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem;">
+            <span style="background: #132a47; color: #ffffff; padding: 4px 14px; border-radius: 20px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em;">
+              {{ qrType() === 'site' ? '🌐 Portal Oficial na Web' : '🎓 Inscrições Gratuitas para Cursos' }}
+            </span>
+            <h3 style="color: #0f172a; margin: 0.75rem 0 0.25rem; font-size: 1.35rem; font-weight: 800;">
+              {{ qrType() === 'site' ? 'Escaneie para Acessar Nosso Site' : 'Inscrições Abertas em Banho e Tosa' }}
+            </h3>
+            <p style="color: #64748b; font-size: 0.92rem; margin: 0;">
+              Aponte a câmera do seu celular para o QR Code abaixo para abrir instantaneamente:
+            </p>
+          </div>
+
+          <!-- IMAGEM DO QR CODE GRANDE -->
+          <div style="display: inline-block; background: #ffffff; padding: 1rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 2px solid #e2e8f0; margin-bottom: 1.25rem;">
+            <img 
+              [src]="qrType() === 'site' ? 'assets/qrcode-site.png' : 'assets/qrcode-cadastro.png'" 
+              alt="QR Code Oficial" 
+              style="width: 250px; height: 250px; display: block; image-rendering: pixelated;">
+            <div style="margin-top: 8px; font-family: monospace; font-weight: 800; color: #132a47; font-size: 0.95rem;">
+              {{ qrType() === 'site' ? 'ongmaosquecuidam.com.br' : 'ongmaosquecuidam.com.br/cadastro' }}
+            </div>
+          </div>
+
+          <!-- DADOS DA SEDE PARA O CARTAZ IMPRESSO -->
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; color: #475569; font-size: 0.85rem; line-height: 1.5;">
+            <div><strong>📍 Sede Oficial:</strong> Rua Raymundo Peixoto Lins, nº 48, Barra • Macaé/RJ</div>
+            <div><strong>📱 WhatsApp:</strong> (22) 99848-1112 • <strong>Instagram:</strong> &#64;maosquecuidam_4</div>
+          </div>
+        </div>
+
+        <!-- SELETOR DE DESTINO & BOTÕES DE DOWNLOAD / IMPRESSÃO (NÃO IMPRIMÍVEIS) -->
+        <div class="no-print" style="margin-top: 1rem; border-top: 1px solid #e2e8f0; padding-top: 1.25rem;">
+          <!-- SELETOR -->
+          <div style="display: flex; justify-content: center; gap: 8px; margin-bottom: 1rem;">
+            <button 
+              type="button" 
+              class="btn btn-sm" 
+              [style.background]="qrType() === 'site' ? '#132a47' : '#f1f5f9'"
+              [style.color]="qrType() === 'site' ? '#ffffff' : '#334155'"
+              (click)="qrType.set('site')" 
+              style="font-weight: 700;">
+              🌐 QR Code do Site Geral
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-sm" 
+              [style.background]="qrType() === 'cadastro' ? '#132a47' : '#f1f5f9'"
+              [style.color]="qrType() === 'cadastro' ? '#ffffff' : '#334155'"
+              (click)="qrType.set('cadastro')" 
+              style="font-weight: 700;">
+              🎓 QR Code Direto para Inscrições
+            </button>
+          </div>
+
+          <!-- BOTÕES DE DOWNLOAD E IMPRESSÃO -->
+          <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+            <a 
+              [href]="qrType() === 'site' ? 'assets/qrcode-site.png' : 'assets/qrcode-cadastro.png'" 
+              [download]="qrType() === 'site' ? 'qrcode_site_ong_maos_que_cuidam.png' : 'qrcode_cadastro_cursos.png'"
+              class="btn btn-primary btn-sm" 
+              style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+              <span>📥 Baixar Imagem PNG (1000x1000)</span>
+            </a>
+
+            <a 
+              [href]="qrType() === 'site' ? 'assets/qrcode-site.svg' : 'assets/qrcode-cadastro.svg'" 
+              [download]="qrType() === 'site' ? 'qrcode_site_ong_maos_que_cuidam.svg' : 'qrcode_cadastro_cursos.svg'"
+              class="btn btn-outline-navy btn-sm" 
+              style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+              <span>📥 Baixar Vetor SVG</span>
+            </a>
+
+            <button 
+              type="button" 
+              class="btn btn-outline-gold btn-sm" 
+              (click)="printQrPoster()" 
+              style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+              <span>🖨️ Imprimir Cartaz A4</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   }
