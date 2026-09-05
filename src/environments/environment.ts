@@ -1,15 +1,15 @@
 export const environment = {
-  production: false,
+  production: true,
   
   // Configuração Oficial do Firebase / Firestore (Google Cloud)
   // Substitua com as chaves do Console do Firebase da sua ONG (https://console.firebase.google.com/)
   firebase: {
-    apiKey: "AIzaSyD-SUA_CHAVE_API_FIREBASE",
-    authDomain: "maos-que-cuidam-ong.firebaseapp.com",
-    projectId: "maos-que-cuidam-ong",
-    storageBucket: "maos-que-cuidam-ong.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdef123456"
+    apiKey: "AIzaSyD1YD_Bnq5BdMev00EOzIoxoon5gPcsd1o",
+    authDomain: "maos-que-cuidam-5b73e.firebaseapp.com",
+    projectId: "maos-que-cuidam-5b73e",
+    storageBucket: "maos-que-cuidam-5b73e.firebasestorage.app",
+    messagingSenderId: "981758913431",
+    appId: "1:981758913431:web:5f96a31f4ffc45c9e772d2"
   },
 
   // Configuração do EmailJS para envio automático de e-mails
