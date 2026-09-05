@@ -34,6 +34,7 @@ export class AuthService {
     this.loadStaffFromStorage();
     this.loadLogsFromStorage();
     this.restoreSession();
+    this.syncWithFirestore();
   }
 
   /**
@@ -102,6 +103,19 @@ export class AuthService {
 
     // Registra no histórico de acessos (Firestore Cloud)
     this.firebaseService.saveDocument('historico_acessos', logEntry.id, logEntry);
+
+    // Sincroniza o hash atualizado com a nuvem para que qualquer celular reconheça essa senha
+    this.firebaseService.saveDocument('equipe_interna', user.id, {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      passwordHash: user.password,
+      role: user.role,
+      isOwner: user.isOwner,
+      phone: user.phone,
+      active: user.active,
+      updatedAt: new Date().toISOString()
+    });
 
     // Envia e-mail de alerta de segurança
     this.notificationService.sendEmail('template_alerta_login', {
@@ -309,9 +323,22 @@ export class AuthService {
     this.staffUsersSignal.set(updatedList);
     this.saveStaffToStorage(updatedList);
 
-    if (isSelf) {
-      const refreshed = updatedList.find(u => u.id === targetUserId);
-      if (refreshed) {
+    const refreshed = updatedList.find(u => u.id === targetUserId);
+    if (refreshed) {
+      // Sincroniza a nova senha imediatamente com o Firebase Cloud para que todos os celulares recebam
+      this.firebaseService.saveDocument('equipe_interna', targetUserId, {
+        id: targetUserId,
+        email: refreshed.email,
+        name: refreshed.name,
+        passwordHash: refreshed.password,
+        role: refreshed.role,
+        isOwner: refreshed.isOwner,
+        phone: refreshed.phone,
+        active: refreshed.active,
+        updatedAt: new Date().toISOString()
+      });
+
+      if (isSelf) {
         this.currentUserSignal.set(refreshed);
         this.saveSession(refreshed);
       }
@@ -337,6 +364,39 @@ export class AuthService {
     this.staffUsersSignal.set(updatedList);
     this.saveStaffToStorage(updatedList);
     return { success: true, message: 'Colaborador removido da equipe com sucesso.' };
+  }
+
+  /**
+   * Sincroniza credenciais da equipe com o Firestore na nuvem
+   * Garante que a senha alterada em qualquer dispositivo passe a valer em todos os celulares imediatamente
+   */
+  async syncWithFirestore(): Promise<void> {
+    try {
+      if (this.firebaseService.isFirebaseConfigured) {
+        const cloudStaff = await this.firebaseService.getCollectionData('equipe_interna');
+        if (cloudStaff && cloudStaff.length > 0) {
+          const localList = this.staffUsersSignal();
+          let modified = false;
+          const merged = localList.map(localUser => {
+            const remote = cloudStaff.find((r: any) => 
+              (r.email && r.email.toLowerCase() === localUser.email.toLowerCase()) || r.id === localUser.id
+            );
+            if (remote && remote['passwordHash'] && remote['passwordHash'] !== localUser.password) {
+              modified = true;
+              return { ...localUser, password: remote['passwordHash'] };
+            }
+            return localUser;
+          });
+          if (modified) {
+            this.staffUsersSignal.set(merged);
+            this.saveStaffToStorage(merged);
+            console.log('🔄 [Auth] Credenciais da equipe sincronizadas com a nuvem!');
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Sincronização de credenciais em segundo plano:', e);
+    }
   }
 
   // --- PERSISTÊNCIA ---

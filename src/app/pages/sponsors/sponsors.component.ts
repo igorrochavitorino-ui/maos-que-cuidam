@@ -27,8 +27,8 @@ export class SponsorsComponent {
   editingSponsorId = signal<string | null>(null);
   toastMessage = signal<string | null>(null);
 
-  loginEmail = signal<string>('admin@maosquecuidam.org.br');
-  loginPassword = signal<string>('admin');
+  loginEmail = signal<string>('');
+  loginPassword = signal<string>('');
   loginError = signal<string | null>(null);
 
   logoPreview = signal<string>('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="gp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23f472b6"/><stop offset="100%" stop-color="%23ec4899"/></linearGradient></defs><rect width="100" height="100" rx="28" fill="%23fdf2f8"/><circle cx="50" cy="50" r="30" fill="url(%23gp)"/><path d="M42 38c-3 0-5 2-5 5 0 6 13 18 13 18s13-12 13-18c0-3-2-5-5-5-3 0-6 3-8 6-2-3-5-6-8-6z" fill="%23ffffff"/></svg>');
