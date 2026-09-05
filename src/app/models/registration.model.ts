@@ -37,6 +37,8 @@ export interface StudentRegistration {
   neighborhood: string;
   courseId: string;
   courseName: string;
+  selectedCourseIds?: string[];
+  selectedCourseNames?: string[];
   preferredShift: 'Tarde (13:00 às 17:00)' | 'Noite (18:00 às 22:00)' | 'Sábados (08h às 15h)' | string;
   employmentStatus: string;
   hasPetExperience: boolean;

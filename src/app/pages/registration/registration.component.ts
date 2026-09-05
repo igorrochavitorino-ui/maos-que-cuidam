@@ -27,6 +27,11 @@ export class RegistrationComponent implements OnInit {
   submittedVolunteer = signal<VolunteerRegistration | null>(null);
   submittedPet = signal<PetRegistration | null>(null);
 
+  // Multi-seleção de cursos: permite selecionar 1, 2, 3 ou todos os 4 cursos de uma vez
+  selectedCourseIds = signal<string[]>([]);
+  showSuccessModal = signal<boolean>(false);
+  isSubmitting = signal<boolean>(false);
+
   // Formulários Reativos
   studentForm: FormGroup = this.fb.group({
     fullName: ['', [Validators.required, Validators.minLength(3)]],
@@ -36,12 +41,11 @@ export class RegistrationComponent implements OnInit {
     birthDate: ['', Validators.required],
     city: ['Macaé', Validators.required],
     neighborhood: ['', Validators.required],
-    courseId: ['curso-banho-higienizacao', Validators.required],
     preferredShift: ['Tarde (13:00 às 17:00)', Validators.required],
     employmentStatus: ['Buscando primeira oportunidade na área', Validators.required],
     hasPetExperience: [false],
-    motivation: ['', [Validators.required, Validators.minLength(15)]],
-    agreeTerms: [false, Validators.requiredTrue]
+    motivation: ['', [Validators.required, Validators.minLength(3)]],
+    agreeTerms: [true, Validators.requiredTrue]
   });
 
   volunteerForm: FormGroup = this.fb.group({
@@ -50,7 +54,7 @@ export class RegistrationComponent implements OnInit {
     phone: ['', [Validators.required, Validators.minLength(10)]],
     occupation: ['', Validators.required],
     areaOfInterest: ['Instrutor de Banho e Tosa', Validators.required],
-    experienceDescription: ['', [Validators.required, Validators.minLength(15)]],
+    experienceDescription: ['', [Validators.required, Validators.minLength(5)]],
     availability: ['', Validators.required],
     agreeTerms: [false, Validators.requiredTrue]
   });
@@ -71,6 +75,9 @@ export class RegistrationComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    // Por padrão, seleciona os 4 cursos oficiais (formação completa)
+    this.selectedCourseIds.set(this.courses.map(c => c.id));
+
     // Escutar queryParams para pré-seleção de curso ou aba
     this.route.queryParams.subscribe(params => {
       if (params['tab']) {
@@ -82,10 +89,60 @@ export class RegistrationComponent implements OnInit {
         this.activeTab.set('aluno');
         const courseExists = this.courses.find(c => c.id === params['curso']);
         if (courseExists) {
-          this.studentForm.patchValue({ courseId: params['curso'] });
+          this.selectedCourseIds.set([params['curso']]);
         }
       }
     });
+  }
+
+  toggleCourse(id: string): void {
+    const current = this.selectedCourseIds();
+    if (current.includes(id)) {
+      if (current.length > 1) {
+        this.selectedCourseIds.set(current.filter(c => c !== id));
+      } else {
+        alert('Você deve manter pelo menos 1 curso selecionado.');
+      }
+    } else {
+      this.selectedCourseIds.set([...current, id]);
+    }
+  }
+
+  toggleAllCourses(): void {
+    if (this.isAllCoursesSelected()) {
+      // Se todos já estavam selecionados, deixa o principal
+      this.selectedCourseIds.set([this.courses[0].id]);
+    } else {
+      // Seleciona todos os 4 cursos da ONG
+      this.selectedCourseIds.set(this.courses.map(c => c.id));
+    }
+  }
+
+  isAllCoursesSelected(): boolean {
+    return this.courses.length > 0 && this.selectedCourseIds().length === this.courses.length;
+  }
+
+  isCourseSelected(id: string): boolean {
+    return this.selectedCourseIds().includes(id);
+  }
+
+  getStudentFormErrors(): string[] {
+    const errors: string[] = [];
+    const f = this.studentForm;
+
+    if (this.selectedCourseIds().length === 0) errors.push('Selecione ao menos 1 curso desejado');
+    if (f.get('fullName')?.invalid) errors.push('Nome Completo (mínimo 3 letras)');
+    if (f.get('cpf')?.invalid) errors.push('CPF (mínimo 11 dígitos)');
+    if (f.get('phone')?.invalid) errors.push('WhatsApp com DDD (mínimo 10 dígitos)');
+    if (f.get('email')?.invalid) errors.push('E-mail de contato válido');
+    if (f.get('birthDate')?.invalid) errors.push('Data de nascimento');
+    if (f.get('city')?.invalid) errors.push('Cidade');
+    if (f.get('neighborhood')?.invalid) errors.push('Bairro');
+    if (f.get('preferredShift')?.invalid) errors.push('Turno de preferência');
+    if (f.get('motivation')?.invalid) errors.push('Motivação / Por que deseja fazer o curso');
+    if (f.get('agreeTerms')?.invalid) errors.push('Termos do projeto social (marcar caixinha obrigatória)');
+
+    return errors;
   }
 
   setTab(tab: 'aluno' | 'voluntario' | 'pet'): void {
@@ -94,43 +151,72 @@ export class RegistrationComponent implements OnInit {
     this.submittedStudent.set(null);
     this.submittedVolunteer.set(null);
     this.submittedPet.set(null);
+    this.showSuccessModal.set(false);
+  }
+
+  closeSuccessModal(): void {
+    this.showSuccessModal.set(false);
   }
 
   // --- SUBMISSÕES ---
-  submitStudent(): void {
-    if (this.studentForm.invalid) {
+  async submitStudent(): Promise<void> {
+    if (this.studentForm.invalid || this.selectedCourseIds().length === 0) {
       this.studentForm.markAllAsTouched();
+      const errs = this.getStudentFormErrors();
+      alert('Por favor, preencha os campos obrigatórios em destaque para concluir sua inscrição:\n\n• ' + errs.join('\n• '));
       return;
     }
 
-    const val = this.studentForm.value;
-    const selectedCourse = this.courses.find(c => c.id === val.courseId);
+    this.isSubmitting.set(true);
 
-    const created = this.registrationService.registerStudent({
-      fullName: val.fullName,
-      email: val.email,
-      phone: val.phone,
-      cpf: val.cpf,
-      birthDate: val.birthDate,
-      city: val.city,
-      neighborhood: val.neighborhood,
-      courseId: val.courseId,
-      courseName: selectedCourse ? selectedCourse.title : 'Curso de Banho e Tosa',
-      preferredShift: val.preferredShift,
-      employmentStatus: val.employmentStatus,
-      hasPetExperience: val.hasPetExperience,
-      motivation: val.motivation
-    });
+    try {
+      const val = this.studentForm.value;
+      const selectedCourses = this.courses.filter(c => this.selectedCourseIds().includes(c.id));
+      const selectedCourseNames = selectedCourses.map(c => c.title);
+      const primaryCourse = selectedCourses[0] || this.courses[0];
 
-    this.submittedStudent.set(created);
-    this.studentForm.reset({
-      city: 'São Paulo',
-      courseId: 'curso-banho-higienizacao',
-      preferredShift: 'Manhã (08h às 12h)',
-      employmentStatus: 'Buscando primeira oportunidade na área',
-      hasPetExperience: false,
-      agreeTerms: false
-    });
+      let formattedCourseName: string;
+      if (this.isAllCoursesSelected()) {
+        formattedCourseName = '⭐ Formação Completa em Todos os 4 Cursos (Banho & Tosa + Cuidados + Empreendedorismo)';
+      } else if (selectedCourseNames.length > 1) {
+        formattedCourseName = selectedCourseNames.join(' + ');
+      } else {
+        formattedCourseName = primaryCourse.title;
+      }
+
+      const created = await this.registrationService.registerStudent({
+        fullName: val.fullName,
+        email: val.email,
+        phone: val.phone,
+        cpf: val.cpf,
+        birthDate: val.birthDate,
+        city: val.city,
+        neighborhood: val.neighborhood,
+        courseId: primaryCourse.id,
+        courseName: formattedCourseName,
+        selectedCourseIds: this.selectedCourseIds(),
+        selectedCourseNames: selectedCourseNames,
+        preferredShift: val.preferredShift,
+        employmentStatus: val.employmentStatus,
+        hasPetExperience: val.hasPetExperience,
+        motivation: val.motivation
+      });
+
+      this.submittedStudent.set(created);
+      this.showSuccessModal.set(true);
+
+      // Reseta mantendo padrões amigáveis
+      this.studentForm.reset({
+        city: 'Macaé',
+        preferredShift: 'Tarde (13:00 às 17:00)',
+        employmentStatus: 'Buscando primeira oportunidade na área',
+        hasPetExperience: false,
+        agreeTerms: true
+      });
+      this.selectedCourseIds.set(this.courses.map(c => c.id));
+    } finally {
+      this.isSubmitting.set(false);
+    }
   }
 
   submitVolunteer(): void {

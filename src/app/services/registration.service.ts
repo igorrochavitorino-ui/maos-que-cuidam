@@ -387,6 +387,15 @@ export class RegistrationService {
       }
     });
 
+    // 4. Inscrições de alunos em tempo real
+    this.firebaseService.listenToCollection('alunos', (cloudStudents) => {
+      if (cloudStudents !== null) {
+        this.studentsSignal.set(cloudStudents as StudentRegistration[]);
+        this.saveStudents(cloudStudents as StudentRegistration[]);
+        console.log(`🔥 [Firestore Realtime] Alunos sincronizados em tempo real: ${cloudStudents.length}`);
+      }
+    });
+
     // Carga inicial completa de outras coleções
     this.syncFromFirestore();
   }
@@ -645,7 +654,7 @@ export class RegistrationService {
   }
 
   // --- ALUNOS ---
-  registerStudent(data: Omit<StudentRegistration, 'id' | 'protocol' | 'createdAt' | 'status'>): StudentRegistration {
+  async registerStudent(data: Omit<StudentRegistration, 'id' | 'protocol' | 'createdAt' | 'status'>): Promise<StudentRegistration> {
     const newStudent: StudentRegistration = {
       ...data,
       id: 'std_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -659,7 +668,7 @@ export class RegistrationService {
     this.saveStudents(updated);
 
     // Sincronização em Nuvem (Firestore) & E-mail
-    this.firebaseService.saveDocument('alunos', newStudent.id, newStudent);
+    await this.firebaseService.saveDocument('alunos', newStudent.id, newStudent);
     this.notificationService.sendEmail('template_nova_inscricao', {
       protocol: newStudent.protocol,
       fullName: newStudent.fullName,
