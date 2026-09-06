@@ -655,3 +655,38 @@ html.high-contrast-mode .btn-primary {
 html.high-contrast-mode a {
   color: #00ffff !important;
 }
+
+/* ==========================================================================
+   SUPRESSÃO DO BADGE / FEEDBACK DRAWER DO NETLIFY
+   Garante que nenhum banner flutuante do Netlify fique por cima do site/WhatsApp
+   ========================================================================== */
+netl-drawer,
+netlify-drawer,
+#netlify-drawer,
+.netlify-badge,
+[data-netlify-deploy-id],
+[class*="netlify-drawer"],
+[class*="feedback-widget"],
+iframe[title*="Netlify" i],
+iframe[src*="netlify" i],
+div[id*="netlify" i]:not(#root):not(#app),
+div[class*="netlify" i],
+div[style*="z-index: 2147483647"],
+div[style*="z-index: 1000000"],
+a[href*="netlify.com"][style*="position: fixed"],
+a[href*="netlify.com"][style*="position: absolute"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  z-index: -9999 !important;
+}
+

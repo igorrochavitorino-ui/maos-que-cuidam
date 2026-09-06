@@ -18,9 +18,19 @@
 
   <!-- 🟢 BOTÃO FLUTUANTE DO WHATSAPP COM BALÃO DE ATENDIMENTO -->
   <aside class="floating-whatsapp-wrap" aria-label="Atendimento via WhatsApp">
-    <div class="whatsapp-tooltip animate-fade-in">
-      <span>💬 Dúvidas sobre Cursos ou Adoção? <strong>Fale Conosco!</strong></span>
-    </div>
+    @if (showWhatsappTooltip()) {
+      <div class="whatsapp-tooltip animate-fade-in">
+        <span>💬 Dúvidas sobre Cursos ou Adoção? <strong>Fale Conosco!</strong></span>
+        <button 
+          type="button" 
+          class="whatsapp-tooltip-close" 
+          (click)="dismissTooltip($event)" 
+          title="Fechar mensagem"
+          aria-label="Fechar mensagem de ajuda">
+          ✕
+        </button>
+      </div>
+    }
     <a 
       href="https://wa.me/5522998481112?text=Ol%C3%A1!%20Estava%20navegando%20no%20site%20da%20ONG%20M%C3%A3os%20que%20Cuidam%20e%20gostaria%20de%20tirar%20algumas%20d%C3%BAvidas." 
       target="_blank" 
