@@ -16,6 +16,11 @@
         }
 
         <form (ngSubmit)="onLogin()" class="login-form">
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.82rem; color: #166534; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.1rem;">💡</span>
+            <span>Faça login para acessar a gestão de <strong>Alunos</strong>, <strong>Pets</strong> e as <strong>📊 Visitas ao Site (Live)</strong>.</span>
+          </div>
+
           <div class="form-group">
             <label class="form-label" for="adminEmail">E-mail Corporativo</label>
             <input 
@@ -25,7 +30,7 @@
               (ngModelChange)="loginEmail.set($event)" 
               name="email" 
               required 
-              placeholder="seuemail@maosquecuidam.org.br" 
+              placeholder="admin@maosquecuidam.org.br" 
               class="form-control">
           </div>
 
@@ -43,10 +48,17 @@
           </div>
 
           <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
-            🔒 Entrar na Área do Colaborador
+            🔒 Entrar na Área do Colaborador &raquo;
           </button>
 
-          <div style="margin-top: 1.25rem; text-align: center;">
+          <!-- BOTÃO DE ACESSO RÁPIDO -->
+          <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px dashed #cbd5e1; text-align: center;">
+            <button type="button" class="btn btn-outline-gold btn-sm" style="font-size: 0.78rem; padding: 5px 12px; font-weight: 700;" (click)="loginEmail.set('admin@maosquecuidam.org.br'); loginPassword.set('admin')">
+              👑 Preencher Login Diretoria (admin&#64;maosquecuidam.org.br)
+            </button>
+          </div>
+
+          <div style="margin-top: 1rem; text-align: center;">
             <a routerLink="/" class="btn btn-outline-navy btn-sm" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 600;">
               ← Voltar para a Página Inicial
             </a>
@@ -90,17 +102,23 @@
         </div>
 
         <div class="admin-user-actions">
+          <button class="btn btn-sm" (click)="setView('analytics')" style="background: #10b981; color: #ffffff; font-weight: 800; border: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 8px; cursor: pointer;">
+            <span>📊 Visitas ao Site (Live)</span>
+            <span style="background: #ffffff; color: #065f46; font-size: 0.72rem; padding: 1px 6px; border-radius: 8px; font-weight: 900;">
+              {{ analyticsService.summary().todayTotal }} hoje
+            </span>
+          </button>
           <button class="btn btn-outline-gold btn-sm" (click)="openQrModal('site')" style="border-color: #d49a37; font-weight: 700;">
             📱 QR Code & Cartaz A4
           </button>
-          <button class="btn btn-outline-gold btn-sm" (click)="setView('logs')">
-            📋 Ver Histórico de Acessos
+          <button class="btn btn-outline-navy btn-sm" (click)="setView('logs')">
+            📋 Logins da Equipe
           </button>
           <button class="btn btn-outline-navy btn-sm" (click)="openPasswordModal(authService.currentUser()!)">
-            🔑 Trocar Minha Senha
+            🔑 Trocar Senha
           </button>
           <button class="btn btn-outline-navy btn-sm btn-logout" (click)="onLogout()">
-            🚪 Sair do Painel
+            🚪 Sair
           </button>
         </div>
       </div>
@@ -117,6 +135,19 @@
           <div class="stat-info">
             <span class="stat-number">{{ registrationService.totalStudents() }}</span>
             <span class="stat-label">Alunos Inscritos</span>
+          </div>
+        </div>
+
+        <!-- 📊 CARD EM DESTAQUE VERDE: VISITAS AO SITE -->
+        <div class="stat-card card-modern stat-analytics" (click)="setView('analytics')" style="border: 2.5px solid #10b981; background: #f0fdf4; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);">
+          <div class="stat-icon" style="background: #dcfce7; color: #16a34a; font-size: 1.6rem;">📊</div>
+          <div class="stat-info">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="stat-number" style="color: #065f46; font-size: 2rem; font-weight: 900;">{{ analyticsService.summary().todayTotal }}</span>
+              <span class="badge" style="background: #10b981; color: #fff; font-size: 0.72rem; padding: 2px 7px; border-radius: 8px; font-weight: 800;">Live</span>
+            </div>
+            <span class="stat-label" style="font-weight: 800; color: #065f46;">Visitas ao Site Hoje</span>
+            <small style="color: #059669; font-weight: 700; font-size: 0.76rem; display: block; margin-top: 2px;">{{ analyticsService.summary().weekTotal }} acessos nesta semana</small>
           </div>
         </div>
 
@@ -151,14 +182,6 @@
             <span class="stat-label">Histórico de Logins</span>
           </div>
         </div>
-
-        <div class="stat-card card-modern stat-analytics" (click)="setView('analytics')" style="border-left: 4px solid #10b981; cursor: pointer;">
-          <div class="stat-icon">📊</div>
-          <div class="stat-info">
-            <span class="stat-number">{{ analyticsService.summary().todayTotal }}</span>
-            <span class="stat-label">Visitas Hoje ({{ analyticsService.summary().weekTotal }} na semana)</span>
-          </div>
-        </div>
       </div>
 
       <!-- BARRA DE NAVEGAÇÃO ENTRE ABAS -->
@@ -169,6 +192,18 @@
             [class.active]="activeView() === 'students'"
             (click)="setView('students')">
             <span>🎓 Alunos ({{ registrationService.totalStudents() }})</span>
+          </button>
+
+          <!-- 📊 ABA 2: VISITAS AO SITE (EM DESTAQUE VERDE) -->
+          <button 
+            class="admin-tab-btn" 
+            [class.active]="activeView() === 'analytics'"
+            (click)="setView('analytics')"
+            style="border: 2px solid #10b981; background: #f0fdf4; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);">
+            <span style="color: #065f46; font-weight: 900; font-size: 0.92rem;">📊 Visitas ao Site (Live)</span>
+            <span style="background: #10b981; color: #fff; font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; font-weight: 800; margin-left: 6px;">
+              {{ analyticsService.summary().todayTotal }} hoje
+            </span>
           </button>
 
           <button 
@@ -206,16 +241,7 @@
             class="admin-tab-btn" 
             [class.active]="activeView() === 'logs'"
             (click)="setView('logs')">
-            <span>📋 Logins & Segurança ({{ authService.accessLogs().length }})</span>
-          </button>
-
-          <button 
-            class="admin-tab-btn" 
-            [class.active]="activeView() === 'analytics'"
-            (click)="setView('analytics')"
-            style="border: 1.5px solid #10b981; background: #f0fdf4;">
-            <span style="color: #065f46; font-weight: 700;">📊 Visitas ao Site ({{ analyticsService.summary().todayTotal }} hoje)</span>
-            <span style="background: #10b981; color: #fff; font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; font-weight: 800; margin-left: 6px;">Live</span>
+            <span>📋 Logins da Equipe ({{ authService.accessLogs().length }})</span>
           </button>
         </div>
 
