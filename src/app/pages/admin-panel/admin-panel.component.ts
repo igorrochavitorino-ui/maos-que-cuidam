@@ -510,18 +510,54 @@ export class AdminPanelComponent {
     }
   }
 
+  private compressPosterImage(file: File, callback: (base64: string) => void): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_DIM = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_DIM) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          }
+        } else {
+          if (height > MAX_DIM) {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          callback(canvas.toDataURL('image/jpeg', 0.75));
+        } else {
+          callback(e.target.result);
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   onPosterFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
       this.posterFileName.set(file.name);
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.editAdPosterUrl.set(e.target.result);
-      };
-      reader.readAsDataURL(file);
+      this.compressPosterImage(file, (compressed) => {
+        this.editAdPosterUrl.set(compressed);
+      });
     }
   }
+
 
   setSampleVideo(videoUrl: string, sampleTitle?: string, sampleSponsor?: string, sampleBadge?: string, samplePoster?: string, sampleClickUrl?: string, sampleDesc?: string): void {
     this.editAdVideoUrl.set(videoUrl);
