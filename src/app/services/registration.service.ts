@@ -95,12 +95,12 @@ export class RegistrationService {
         {
           title: 'Módulo 1: Introdução, História & Mercado Profissional',
           topics: [
-            '1. Introdução ao banho e tosa',
+            '1. Introdução ao embelezamento e higiene animal',
             '2. Postura Profissional',
-            '3. Origem do banho e tosa',
+            '3. Origem e evolução do setor pet',
             '4. Surgimento da Profissão',
             '5. Lei que trata os maus tratos no Brasil',
-            '6. Mercado Pet 2025'
+            '6. Mercado Pet Atual'
           ]
         },
         {
@@ -108,28 +108,28 @@ export class RegistrationService {
           topics: [
             '7. Ética, deveres e obrigações',
             '8. Responsabilidade civil',
-            '9. Anatomia Simples',
-            '10. Unhas',
-            '11. Orelhas',
-            '12. Raças e tipos de pelagens'
+            '9. Anatomia Básica',
+            '10. Unhas e almofadas plantares',
+            '11. Orelhas e higienização auricular',
+            '12. Tipos de pelagens e suas particularidades'
           ]
         },
         {
           title: 'Módulo 3: Equipamentos, Segurança & Saúde Pet',
           topics: [
-            '13. Ferramentas e equipamentos',
-            '14. Diferença entre as tesouras',
-            '15. Acidentes e segurança',
-            '16. Parasitas',
-            '17. Anamnese'
+            '13. Ferramentas, sopradores e secadores',
+            '14. Máquinas, lâminas e adaptadores',
+            '15. Acidentes e protocolos de segurança',
+            '16. Parasitas e saúde da pele',
+            '17. Anamnese e triagem inicial'
           ]
         },
         {
-          title: 'Módulo 4: Prática Completa de Banho & Tosa',
+          title: 'Módulo 4: Prática Completa de Banho & Higienização',
           topics: [
-            '18. Banho',
-            '19. Tosa higiênica',
-            '20. Tosa'
+            '18. Técnicas de banho e hidratação',
+            '19. Tosa higiênica e desvelo de áreas sensíveis',
+            '20. Secagem, escovação e finalização profissional'
           ]
         }
       ]
@@ -138,8 +138,8 @@ export class RegistrationService {
       id: 'curso-tosa-comercial-tesoura',
       title: 'Estética Animal',
       tagline: 'Eleve o padrão do seu trabalho com tosas modernas, tosa bebê e acabamento perfeito.',
-      shortDescription: 'Aprenda tosa higiênica, tosa padrão da máquina, tosa bebê em Spitz e Poodle, além do domínio de tesouras retas, curvas e tubarão.',
-      fullDescription: 'Capacitação prática avançada para quem deseja atuar no mercado de trabalho ou abrir seu próprio negócio de banho e tosa, priorizando estética e conforto ao animal.',
+      shortDescription: 'Aprenda tosa higiênica, tosa padrão da máquina, tosa bebê e estilos comerciais para diferentes tipos de pelagem.',
+      fullDescription: 'Capacitação prática avançada para quem deseja atuar no mercado de trabalho ou abrir seu próprio negócio de estética animal, priorizando beleza, conforto e bem-estar ao animal.',
       durationHours: 8,
       durationWeeks: 1,
       modality: 'Presencial Prático',
@@ -148,25 +148,41 @@ export class RegistrationService {
       prerequisites: 'Curso básico de embelezamento e higiene ou experiência prévia comprovada na área.',
       certificateIncluded: true,
       maxStudentsPerClass: 10,
-      icon: 'scissors',
+      icon: 'sparkles',
       badge: 'Alta Empregabilidade',
       highlighted: true,
       modules: [
         {
-          title: 'Módulo 1: Equipamentos e Afiação',
-          topics: ['Tipos de lâminas (10, 7F, 4F, etc.) e manutenção de máquinas', 'Tesouras retas, curvas, desbastadeiras e tubarão', 'Ergonomia do tosador']
+          title: 'Módulo 1: Equipamentos e Máquinas Profissionais',
+          topics: [
+            'Tipos de lâminas (10, 7F, 4F, etc.) e manutenção de máquinas',
+            'Uso correto de adaptadores e pentes de altura',
+            'Ergonomia e segurança do profissional'
+          ]
         },
         {
           title: 'Módulo 2: Tosa Higiênica Completa',
-          topics: ['Região íntima, perianal, almofadas plantares e abdômen', 'Proteção de áreas sensíveis', 'Padronização rápida e segura']
+          topics: [
+            'Região íntima, perianal, almofadas plantares e abdômen',
+            'Proteção de áreas sensíveis',
+            'Padronização rápida e segura'
+          ]
         },
         {
           title: 'Módulo 3: Tosas Comerciais e Tosa Bebê',
-          topics: ['Tosa bebê em Shih Tzu, Lhasa Apso e Yorkshire', 'Desenho de rostos redondos e orelhas modeladas', 'Tosa em cães de pelagem dupla (Spitz/Lulu)']
+          topics: [
+            'Tosa bebê comercial e padronização estética',
+            'Desenho de rostos redondos e orelhas modeladas',
+            'Manejo e cuidados em pelagens duplas e pelagens longas'
+          ]
         },
         {
-          title: 'Módulo 4: Escultura e Acabamento na Tesoura',
-          topics: ['Alinhamento de patas e saias na tesoura reta', 'Transições perfeitas com tesoura semi-dentada', 'Simetria e velocidade com perfeição']
+          title: 'Módulo 4: Técnicas de Acabamento e Estilização',
+          topics: [
+            'Alinhamento de patas, corpo e saias',
+            'Transições perfeitas e uniformidade na pelagem',
+            'Simetria, velocidade e acabamento de alto padrão'
+          ]
         }
       ]
     },
@@ -1278,7 +1294,7 @@ export class RegistrationService {
         preferredShift: 'Sábados (08h às 17h)',
         employmentStatus: 'Autônomo',
         hasPetExperience: true,
-        motivation: 'Já trabalho como banhista e quero me qualificar na tesoura para aumentar minha renda e abrir meu próprio espaço.',
+        motivation: 'Já trabalho como banhista e quero me qualificar em estética animal para aumentar minha renda e abrir meu próprio espaço.',
         status: 'Pendente',
         createdAt: '2026-08-30T10:15:00.000Z'
       },

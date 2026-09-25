@@ -36,7 +36,7 @@ export class HomeComponent {
     authorName: ['', [Validators.required, Validators.minLength(3)]],
     userType: ['Aluno(a) Formado(a)', Validators.required],
     currentRole: ['', [Validators.required, Validators.minLength(3)]],
-    courseCompleted: ['Especialização em Tosa Comercial & Tesoura', Validators.required],
+    courseCompleted: ['Estética Animal', Validators.required],
     story: ['', [Validators.required, Validators.minLength(15)]],
     rating: [5, Validators.required],
     avatarUrl: ['']
@@ -82,7 +82,7 @@ export class HomeComponent {
   openReviewModal(): void {
     this.reviewForm.reset({
       userType: 'Aluno(a) Formado(a)',
-      courseCompleted: 'Especialização em Tosa Comercial & Tesoura',
+      courseCompleted: 'Estética Animal',
       rating: 5
     });
     this.selectedRating.set(5);
