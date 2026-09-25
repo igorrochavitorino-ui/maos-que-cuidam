@@ -76,7 +76,7 @@ export class RegistrationService {
   private readonly coursesList: Course[] = [
     {
       id: 'curso-banho-higienizacao',
-      title: 'Formação Básica em Banho & Higienização Pet',
+      title: 'Embelezamento e Higiene',
       tagline: 'O ponto de partida essencial para cuidar de cães e gatos com amor, técnica e segurança.',
       shortDescription: 'Domine técnicas de manejo positivo sem estresse, secagem correta, corte de unhas, limpeza auricular e produtos adequados para cada pelagem.',
       fullDescription: 'Este curso prepara o aluno para os fundamentos da rotina de higienização pet, focando no bem-estar animal, redução de estresse e domínio técnico das principais etapas do banho comercial e de abrigo.',
@@ -136,7 +136,7 @@ export class RegistrationService {
     },
     {
       id: 'curso-tosa-comercial-tesoura',
-      title: 'Especialização em Tosa Comercial',
+      title: 'Estética Animal',
       tagline: 'Eleve o padrão do seu trabalho com tosas modernas, tosa bebê e acabamento perfeito.',
       shortDescription: 'Aprenda tosa higiênica, tosa padrão da máquina, tosa bebê em Spitz e Poodle, além do domínio de tesouras retas, curvas e tubarão.',
       fullDescription: 'Capacitação prática avançada para quem deseja atuar no mercado de trabalho ou abrir seu próprio negócio de banho e tosa, priorizando estética e conforto ao animal.',
@@ -145,7 +145,7 @@ export class RegistrationService {
       modality: 'Presencial Prático',
       level: 'Intermediário',
       scheduleOptions: ['Tarde (13:00 às 17:00)', 'Noite (18:00 às 22:00)', 'Sábados (08h às 15h)'],
-      prerequisites: 'Curso básico de banho e higienização ou experiência prévia comprovada na área.',
+      prerequisites: 'Curso básico de embelezamento e higiene ou experiência prévia comprovada na área.',
       certificateIncluded: true,
       maxStudentsPerClass: 10,
       icon: 'scissors',
@@ -267,7 +267,7 @@ export class RegistrationService {
       {
         id: 'dep-1',
         authorName: 'Camila Rodrigues',
-        courseCompleted: 'Especialização em Tosa Comercial & Tesoura',
+        courseCompleted: 'Estética Animal',
         year: 2025,
         avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
         story: 'A ONG Mãos que Cuidam mudou o rumo da minha vida. Eu morava no bairro Barra em Macaé e estava desempregada há quase um ano. Os professores me ensinaram com uma paciência incrível. Hoje trabalho com carteira assinada em uma grande clínica pet nos Cavaleiros e sustento minha família com dignidade!',
@@ -277,7 +277,7 @@ export class RegistrationService {
       {
         id: 'dep-2',
         authorName: 'Marcos Vinícius Andrade',
-        courseCompleted: 'Formação Básica em Banho & Empreendedorismo Pet',
+        courseCompleted: 'Embelezamento e Higiene',
         year: 2025,
         avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
         story: 'O respeito e o amor que a ONG ensina em relação aos animais é algo único. Aprendi a lidar com cães assustados sem usar força ou sedação. Com o apoio da equipe, montei meu Pet Móvel atendendo os bairros Imbetiba, Glória e Parque Aeroporto!',
@@ -1255,7 +1255,7 @@ export class RegistrationService {
         city: 'São Paulo',
         neighborhood: 'Vila Mariana',
         courseId: 'curso-banho-higienizacao',
-        courseName: 'Formação Básica em Banho & Higienização Pet',
+        courseName: 'Embelezamento e Higiene',
         preferredShift: 'Manhã (08h às 12h)',
         employmentStatus: 'Buscando recolocação profissional',
         hasPetExperience: true,
@@ -1274,7 +1274,7 @@ export class RegistrationService {
         city: 'São Paulo',
         neighborhood: 'Tatuapé',
         courseId: 'curso-tosa-comercial-tesoura',
-        courseName: 'Especialização em Tosa Comercial & Técnicas na Tesoura',
+        courseName: 'Estética Animal',
         preferredShift: 'Sábados (08h às 17h)',
         employmentStatus: 'Autônomo',
         hasPetExperience: true,

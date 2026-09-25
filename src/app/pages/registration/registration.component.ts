@@ -177,7 +177,7 @@ export class RegistrationComponent implements OnInit {
 
       let formattedCourseName: string;
       if (this.isAllCoursesSelected()) {
-        formattedCourseName = '⭐ Formação Completa em Todos os 4 Cursos (Banho & Tosa + Cuidados + Empreendedorismo)';
+        formattedCourseName = '⭐ Formação Completa em Todos os 4 Cursos (Embelezamento e Higiene + Estética Animal + Cuidados + Empreendedorismo)';
       } else if (selectedCourseNames.length > 1) {
         formattedCourseName = selectedCourseNames.join(' + ');
       } else {

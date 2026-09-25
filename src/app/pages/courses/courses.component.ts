@@ -32,7 +32,7 @@ export class CoursesComponent {
   reviewForm: FormGroup = this.fb.group({
     authorName: ['', [Validators.required, Validators.minLength(3)]],
     currentRole: ['', [Validators.required, Validators.minLength(3)]],
-    courseCompleted: ['Especialização em Tosa Comercial', Validators.required],
+    courseCompleted: ['Estética Animal', Validators.required],
     story: ['', [Validators.required, Validators.minLength(15)]],
     rating: [5, Validators.required],
     avatarUrl: ['']
