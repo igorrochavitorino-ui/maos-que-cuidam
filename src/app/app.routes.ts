@@ -12,7 +12,7 @@ import { ConsultComponent } from './pages/consult/consult.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Início | ONG Mãos que Cuidam' },
-  { path: 'cursos', component: CoursesComponent, title: 'Cursos de Banho e Tosa | ONG Mãos que Cuidam' },
+  { path: 'cursos', component: CoursesComponent, title: 'Cursos de Embelezamento e Estética Animal | ONG Mãos que Cuidam' },
   { path: 'adocao', component: AdoptionComponent, title: 'Adoção & Doação de Animais | ONG Mãos que Cuidam' },
   { path: 'adotar', redirectTo: 'adocao' },
   { path: 'transformacoes', component: GalleryComponent, title: 'Galeria & Banho Gratuito | ONG Mãos que Cuidam' },
