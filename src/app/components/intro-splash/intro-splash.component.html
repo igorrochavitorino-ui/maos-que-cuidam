@@ -12,8 +12,18 @@
     (ended)="onVideoEnded()">
   </video>
 
-  <!-- Botão de Ativar Som -->
-  <button class="sound-btn" (click)="toggleSound($event)" type="button" [class.sound-on]="!isMuted()">
+  <!-- Botão Central de Play caso o Celular/Brave pause o autoplay -->
+  <div *ngIf="isPaused() && !isFadingOut()" class="play-overlay" (click)="playVideo($event)">
+    <div class="play-pulse-circle">
+      <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="6 3 20 12 6 21 6 3"/>
+      </svg>
+    </div>
+    <span class="play-text">Toque para Iniciar com Som</span>
+  </div>
+
+  <!-- Botão de Ativar Som (quando estiver rodando) -->
+  <button *ngIf="!isPaused()" class="sound-btn" (click)="toggleSound($event)" type="button" [class.sound-on]="!isMuted()">
     <span *ngIf="isMuted()">🔇 Toque p/ Ativar Som</span>
     <span *ngIf="!isMuted()">🔊 Som Ativado</span>
   </button>
