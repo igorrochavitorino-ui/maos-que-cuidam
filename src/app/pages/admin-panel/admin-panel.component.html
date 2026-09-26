@@ -243,6 +243,14 @@
             (click)="setView('logs')">
             <span>📋 Logins da Equipe ({{ authService.accessLogs().length }})</span>
           </button>
+
+          <button 
+            class="admin-tab-btn" 
+            [class.active]="activeView() === 'courses'"
+            (click)="setView('courses')"
+            style="border-left: 3px solid #d4af37;">
+            <span>📚 Gerenciar Cursos ({{ registrationService.courses().length }})</span>
+          </button>
         </div>
 
         <!-- FILTROS E EXPORTAÇÃO -->
@@ -1238,6 +1246,95 @@
           </div>
         </div>
       }
+
+      <!-- ================= ABA 8: GERENCIAMENTO DE CURSOS E GRADE CURRICULAR ================= -->
+      @if (activeView() === 'courses') {
+        <div class="courses-mgmt-container animate-fade-in">
+          <!-- CABEÇALHO DA GESTÃO DE CURSOS -->
+          <div class="card-modern courses-mgmt-header">
+            <div class="courses-header-info">
+              <div class="header-badge-row">
+                <span class="badge-gold-pill">📚 CURRÍCULO & CAPACITAÇÃO</span>
+                <span class="badge-status-pill">🔥 Sincronização em Nuvem Ativa</span>
+              </div>
+              <h3 class="courses-mgmt-title">Gestão de Cursos e Grade Curricular</h3>
+              <p class="courses-mgmt-subtitle">
+                Altere títulos, descrições, carga horária, modalidades, módulos e tópicos diretamente pelo navegador. 
+                Todas as alterações são salvas automaticamente no <strong>Firebase Firestore</strong> e refletidas em tempo real em todas as páginas do site.
+              </p>
+            </div>
+            <div class="courses-header-actions">
+              <button 
+                type="button" 
+                class="btn btn-outline-navy" 
+                (click)="resetAllCoursesToDefault()"
+                title="Restaurar todos os cursos para a configuração padrão original">
+                <span>🔄 Restaurar Todos Padrão</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- GRID DE CURSOS -->
+          <div class="courses-mgmt-grid">
+            @for (course of courses; track course.id) {
+              <div class="card-modern course-mgmt-card">
+                <div class="course-card-top">
+                  <div class="course-badge-box">
+                    <span class="badge badge-gold">{{ course.badge || 'Capacitação' }}</span>
+                    <span class="course-id-tag">ID: {{ course.id }}</span>
+                  </div>
+                  <h4 class="course-card-title">{{ course.title }}</h4>
+                  <p class="course-card-tagline">{{ course.tagline }}</p>
+                </div>
+
+                <div class="course-card-details">
+                  <div class="course-info-pills">
+                    <span class="course-pill">⏱️ <strong>{{ course.durationHours }}h</strong></span>
+                    <span class="course-pill">📅 <strong>{{ course.durationWeeks }} semanas</strong></span>
+                    <span class="course-pill">📍 <strong>{{ course.modality }}</strong></span>
+                    <span class="course-pill">📊 <strong>{{ course.level }}</strong></span>
+                  </div>
+
+                  <p class="course-card-desc">
+                    {{ course.shortDescription }}
+                  </p>
+
+                  <div class="course-modules-summary">
+                    <div class="modules-summary-header">
+                      <span class="summary-title">📖 Grade Curricular ({{ course.modules.length }} Módulos):</span>
+                    </div>
+                    <div class="modules-mini-list">
+                      @for (mod of course.modules; track mod.title; let mIdx = $index) {
+                        <div class="module-mini-item">
+                          <span class="mod-num">{{ mIdx + 1 }}</span>
+                          <span class="mod-title">{{ mod.title }}</span>
+                          <span class="mod-topics-count">({{ mod.topics.length }} tópicos)</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="course-card-actions">
+                  <button 
+                    type="button" 
+                    class="btn btn-primary btn-edit-course" 
+                    (click)="openEditCourseModal(course)">
+                    <span>✏️ Editar Curso & Grade</span>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-danger btn-reset-course" 
+                    (click)="resetCourseToDefault(course.id, course.title)"
+                    title="Restaurar este curso para a grade padrão original">
+                    <span>🔄 Restaurar</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
     </div>
   </section>
 
@@ -2091,6 +2188,255 @@
               <span>🖨️ Imprimir Cartaz A4</span>
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ================= MODAL: EDITAR CURSO & GRADE CURRICULAR ================= -->
+  @if (showEditCourseModal() && editingCourse()) {
+    <div class="modal-backdrop" (click)="closeEditCourseModal()">
+      <div class="modal-box course-edit-modal-lux animate-fade-in" (click)="$event.stopPropagation()">
+        <button class="modal-close-btn" (click)="closeEditCourseModal()" aria-label="Fechar">✕</button>
+
+        <div class="modal-header">
+          <div class="header-badge-row">
+            <span class="badge badge-gold">{{ courseEditBadge() || 'Capacitação Profissional' }}</span>
+            <span class="badge-status-pill">✏️ Modo Edição de Grade</span>
+          </div>
+          <h3 class="modal-course-title">Editar Curso: {{ editingCourse()?.title }}</h3>
+          <p class="modal-course-tagline">
+            Personalize as informações, requisitos e a grade modular deste curso. As alterações entram em vigor no site e no formulário de inscrição imediatamente.
+          </p>
+        </div>
+
+        <div class="modal-body modal-scrollable-body">
+          <!-- SEÇÃO 1: INFORMAÇÕES BÁSICAS -->
+          <div class="form-section-card">
+            <div class="section-card-title">
+              <span>1</span> Informações Principais do Curso
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Nome Oficial do Curso <span class="required">*</span></label>
+              <input 
+                type="text" 
+                [ngModel]="courseEditTitle()" 
+                (ngModelChange)="courseEditTitle.set($event)" 
+                placeholder="Ex: Embelezamento e Higiene" 
+                class="form-control font-weight-bold">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Slogan / Chamada de Destaque (Tagline)</label>
+              <input 
+                type="text" 
+                [ngModel]="courseEditTagline()" 
+                (ngModelChange)="courseEditTagline.set($event)" 
+                placeholder="Ex: O ponto de partida essencial para cuidar de cães e gatos com amor..." 
+                class="form-control">
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Selo de Destaque (Badge)</label>
+                <input 
+                  type="text" 
+                  [ngModel]="courseEditBadge()" 
+                  (ngModelChange)="courseEditBadge.set($event)" 
+                  placeholder="Ex: Mais Procurado, Alta Empregabilidade" 
+                  class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Pré-requisitos de Matrícula</label>
+                <input 
+                  type="text" 
+                  [ngModel]="courseEditPrerequisites()" 
+                  (ngModelChange)="courseEditPrerequisites.set($event)" 
+                  placeholder="Ex: Idade mínima de 16 anos..." 
+                  class="form-control">
+              </div>
+            </div>
+          </div>
+
+          <!-- SEÇÃO 2: FORMATO & CARGA HORÁRIA -->
+          <div class="form-section-card">
+            <div class="section-card-title">
+              <span>2</span> Carga Horária, Nível e Formato
+            </div>
+
+            <div class="grid-4-cols">
+              <div class="form-group">
+                <label class="form-label">Carga Horária (Horas)</label>
+                <input 
+                  type="number" 
+                  [ngModel]="courseEditDurationHours()" 
+                  (ngModelChange)="courseEditDurationHours.set($event)" 
+                  class="form-control" 
+                  min="1">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Duração (Semanas)</label>
+                <input 
+                  type="number" 
+                  [ngModel]="courseEditDurationWeeks()" 
+                  (ngModelChange)="courseEditDurationWeeks.set($event)" 
+                  class="form-control" 
+                  min="1">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Modalidade</label>
+                <select 
+                  [ngModel]="courseEditModality()" 
+                  (ngModelChange)="courseEditModality.set($event)" 
+                  class="form-select">
+                  <option value="Presencial Prático">Presencial Prático</option>
+                  <option value="Workshop">Workshop</option>
+                  <option value="Intensivo">Intensivo</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Nível de Dificuldade</label>
+                <select 
+                  [ngModel]="courseEditLevel()" 
+                  (ngModelChange)="courseEditLevel.set($event)" 
+                  class="form-select">
+                  <option value="Iniciante">Iniciante</option>
+                  <option value="Intermediário">Intermediário</option>
+                  <option value="Avançado">Avançado</option>
+                  <option value="Todos os Níveis">Todos os Níveis</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEÇÃO 3: DESCRIÇÕES DETALHADAS -->
+          <div class="form-section-card">
+            <div class="section-card-title">
+              <span>3</span> Descrições do Curso
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descrição Resumida (Exibida nos Cards)</label>
+              <textarea 
+                [ngModel]="courseEditShortDesc()" 
+                (ngModelChange)="courseEditShortDesc.set($event)" 
+                rows="2" 
+                class="form-control" 
+                placeholder="Breve resumo das principais competências..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Descrição Completa</label>
+              <textarea 
+                [ngModel]="courseEditFullDesc()" 
+                (ngModelChange)="courseEditFullDesc.set($event)" 
+                rows="3" 
+                class="form-control" 
+                placeholder="Visão abrangente sobre a proposta do curso..."></textarea>
+            </div>
+          </div>
+
+          <!-- SEÇÃO 4: GRADE CURRICULAR INTERATIVA (MÓDULOS & TÓPICOS) -->
+          <div class="form-section-card">
+            <div class="section-card-title-between">
+              <div class="section-card-title" style="margin: 0;">
+                <span>4</span> Grade Curricular Modular ({{ courseEditModules().length }} Módulos)
+              </div>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-outline-gold" 
+                (click)="addModuleToEditingCourse()">
+                <span>➕ Adicionar Novo Módulo</span>
+              </button>
+            </div>
+
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0 0 1rem 0;">
+              Adicione ou remova módulos e tópicos. Cada tópico é salvo e exibido no modal de detalhes do curso e em todo o site.
+            </p>
+
+            <div class="course-modules-editor-list">
+              @for (mod of courseEditModules(); track $index; let mIdx = $index) {
+                <div class="module-edit-box">
+                  <div class="module-edit-header">
+                    <div class="module-index-badge">Módulo {{ mIdx + 1 }}</div>
+                    <input 
+                      type="text" 
+                      [ngModel]="mod.title" 
+                      (ngModelChange)="updateModuleTitle(mIdx, $event)" 
+                      placeholder="Ex: Módulo {{ mIdx + 1 }}: Título do Módulo" 
+                      class="form-control module-title-input">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm btn-icon-danger" 
+                      (click)="removeModuleFromEditingCourse(mIdx)" 
+                      title="Excluir este módulo">
+                      🗑️
+                    </button>
+                  </div>
+
+                  <div class="module-topics-list">
+                    <label class="topics-label">Tópicos e Aulas deste Módulo:</label>
+                    @for (topic of mod.topics; track $index; let tIdx = $index) {
+                      <div class="topic-edit-row">
+                        <span class="topic-bullet">•</span>
+                        <input 
+                          type="text" 
+                          [ngModel]="topic" 
+                          (ngModelChange)="updateTopicText(mIdx, tIdx, $event)" 
+                          placeholder="Conteúdo do tópico..." 
+                          class="form-control topic-input">
+                        <button 
+                          type="button" 
+                          class="btn-remove-topic" 
+                          (click)="removeTopicFromModule(mIdx, tIdx)" 
+                          title="Remover este tópico">
+                          ✕
+                        </button>
+                      </div>
+                    }
+
+                    <button 
+                      type="button" 
+                      class="btn btn-sm btn-add-topic" 
+                      (click)="addTopicToModule(mIdx)">
+                      <span>➕ Adicionar Tópico ao Módulo {{ mIdx + 1 }}</span>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div style="text-align: center; margin-top: 1rem;">
+              <button 
+                type="button" 
+                class="btn btn-outline-navy" 
+                (click)="addModuleToEditingCourse()"
+                style="font-size: 0.88rem; font-weight: 700;">
+                <span>➕ Adicionar Mais um Módulo à Grade</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 1rem; align-items: center;">
+          <button 
+            type="button" 
+            class="btn btn-outline-navy" 
+            (click)="closeEditCourseModal()">
+            Cancelar
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-primary" 
+            (click)="saveCourseChanges()" 
+            style="padding: 10px 24px; font-weight: 700; font-size: 0.95rem;">
+            <span>💾 Salvar Alterações na Nuvem & Site</span>
+          </button>
         </div>
       </div>
     </div>

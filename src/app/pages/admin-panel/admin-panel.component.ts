@@ -14,6 +14,7 @@ import {
   AdminUser, 
   AdminRole, 
   Course, 
+  CourseModule,
   VideoAd 
 } from '../../models/registration.model';
 
@@ -37,7 +38,9 @@ export class AdminPanelComponent {
   analyticsService = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
 
-  courses: Course[] = this.registrationService.getCourses();
+  get courses(): Course[] {
+    return this.registrationService.getCourses();
+  }
   readonly VAGAS_TITULARES_LIMITE = 15; // 15 vagas titulares por turma
 
   // Estados de Login
@@ -45,12 +48,28 @@ export class AdminPanelComponent {
   loginPassword = signal<string>('');
   loginError = signal<string | null>(null);
 
-  // Visualização ativa (inclui 'analytics' para tráfego do site)
-  activeView = signal<'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs' | 'analytics'>('students');
+  // Visualização ativa (inclui 'analytics' para tráfego do site e 'courses' para gerenciar grade)
+  activeView = signal<'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs' | 'analytics' | 'courses'>('students');
+
+  // Gerenciamento de Cursos & Grade Curricular
+  showEditCourseModal = signal<boolean>(false);
+  editingCourse = signal<Course | null>(null);
+
+  courseEditTitle = signal<string>('');
+  courseEditTagline = signal<string>('');
+  courseEditShortDesc = signal<string>('');
+  courseEditFullDesc = signal<string>('');
+  courseEditDurationHours = signal<number>(60);
+  courseEditDurationWeeks = signal<number>(4);
+  courseEditModality = signal<'Presencial Prático' | 'Intensivo' | 'Workshop'>('Presencial Prático');
+  courseEditLevel = signal<'Iniciante' | 'Intermediário' | 'Avançado' | 'Todos os Níveis'>('Iniciante');
+  courseEditPrerequisites = signal<string>('');
+  courseEditBadge = signal<string>('');
+  courseEditModules = signal<CourseModule[]>([]);
 
   constructor() {
     this.route.queryParams.subscribe(params => {
-      if (params['tab'] && ['students', 'volunteers', 'pets', 'videoAds', 'staff', 'logs', 'analytics'].includes(params['tab'])) {
+      if (params['tab'] && ['students', 'volunteers', 'pets', 'videoAds', 'staff', 'logs', 'analytics', 'courses'].includes(params['tab'])) {
         this.setView(params['tab'] as any);
       }
     });
@@ -271,7 +290,7 @@ export class AdminPanelComponent {
     this.showToast('Sessão encerrada com sucesso.');
   }
 
-  setView(view: 'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs' | 'analytics'): void {
+  setView(view: 'students' | 'volunteers' | 'pets' | 'videoAds' | 'staff' | 'logs' | 'analytics' | 'courses'): void {
     this.activeView.set(view);
     this.searchQuery.set('');
     this.statusFilter.set('all');
@@ -828,6 +847,127 @@ export class AdminPanelComponent {
   openQrModal(type: 'site' | 'cadastro' = 'site'): void {
     this.qrType.set(type);
     this.showQrModal.set(true);
+  }
+
+  // --- GESTÃO DE CURSOS & GRADE CURRICULAR ---
+  openEditCourseModal(course: Course): void {
+    this.editingCourse.set(course);
+    this.courseEditTitle.set(course.title);
+    this.courseEditTagline.set(course.tagline || '');
+    this.courseEditShortDesc.set(course.shortDescription || '');
+    this.courseEditFullDesc.set(course.fullDescription || '');
+    this.courseEditDurationHours.set(course.durationHours || 40);
+    this.courseEditDurationWeeks.set(course.durationWeeks || 4);
+    this.courseEditModality.set(course.modality || 'Presencial Prático');
+    this.courseEditLevel.set(course.level || 'Iniciante');
+    this.courseEditPrerequisites.set(course.prerequisites || '');
+    this.courseEditBadge.set(course.badge || '');
+    const clonedModules: CourseModule[] = (course.modules || []).map(m => ({
+      title: m.title,
+      topics: [...(m.topics || [])]
+    }));
+    this.courseEditModules.set(clonedModules);
+    this.showEditCourseModal.set(true);
+  }
+
+  closeEditCourseModal(): void {
+    this.showEditCourseModal.set(false);
+    this.editingCourse.set(null);
+  }
+
+  addModuleToEditingCourse(): void {
+    const current = this.courseEditModules();
+    const newModuleNum = current.length + 1;
+    this.courseEditModules.set([
+      ...current,
+      {
+        title: `Módulo ${newModuleNum}: Novo Módulo`,
+        topics: ['1. Tópico inicial deste módulo']
+      }
+    ]);
+  }
+
+  removeModuleFromEditingCourse(modIndex: number): void {
+    if (confirm('Tem certeza que deseja remover este módulo e todos os seus tópicos?')) {
+      const current = this.courseEditModules();
+      this.courseEditModules.set(current.filter((_, idx) => idx !== modIndex));
+    }
+  }
+
+  updateModuleTitle(modIndex: number, newTitle: string): void {
+    const current = this.courseEditModules();
+    if (current[modIndex]) {
+      current[modIndex].title = newTitle;
+      this.courseEditModules.set([...current]);
+    }
+  }
+
+  addTopicToModule(modIndex: number): void {
+    const current = this.courseEditModules();
+    if (current[modIndex]) {
+      const nextNum = current[modIndex].topics.length + 1;
+      current[modIndex].topics.push(`${nextNum}. Novo Tópico`);
+      this.courseEditModules.set([...current]);
+    }
+  }
+
+  removeTopicFromModule(modIndex: number, topicIndex: number): void {
+    const current = this.courseEditModules();
+    if (current[modIndex]) {
+      current[modIndex].topics.splice(topicIndex, 1);
+      this.courseEditModules.set([...current]);
+    }
+  }
+
+  updateTopicText(modIndex: number, topicIndex: number, text: string): void {
+    const current = this.courseEditModules();
+    if (current[modIndex] && current[modIndex].topics[topicIndex] !== undefined) {
+      current[modIndex].topics[topicIndex] = text;
+      this.courseEditModules.set([...current]);
+    }
+  }
+
+  saveCourseChanges(): void {
+    const course = this.editingCourse();
+    if (!course) return;
+
+    const title = this.courseEditTitle().trim();
+    if (!title) {
+      alert('O título do curso não pode ficar em branco.');
+      return;
+    }
+
+    const updatedData: Partial<Course> = {
+      title,
+      tagline: this.courseEditTagline().trim(),
+      shortDescription: this.courseEditShortDesc().trim(),
+      fullDescription: this.courseEditFullDesc().trim(),
+      durationHours: Number(this.courseEditDurationHours()) || 40,
+      durationWeeks: Number(this.courseEditDurationWeeks()) || 4,
+      modality: this.courseEditModality(),
+      level: this.courseEditLevel(),
+      prerequisites: this.courseEditPrerequisites().trim(),
+      badge: this.courseEditBadge().trim(),
+      modules: this.courseEditModules()
+    };
+
+    this.registrationService.updateCourse(course.id, updatedData);
+    this.showToast(`✅ Curso "${title}" atualizado com sucesso e salvo na nuvem!`);
+    this.closeEditCourseModal();
+  }
+
+  resetCourseToDefault(courseId: string, courseTitle: string): void {
+    if (confirm(`Tem certeza que deseja restaurar as informações e a grade curricular original do curso "${courseTitle}"?`)) {
+      this.registrationService.resetCourseToDefault(courseId);
+      this.showToast(`Curso "${courseTitle}" restaurado para a grade padrão.`);
+    }
+  }
+
+  resetAllCoursesToDefault(): void {
+    if (confirm('Tem certeza que deseja restaurar TODOS os cursos para o padrão original da ONG? Todas as alterações salvas serão redefinidas.')) {
+      this.registrationService.resetAllCoursesToDefault();
+      this.showToast('Todos os cursos foram restaurados para o padrão original.');
+    }
   }
 
   printQrPoster(): void {

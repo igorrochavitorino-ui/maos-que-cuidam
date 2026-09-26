@@ -1,0 +1,60 @@
+<section class="hero-container">
+  <div class="glow-effect"></div>
+  
+  <div class="logo-wrapper">
+    <!-- SVG Animado com as Mãos, Coração e Pata -->
+    <svg class="hero-svg" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Círculo Dourado com brilho de varredura -->
+      <circle cx="200" cy="200" r="180" stroke="url(#goldGradient)" stroke-width="6" class="circle-pulse" />
+      
+      <!-- Pata Central (Azul Marinho) -->
+      <g class="paw-group">
+        <ellipse cx="200" cy="180" rx="36" ry="28" fill="#1b2a47" />
+        <circle cx="160" cy="140" r="14" fill="#1b2a47" />
+        <circle cx="186" cy="120" r="14" fill="#1b2a47" />
+        <circle cx="214" cy="120" r="14" fill="#1b2a47" />
+        <circle cx="240" cy="140" r="14" fill="#1b2a47" />
+      </g>
+
+      <!-- Coração Central Dourado -->
+      <path class="heart-pulse" d="M200 230 C190 215, 175 220, 175 235 C175 250, 200 265, 200 265 C200 265, 225 250, 225 235 C225 220, 210 215, 200 230 Z" fill="#d4af37" />
+
+      <!-- Mão Esquerda (Dourada) -->
+      <path class="hand hand-left" d="M 120 220 C 130 180, 160 170, 170 200 C 160 230, 130 250, 120 220 Z" fill="#d4af37" />
+
+      <!-- Mão Direita (Azul Marinho) -->
+      <path class="hand hand-right" d="M 280 220 C 270 180, 240 170, 230 200 C 240 230, 270 250, 280 220 Z" fill="#1b2a47" />
+
+      <!-- Gradiente Dourado -->
+      <defs>
+        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#f5e0a3" />
+          <stop offset="50%" stop-color="#d4af37" />
+          <stop offset="100%" stop-color="#aa820a" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <h1 class="hero-title">Mãos que Cuidam</h1>
+    <div class="hero-badge">
+      <span>AMOR • RESPEITO • PROTEÇÃO</span>
+    </div>
+
+    <p class="hero-lead-text">
+      Capacitando pessoas, gerando oportunidades profissionais e transformando a vida de cães e gatos em Macaé/RJ com dignidade, amor e bem-estar animal.
+    </p>
+
+    <!-- Botões de Ação Direta -->
+    <div class="hero-cta-group">
+      <a routerLink="/cadastro" class="btn-hero-action primary">
+        <span>🐾 Inscrições Gratuitas</span>
+      </a>
+      <a routerLink="/cursos" class="btn-hero-action secondary">
+        <span>🎓 Conhecer os Cursos</span>
+      </a>
+      <a routerLink="/doar" class="btn-hero-action outline">
+        <span>❤️ Como Ajudar</span>
+      </a>
+    </div>
+  </div>
+</section>

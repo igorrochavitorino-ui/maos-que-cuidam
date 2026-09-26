@@ -20,7 +20,9 @@ export class RegistrationComponent implements OnInit {
   public notificationService = inject(NotificationService);
 
   activeTab = signal<'aluno' | 'voluntario' | 'pet'>('aluno');
-  courses: Course[] = this.registrationService.getCourses();
+  get courses(): Course[] {
+    return this.registrationService.getCourses();
+  }
 
   // Estados de confirmação
   submittedStudent = signal<StudentRegistration | null>(null);

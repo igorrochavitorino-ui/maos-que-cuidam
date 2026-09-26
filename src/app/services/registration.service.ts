@@ -35,6 +35,7 @@ export class RegistrationService {
   private readonly TESTIMONIALS_KEY = 'mqc_testimonials_data';
   private readonly IMPACT_STATS_KEY = 'mqc_impact_stats_data';
   private readonly VIDEO_ADS_KEY = 'mqc_video_ads_data';
+  private readonly COURSES_KEY = 'mqc_courses_data';
 
   // Signals para reatividade pura
   private studentsSignal = signal<StudentRegistration[]>([]);
@@ -48,6 +49,7 @@ export class RegistrationService {
   private testimonialsSignal = signal<Testimonial[]>([]);
   private impactStatsSignal = signal<ImpactStat[]>([]);
   private videoAdsSignal = signal<VideoAd[]>([]);
+  private coursesSignal = signal<Course[]>([]);
 
   // Computed signals
   readonly students = computed(() => this.studentsSignal());
@@ -61,6 +63,7 @@ export class RegistrationService {
   readonly testimonials = computed(() => this.testimonialsSignal());
   readonly impactStats = computed(() => this.impactStatsSignal());
   readonly videoAds = computed(() => this.videoAdsSignal());
+  readonly courses = computed(() => this.coursesSignal());
 
   readonly totalStudents = computed(() => this.studentsSignal().length);
   readonly totalVolunteers = computed(() => this.volunteersSignal().length);
@@ -71,8 +74,9 @@ export class RegistrationService {
   readonly totalAdoptionApplications = computed(() => this.adoptionApplicationsSignal().length);
   readonly totalSponsors = computed(() => this.sponsorsSignal().length);
   readonly totalTestimonials = computed(() => this.testimonialsSignal().length);
+  readonly totalCourses = computed(() => this.coursesSignal().length);
 
-  // Lista oficial de cursos da ONG Mãos que Cuidam
+  // Lista oficial de cursos padrão da ONG Mãos que Cuidam (fallback inicial)
   private readonly coursesList: Course[] = [
     {
       id: 'curso-banho-higienizacao',
@@ -412,6 +416,15 @@ export class RegistrationService {
       }
     });
 
+    // 5. Cursos da grade curricular em tempo real
+    this.firebaseService.listenToCollection('cursos', (cloudCourses) => {
+      if (cloudCourses && cloudCourses.length > 0) {
+        this.coursesSignal.set(cloudCourses as Course[]);
+        this.saveCourses(cloudCourses as Course[]);
+        console.log(`🔥 [Firestore Realtime] Cursos sincronizados em tempo real: ${cloudCourses.length}`);
+      }
+    });
+
     // Carga inicial completa de outras coleções
     this.syncFromFirestore();
   }
@@ -478,11 +491,49 @@ export class RegistrationService {
   }
 
   getCourses(): Course[] {
-    return [...this.coursesList];
+    return [...this.coursesSignal()];
   }
 
   getCourseById(id: string): Course | undefined {
-    return this.coursesList.find(c => c.id === id);
+    return this.coursesSignal().find(c => c.id === id);
+  }
+
+  updateCourse(id: string, updatedData: Partial<Course>): void {
+    const updated = this.coursesSignal().map(c => c.id === id ? { ...c, ...updatedData } : c);
+    this.coursesSignal.set(updated);
+    this.saveCourses(updated);
+    const saved = updated.find(c => c.id === id);
+    if (saved) {
+      this.firebaseService.saveDocument('cursos', id, saved);
+    }
+  }
+
+  saveCourse(course: Course): void {
+    const existingIndex = this.coursesSignal().findIndex(c => c.id === course.id);
+    let updated: Course[];
+    if (existingIndex >= 0) {
+      updated = this.coursesSignal().map(c => c.id === course.id ? course : c);
+    } else {
+      updated = [...this.coursesSignal(), course];
+    }
+    this.coursesSignal.set(updated);
+    this.saveCourses(updated);
+    this.firebaseService.saveDocument('cursos', course.id, course);
+  }
+
+  resetCourseToDefault(id: string): void {
+    const def = this.coursesList.find(c => c.id === id);
+    if (def) {
+      this.updateCourse(id, def);
+    }
+  }
+
+  resetAllCoursesToDefault(): void {
+    this.coursesSignal.set([...this.coursesList]);
+    this.saveCourses(this.coursesList);
+    this.coursesList.forEach(c => {
+      this.firebaseService.saveDocument('cursos', c.id, c);
+    });
   }
 
   getSponsors(): Sponsor[] {
@@ -876,6 +927,13 @@ export class RegistrationService {
         this.saveTestimonials(cloudTestimonials as Testimonial[]);
       }
 
+      // 11. CURSOS DA GRADE CURRICULAR
+      const cloudCourses = await this.firebaseService.getCollectionData('cursos');
+      if (cloudCourses !== null && cloudCourses.length > 0) {
+        this.coursesSignal.set(cloudCourses as Course[]);
+        this.saveCourses(cloudCourses as Course[]);
+      }
+
       console.log('✅ [RegistrationService] Sincronização em nuvem com o Firestore concluída!');
     } catch (err) {
       console.warn('⚠️ [RegistrationService] Falha na sincronização com o Firestore:', err);
@@ -986,6 +1044,19 @@ export class RegistrationService {
         this.videoAdsSignal.set(seed);
         this.saveVideoAds(seed);
       }
+
+      const storedCourses = localStorage.getItem(this.COURSES_KEY);
+      if (storedCourses) {
+        try {
+          this.coursesSignal.set(JSON.parse(storedCourses));
+        } catch {
+          this.coursesSignal.set([...this.coursesList]);
+          this.saveCourses(this.coursesList);
+        }
+      } else {
+        this.coursesSignal.set([...this.coursesList]);
+        this.saveCourses(this.coursesList);
+      }
     } catch (e) {
       console.warn('Erro ao carregar do localStorage:', e);
       this.studentsSignal.set(this.getSeedStudents());
@@ -997,7 +1068,12 @@ export class RegistrationService {
       this.testimonialsSignal.set(this.getSeedTestimonials());
       this.impactStatsSignal.set(this.getSeedImpactStats());
       this.videoAdsSignal.set(this.getSeedVideoAds());
+      this.coursesSignal.set([...this.coursesList]);
     }
+  }
+
+  private saveCourses(data: Course[]): void {
+    try { localStorage.setItem(this.COURSES_KEY, JSON.stringify(data)); } catch (e) { console.error(e); }
   }
 
   private saveVideoAds(data: VideoAd[]): void {

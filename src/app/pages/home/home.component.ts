@@ -5,11 +5,12 @@ import { RouterModule } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
 import { AuthService } from '../../services/auth.service';
 import { Course, Testimonial, Sponsor, ImpactStat } from '../../models/registration.model';
+import { HeroBrandComponent } from '../../components/hero-brand/hero-brand.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeroBrandComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -18,7 +19,9 @@ export class HomeComponent {
   registrationService = inject(RegistrationService);
   authService = inject(AuthService);
 
-  courses: Course[] = this.registrationService.getCourses();
+  get courses(): Course[] {
+    return this.registrationService.getCourses();
+  }
   testimonials = computed(() => this.registrationService.testimonials());
   sponsors = computed(() => this.registrationService.sponsors());
   stats = computed(() => this.registrationService.impactStats());

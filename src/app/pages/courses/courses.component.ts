@@ -18,7 +18,9 @@ export class CoursesComponent {
   registrationService = inject(RegistrationService);
   authService = inject(AuthService);
 
-  courses: Course[] = this.registrationService.getCourses();
+  get courses(): Course[] {
+    return this.registrationService.getCourses();
+  }
   testimonials = computed(() => this.registrationService.testimonials());
 
   selectedFilter = signal<string>('all');
