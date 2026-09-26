@@ -5,12 +5,12 @@ import { RouterModule } from '@angular/router';
 import { RegistrationService } from '../../services/registration.service';
 import { AuthService } from '../../services/auth.service';
 import { Course, Testimonial, Sponsor, ImpactStat } from '../../models/registration.model';
-import { HeroBrandComponent } from '../../components/hero-brand/hero-brand.component';
+import { IntroSplashComponent } from '../../components/intro-splash/intro-splash.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, HeroBrandComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, IntroSplashComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

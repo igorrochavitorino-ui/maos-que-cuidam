@@ -1,0 +1,17 @@
+<div *ngIf="isVisible()" class="splash-overlay" [class.fade-out]="isFadingOut()">
+  <video
+    #introVideo
+    class="splash-video"
+    src="assets/gemini_generated_video_35be7947.mp4"
+    autoplay
+    muted
+    playsinline
+    (ended)="onVideoEnded()">
+  </video>
+
+  <!-- Botão opcional para pular -->
+  <button class="skip-btn" (click)="closeIntro()" type="button">Pular introdução ✕</button>
+
+  <!-- Indicador visual para rolar -->
+  <div class="scroll-hint">Role para baixo para entrar</div>
+</div>
