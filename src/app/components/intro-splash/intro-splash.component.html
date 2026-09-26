@@ -1,4 +1,4 @@
-<div *ngIf="isVisible()" class="splash-overlay" [class.fade-out]="isFadingOut()">
+<div *ngIf="isVisible()" class="splash-overlay" [class.fade-out]="isFadingOut()" (click)="onOverlayClick()">
   <video
     #introVideo
     class="splash-video"
@@ -6,13 +6,21 @@
     autoplay
     muted
     playsinline
+    webkit-playsinline
+    x5-playsinline="true"
     preload="auto"
     (ended)="onVideoEnded()">
   </video>
 
-  <!-- Botão opcional para pular -->
-  <button class="skip-btn" (click)="closeIntro()" type="button">Pular introdução ✕</button>
+  <!-- Botão de Ativar Som -->
+  <button class="sound-btn" (click)="toggleSound($event)" type="button" [class.sound-on]="!isMuted()">
+    <span *ngIf="isMuted()">🔇 Toque p/ Ativar Som</span>
+    <span *ngIf="!isMuted()">🔊 Som Ativado</span>
+  </button>
 
-  <!-- Indicador visual para rolar -->
-  <div class="scroll-hint">Role para baixo para entrar</div>
+  <!-- Botão para pular -->
+  <button class="skip-btn" (click)="closeIntro()" type="button">Pular ✕</button>
+
+  <!-- Indicador visual para rolar ou deslizar -->
+  <div class="scroll-hint">Deslize para entrar</div>
 </div>
